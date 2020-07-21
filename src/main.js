@@ -1,19 +1,30 @@
-import Vue from 'vue'
-import BootstrapVue from 'bootstrap-vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import VueApollo from 'vue-apollo';
+import ApolloClient from 'apollo-boost';
+import App from './App.vue';
+import router from './router';
+import store from './store';
+import MyPlugin from './plugins/my-plugin';
 
-import MyPlugin from './plugins/my-plugin'
+Vue.use(BootstrapVue);
+Vue.use(MyPlugin);
+Vue.use(VueApollo);
 
-Vue.use(BootstrapVue)
-Vue.use(MyPlugin)
+const apolloClient = new ApolloClient({
+  uri: 'http://localhost:1337/graphql'
+});
 
-Vue.config.productionTip = false
-Vue.prototype.$log = console.log
+const apolloProvider = new VueApollo({
+  defaultClient: apolloClient
+});
+
+Vue.config.productionTip = false;
+Vue.prototype.$log = console.log;
 
 new Vue({
   router,
   store,
-  render: (h) => h(App),
-}).$mount('#app')
+  apolloProvider,
+  render: h => h(App)
+}).$mount('#app');

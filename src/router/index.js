@@ -1,31 +1,46 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 
-import Home from '@/views/Home.vue'
+import NotFound from '@/components/NotFound.vue';
 
-import NotFound from '@/components/NotFound.vue'
-
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
     path: '*',
     name: 'NotFound',
-    component: NotFound,
-  }, {
+    component: NotFound
+  },
+  {
     path: '/',
     name: 'home',
-    component: Home,
+    component: () => import('@/views/Home.vue'),
     meta: {
-      auth: false,
-    },
+      auth: false
+    }
   },
-]
+  {
+    path: '/pug',
+    name: 'pug',
+    component: () => import('@/views/Pug.vue'),
+    meta: {
+      auth: false
+    }
+  },
+  {
+    path: '/categories',
+    name: 'categories',
+    component: () => import('@/views/Categories.vue'),
+    meta: {
+      auth: false
+    }
+  }
+];
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes,
-})
+  routes
+});
 
-export default router
+export default router;
