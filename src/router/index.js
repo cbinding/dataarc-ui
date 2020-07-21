@@ -8,8 +8,8 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '*',
-    name: 'NotFound',
-    component: NotFound
+    name: 'login',
+    component: () => import('@/views/Login.vue')
   },
   {
     path: '/',
