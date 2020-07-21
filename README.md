@@ -13,18 +13,31 @@ This software requires the following to be insalled:
 - dataarc-api >= 1.0.0
 - Node.js >= 12.x
 - npm >= 6.x
-- yarn >= 1.22.4
+- yarn >= 1.22.x
 
 ### Installing
 
-#### Installing node modules and launch application
+Clone project and enter in folder:
 
-`yarn install`
+```
+cd dataarc-admin
+```
 
-`yarn serve`
+Run yarn install:
+
+```
+yarn install
+```
+
+Enjoy:
+
+```
+yarn serve
+```
 
 ## Built With
 
-- [VueJS](https://vuejs.org/)
-- [Vuetify](https://vuetifyjs.com/en/)
-- [Apollo GraphQL](https://www.apollographql.com/)
+- [Vue CLI](https://cli.vuejs.org/) - Standard Tooling for Vue.js Development
+- [Vuex](https://vuex.vuejs.org/) - Vuex is a state management pattern + library for Vue.js applications.
+- [Vue-Router](https://router.vuejs.org/) - Vue Router is the official router for Vue.js.
+- [Bootstrap](https://getbootstrap.com/) - Build responsive, mobile-first projects on the web with the world’s most popular front-end component library.

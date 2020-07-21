@@ -23,15 +23,24 @@ $RECYCLE.BIN/
 # editor
 .idea
 .vscode
-nbproject
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# logs, databases, env
+# local env files
+.env
+.env.local
+.env.*.local
+
+
+# logs, databases
 .tmp
 *.log
 *.sql
 *.sqlite
 *.sqlite3
-*.env
 /db
 ssl
 *#
@@ -48,6 +57,8 @@ logs
 results
 node_modules
 .node_history
+package-lock.json
+/dist
 
 # tests
 testApp
