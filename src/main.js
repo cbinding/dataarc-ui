@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import BootstrapVue from 'bootstrap-vue';
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
 import VueApollo from 'vue-apollo';
 import ApolloClient from 'apollo-boost';
 import App from './App.vue';
@@ -8,6 +8,7 @@ import store from './store';
 import MyPlugin from './plugins/my-plugin';
 
 Vue.use(BootstrapVue);
+Vue.use(BootstrapVueIcons);
 Vue.use(VueApollo);
 Vue.use(MyPlugin);
 
