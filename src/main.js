@@ -8,8 +8,8 @@ import store from './store';
 import MyPlugin from './plugins/my-plugin';
 
 Vue.use(BootstrapVue);
-Vue.use(MyPlugin);
 Vue.use(VueApollo);
+Vue.use(MyPlugin);
 
 const apolloClient = new ApolloClient({
   uri: 'http://localhost:1337/graphql'
