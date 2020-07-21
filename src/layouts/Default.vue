@@ -1,23 +1,19 @@
 <template>
-  <div class="home">
+  <div class="default-layout">
     <div class="container d-flex justify-content-center align-items-center">
-      <h1>
-        Hello world
-        <b-icon icon="brightness-high" variant="dark" />
-      </h1>
+      <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Home'
+  name: 'Default'
 };
 </script>
 
 <style lang="scss" scoped>
-.home {
-  text-align: center;
+.default-layout {
   min-height: 100vh;
   .container {
     min-height: 100vh;
