@@ -18,9 +18,9 @@
 			</button>
 
 			<p v-show="status">
-        <li class="help">
+        <ul class="help">
           {{status}}
-        </li>
+        </ul>
       </p>
 		</form>
 	</div>
@@ -40,7 +40,7 @@ export default {
 			const { email, password } = this;
 			// Request API.
 			axios
-				.post("http://localhost:1337/auth/local", {
+				.post(this.$baseUrl + "/auth/local", {
 					identifier: email,
 					password: password,
 				})
