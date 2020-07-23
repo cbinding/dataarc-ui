@@ -28,6 +28,8 @@ const apolloProvider = new VueApollo({
   defaultClient: apolloClient
 });
 
+//base url for mongodb
+Vue.prototype.$baseUrl = 'http://localhost:1337';
 Vue.config.productionTip = false;
 Vue.prototype.$log = console.log;
 

@@ -1,11 +1,18 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-
+import axios from 'axios';
 import NotFound from '@/components/NotFound.vue';
 import defaultLayout from '@/layouts/Default.vue';
 import dashboardLayout from '@/layouts/Dashboard.vue';
 
 Vue.use(VueRouter);
+
+window.axios = require('axios');
+
+const token = localStorage.getItem('jwt')
+if (token) {
+  axios.defaults.headers.common['Authorization'] = token
+}
 
 const routes = [
   {
@@ -28,7 +35,7 @@ const routes = [
     name: 'home',
     component: () => import('@/views/Home.vue'),
     meta: {
-      auth: false,
+      auth: true,
       layout: dashboardLayout
     }
   },
@@ -37,7 +44,7 @@ const routes = [
     name: 'about',
     component: () => import('@/views/About.vue'),
     meta: {
-      auth: false,
+      auth: true,
       layout: dashboardLayout
     }
   },
@@ -46,7 +53,7 @@ const routes = [
     name: 'pug',
     component: () => import('@/views/Pug.vue'),
     meta: {
-      auth: false,
+      auth: true,
       layout: dashboardLayout
     }
   },
@@ -55,7 +62,7 @@ const routes = [
     name: 'categories',
     component: () => import('@/views/Categories.vue'),
     meta: {
-      auth: false,
+      auth: true,
       layout: dashboardLayout
     }
   }
@@ -65,6 +72,20 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.auth)) {
+    if (localStorage.getItem("jwt") == null) {
+      next({
+        path: "/login"
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;
