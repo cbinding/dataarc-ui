@@ -13,6 +13,12 @@
 							<b-nav-item to="/categories">Categories</b-nav-item>
 							<b-nav-item v-if="user" @click="logout">Logout</b-nav-item>
 							<b-nav-item v-if="!user" to="/login">Login</b-nav-item>
+              <b-nav-item-dropdown text="Actions" right>
+                <b-dropdown-item to="/actions/create">Create</b-dropdown-item>
+                <b-dropdown-item href="#">Read</b-dropdown-item>
+                <b-dropdown-item href="#">Update</b-dropdown-item>
+                <b-dropdown-item href="#">Delete</b-dropdown-item>
+              </b-nav-item-dropdown>
 						</b-navbar-nav>
 					</b-navbar-nav>
 				</b-collapse>

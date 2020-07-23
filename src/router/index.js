@@ -65,6 +65,24 @@ const routes = [
       auth: true,
       layout: dashboardLayout
     }
+  },
+  {
+    path: '/maplayers',
+    name: 'maplayers',
+    component: () => import('@/views/MapLayers.vue'),
+    meta: {
+      auth: true,
+      layout: dashboardLayout
+    }
+  },
+  {
+    path: '/actions/create',
+    name: 'create',
+    component: () => import('@/views/Create.vue'),
+    meta: {
+      auth: true,
+      layout: dashboardLayout
+    }
   }
 ];
 
