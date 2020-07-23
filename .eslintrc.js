@@ -7,6 +7,9 @@ module.exports = {
   parserOptions: {
     parser: 'babel-eslint'
   },
+  "globals": {
+    "axios": 'readonly'
+  },
   extends: ['airbnb-base', 'plugin:vue/recommended'],
   rules: {
     semi: ['warn', 'never'],

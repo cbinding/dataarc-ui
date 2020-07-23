@@ -2,7 +2,10 @@
   <div class="apollo">
     <h3>Map Layers</h3>
     <ul>
-      <li v-for="mapLayer in mapLayers" :key="mapLayer.id">
+      <li
+        v-for="mapLayer in mapLayers"
+        :key="mapLayer.id"
+      >
         {{ mapLayer.name }}
       </li>
     </ul>
@@ -10,13 +13,13 @@
 </template>
 
 <script>
-import gql from 'graphql-tag';
+import gql from 'graphql-tag'
 
 export default {
   data() {
     return {
-      mapLayers: []
-    };
+      mapLayers: [],
+    }
   },
   apollo: {
     mapLayers: gql`
@@ -26,7 +29,7 @@ export default {
           name
         }
       }
-    `
-  }
-};
+    `,
+  },
+}
 </script>
