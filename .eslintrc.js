@@ -12,6 +12,7 @@ module.exports = {
   },
   extends: ['airbnb-base', 'plugin:vue/recommended'],
   rules: {
+    "linebreak-style": 0,
     semi: ['warn', 'never'],
     'global-require': 'warn',
     'no-prototype-builtins': 'warn',
