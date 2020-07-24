@@ -54,8 +54,7 @@ export default {
   methods: {
     login() {
       const { email, password } = this
-	  // Request API.
-	  console.log(email)
+
       axios
       .post(`${this.$baseUrl}/auth/local`, {
         identifier: email,

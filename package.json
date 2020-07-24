@@ -1,7 +1,7 @@
 {
   "name": "dataarc-admin",
   "version": "2.0.0",
-  "author": "Timothy Sexton",
+  "author": "Dushara",
   "contributors": [
     "tlsexto"
   ],
@@ -21,6 +21,7 @@
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.0.4",
+    "compass-mixins": "^0.12.10",
     "core-js": "^3.1.2",
     "graphql": "^15.3.0",
     "node-sass": "^4.13.0",
@@ -55,9 +56,14 @@
   },
   "browserslist": [
     "> 1%",
-    "last 2 versions"
+    "last 2 versions",
+    "not ie <= 8"
   ],
   "jest": {
     "preset": "@vue/cli-plugin-unit-jest"
+  },
+  "engines": {
+    "node": ">= 6.0.0",
+    "yarn": ">= 1.22.0"
   }
 }
