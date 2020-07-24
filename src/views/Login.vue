@@ -2,7 +2,7 @@
   <div>
     <form
       class="login"
-      @submit.prevent="login()"
+      @submit.prevent="handleSubmit()"
     >
       <h3>Sign In</h3>
 
@@ -39,39 +39,44 @@
         </ul>
       </p>
     </form>
+    <router-link
+      to="/register"
+      class="btn btn-dark btn-lg btn-block"
+    >
+      Register
+    </router-link>
   </div>
 </template>
 
 <script>
+
+import { mapState, mapActions } from 'vuex'
+
 export default {
   data() {
     return {
       email: '',
       password: '',
-      status: false,
+      submitted: false,
     }
   },
+  computed: {
+    ...mapState('account', ['status']),
+  },
+  created() {
+    // reset the login status when you reach the login page
+    this.logout()
+  },
   methods: {
-    login() {
-      const { email, password } = this
+    ...mapActions('account', ['login', 'logout']),
 
-      axios
-      .post(`${this.$baseUrl}/auth/local`, {
-        identifier: email,
-        password,
-      })
-      .then((response) => {
-        // Handle success.
-        const token = response.data.jwt
-        localStorage.setItem('jwt', token)
-        if (token) {
-          this.$router.push('/')
-        }
-      })
-      .catch((error) => {
-        // Handle error.
-        this.status = 'Email or Password is invalid.'
-      })
+    handleSubmit() {
+      this.submitted = true
+      const { email, password } = this
+      if (email && password) {
+        const identifier = email
+        this.login({ identifier, password })
+      }
     },
   },
 }

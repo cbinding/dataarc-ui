@@ -10,20 +10,15 @@ import VueApollo from 'vue-apollo'
 import apolloClient from '@/api/apollo-vue'
 
 // App imports
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import App from '@/App.vue'
+import router from '@/router'
+import store from '@/store'
 
 // Plugins
 import MyPlugin from './plugins/my-plugin'
 
 // Globals
 window.axios = require('axios')
-
-const token = localStorage.getItem('jwt')
-if (token) {
-  axios.defaults.headers.common.Authorization = token
-}
 
 // Apply imported libraries
 Vue.use(BootstrapVue)
