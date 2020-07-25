@@ -7,14 +7,14 @@ module.exports = {
           oneOf: [
             {
               resourceQuery: /^\?vue/,
-              use: ['pug-plain-loader']
+              use: ['pug-plain-loader'],
             },
             {
-              use: ['raw-loader', 'pug-plain-loader']
-            }
-          ]
-        }
-      ]
-    }
-  }
-};
+              use: ['raw-loader', 'pug-plain-loader'],
+            },
+          ],
+        },
+      ],
+    },
+  },
+}

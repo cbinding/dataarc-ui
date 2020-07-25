@@ -19,19 +19,22 @@ This software requires the following to be insalled:
 
 Clone project and enter in folder:
 
-```
+```bash
 cd dataarc-admin
+cp .env.example .env
 ```
+
+Change values in `.env` to match your setup
 
 Run yarn install:
 
-```
+```bash
 yarn install
 ```
 
 Enjoy:
 
-```
+```bash
 yarn serve
 ```
 

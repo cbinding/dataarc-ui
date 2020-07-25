@@ -1,64 +1,85 @@
 <template>
-	<div>
-		<form class="login" @submit.prevent="login()">
-			<h3>Sign In</h3>
+  <div>
+    <form
+      class="login"
+      @submit.prevent="handleSubmit()"
+    >
+      <h3>Sign In</h3>
 
-			<div class="form-group">
-				<label>Email address</label>
-				<input required v-model="email" type="email" class="form-control form-control-lg" />
-			</div>
+      <div class="form-group">
+        <label>Email address</label>
+        <input
+          v-model="email"
+          required
+          type="email"
+          class="form-control form-control-lg"
+        >
+      </div>
 
-			<div class="form-group">
-				<label>Password</label>
-				<input required v-model="password" type="password" class="form-control form-control-lg" />
-			</div>
+      <div class="form-group">
+        <label>Password</label>
+        <input
+          v-model="password"
+          required
+          type="password"
+          class="form-control form-control-lg"
+        >
+      </div>
 
-			<button type="submit" class="btn btn-dark btn-lg btn-block">
-				Sign In
-			</button>
+      <button
+        type="submit"
+        class="btn btn-dark btn-lg btn-block"
+      >
+        Sign In
+      </button>
 
-			<p v-show="status">
+      <p v-show="status">
         <ul class="help">
-          {{status}}
+          {{ status }}
         </ul>
       </p>
-		</form>
-	</div>
+    </form>
+    <router-link
+      to="/register"
+      class="btn btn-dark btn-lg btn-block"
+    >
+      Register
+    </router-link>
+  </div>
 </template>
 
 <script>
+
+import { mapState, mapActions } from 'vuex'
+
 export default {
-	data() {
-		return {
-			email: "",
-			password: "",
-			status: false,
-		};
-	},
-	methods: {
-		login: function() {
-			const { email, password } = this;
-			// Request API.
-			axios
-				.post(this.$baseUrl + "/auth/local", {
-					identifier: email,
-					password: password,
-				})
-				.then((response) => {
-					// Handle success.
-					let token = response.data.jwt;
-					localStorage.setItem("jwt", token);
-					if (token) {
-						this.$router.push("/");
-					}
-				})
-				.catch((error) => {
-					// Handle error.
-					this.status = "Email or Password is invalid.";
-				});
-		},
-	},
-};
+  data() {
+    return {
+      email: '',
+      password: '',
+      submitted: false,
+    }
+  },
+  computed: {
+    ...mapState('account', ['status']),
+  },
+  created() {
+    // reset the login status when you reach the login page
+    this.logout()
+  },
+  methods: {
+    ...mapActions('account', ['login', 'logout']),
+
+    handleSubmit() {
+      this.submitted = true
+      const { email, password } = this
+      if (email && password) {
+        const identifier = email
+        this.login({ identifier, password })
+      }
+    },
+  },
+}
 </script>
 
 <style lang="scss">

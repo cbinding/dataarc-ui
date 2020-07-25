@@ -1,17 +1,15 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import axios from 'axios';
-import NotFound from '@/components/NotFound.vue';
-import defaultLayout from '@/layouts/Default.vue';
-import dashboardLayout from '@/layouts/Dashboard.vue';
-
-Vue.use(VueRouter);
-
-window.axios = require('axios');
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import NotFound from '@/components/NotFound.vue'
+import defaultLayout from '@/layouts/Default.vue'
+import dashboardLayout from '@/layouts/Dashboard.vue'
+import axios from 'axios'
+Vue.use(VueRouter)
 
 const token = localStorage.getItem('jwt')
 if (token) {
-  axios.defaults.headers.common['Authorization'] = token
+  // store.commit('ADD NAME', token)
+  axios.defaults.headers.common.Authorization = `Bearer: ${token}`
 }
 
 const routes = [
@@ -19,7 +17,7 @@ const routes = [
     path: '*',
     name: 'not-found',
     component: NotFound,
-    meta: { layout: defaultLayout }
+    meta: { layout: defaultLayout },
   },
   {
     path: '/login',
@@ -27,8 +25,16 @@ const routes = [
     component: () => import('@/views/Login.vue'),
     meta: {
       auth: false,
-      layout: defaultLayout
-    }
+      layout: defaultLayout,
+    },
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('@/views/Pages/Register.vue'),
+    meta: {
+      auth: false,
+    },
   },
   {
     path: '/',
@@ -36,8 +42,8 @@ const routes = [
     component: () => import('@/views/Home.vue'),
     meta: {
       auth: true,
-      layout: dashboardLayout
-    }
+      layout: dashboardLayout,
+    },
   },
   {
     path: '/about',
@@ -45,8 +51,8 @@ const routes = [
     component: () => import('@/views/About.vue'),
     meta: {
       auth: true,
-      layout: dashboardLayout
-    }
+      layout: dashboardLayout,
+    },
   },
   {
     path: '/pug',
@@ -54,8 +60,8 @@ const routes = [
     component: () => import('@/views/Pug.vue'),
     meta: {
       auth: true,
-      layout: dashboardLayout
-    }
+      layout: dashboardLayout,
+    },
   },
   {
     path: '/categories',
@@ -63,29 +69,42 @@ const routes = [
     component: () => import('@/views/Categories.vue'),
     meta: {
       auth: true,
-      layout: dashboardLayout
-    }
-  }
-];
+      layout: dashboardLayout,
+    },
+  },
+  {
+    path: '/maplayers',
+    name: 'maplayers',
+    component: () => import('@/views/MapLayers.vue'),
+    meta: {
+      auth: true,
+      layout: dashboardLayout,
+    },
+  },
+  {
+    path: '/actions/create',
+    name: 'create',
+    component: () => import('@/views/Create.vue'),
+    meta: {
+      auth: true,
+      layout: dashboardLayout,
+    },
+  },
+]
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
-});
+  routes,
+})
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.auth)) {
-    if (localStorage.getItem("jwt") == null) {
-      next({
-        path: "/login"
-      });
-    } else {
-      next();
-    }
-  } else {
-    next();
-  }
-});
+  const authRequired = to.matched.some((record) => record.meta.auth)
+  const loggedIn = localStorage.getItem('user')
 
-export default router;
+  if (authRequired && !loggedIn) return next('/login')
+
+  next()
+})
+
+export default router
