@@ -2,6 +2,7 @@ import router from '@/router/index'
 import userService from '@/api/user.service'
 
 const user = localStorage.getItem('user')
+
 const state = user
   ? { status: { loggedIn: true }, user }
   : { status: {}, user: null }
