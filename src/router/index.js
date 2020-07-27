@@ -9,7 +9,7 @@ Vue.use(VueRouter)
 const token = localStorage.getItem('jwt')
 if (token) {
   // store.commit('ADD NAME', token)
-  axios.defaults.headers.common.Authorization = `Bearer: ${token}`
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`
 }
 
 const routes = [
@@ -18,6 +18,11 @@ const routes = [
     name: 'not-found',
     component: NotFound,
     meta: { layout: defaultLayout },
+  },
+  {
+    path: '/',
+    meta: { auth: true },
+    redirect: '/dashboard',
   },
   {
     path: '/login',

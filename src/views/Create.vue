@@ -152,30 +152,33 @@ export default {
   },
   methods: {
     create() {
-      const vm = this
       const formData = new FormData()
       let url = ''
-      if (this.form.type == 'Map Layers') {
+      const data = {}
+      if (this.form.type === 'Map Layers') {
         url = `${this.$baseUrl}/map-layers`
-        formData.append('name', this.form.name)
-        formData.append('description', this.form.description)
-        formData.append('file', this.form.file)
+        data.name = this.form.name
+        data.description = this.form.description
+        formData.append('files.file', this.form.file, this.form.file.name)
       }
-      else if (this.form.type == 'Datasets') {
+      else if (this.form.type === 'Datasets') {
         url = `${this.$baseUrl}/datasets`
-        formData.append('name', this.form.name)
-        formData.append('description', this.form.description)
-        formData.append('citation', this.form.citation)
-        formData.append('link', this.form.link)
-        formData.append('image', this.form.file)
-        formData.append('category', this.form.category)
+        data.name = this.form.name
+        data.description = this.form.description
+        data.citation = this.form.citation
+        data.link = this.form.link
+        data.category = this.form.category
+        formData.append('files.image', this.form.file, this.form.file.name)
       }
-      else if (this.form.type == 'Combinators') {
+      else if (this.form.type === 'Combinators') {
         url = `${this.$baseUrl}/combinators`
-        formData.append('name', this.form.name)
-        formData.append('description', this.form.description)
-        formData.append('citation', this.form.citation)
+        data.name = this.form.name
+        data.description = this.form.description
+        data.citation = this.form.citation
       }
+
+      formData.append('data', JSON.stringify(data))
+
 
       axios
       .post(url, formData)
