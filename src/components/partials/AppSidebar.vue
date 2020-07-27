@@ -66,7 +66,7 @@
               <li class="nav-item">
                 <router-link
                   class="nav-link"
-                  to="dashboard/maplayers"
+                  to="/dashboard/maplayers"
                 >
                   Map Layers
                 </router-link>
