@@ -5,19 +5,7 @@
         class="Create"
         @submit.prevent="create()"
       >
-        <h3>Create *</h3>
-        <b-form-group
-          id="input-group-1"
-          label="Type"
-          label-for="input-1"
-        >
-          <b-form-select
-            id="input-1"
-            v-model="form.type"
-            :options="types"
-            required
-          />
-        </b-form-group>
+        <h3>{{ form.action }}</h3>
         <!-- Create Dataset -->
         <b-form-group v-if="form.type == 'Datasets'">
           <label>Name</label>
@@ -115,6 +103,7 @@
           <label>File</label>
           <b-form-file
             v-model="form.file"
+            required
             :state="Boolean(form.file)"
             placeholder="Choose a file or drop it here..."
             drop-placeholder="Drop file here..."
@@ -135,10 +124,12 @@
 <script>
 import gql from 'graphql-tag'
 export default {
+  props: ['item', 'action', 'collectionType'],
   data() {
     return {
       form: {
         type: '',
+        action: '',
         name: '',
         description: '',
         citation: '',
@@ -150,7 +141,17 @@ export default {
       category: ['Textual', 'Archaeological', 'Environmental'],
     }
   },
+  created() {
+    this.setData()
+  },
   methods: {
+    setData() {
+      if (this.item) {
+        this.form = this.item
+      }
+      this.form.type = this.collectionType
+      this.form.action = this.action
+    },
     create() {
       const formData = new FormData()
       let url = ''
@@ -179,13 +180,13 @@ export default {
 
       formData.append('data', JSON.stringify(data))
 
-
       axios
       .post(url, formData)
       .then((response) => {
         // Handle success.
         console.log('success')
         console.log(response)
+        this.$router.push('/dashboard/maplayers')
       })
       .catch((error) => {
         // Handle error.

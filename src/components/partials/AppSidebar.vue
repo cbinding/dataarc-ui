@@ -52,47 +52,23 @@
         </li>
         <li class="nav-item">
           <span
-            v-b-toggle="'sample-pages'"
+            v-b-toggle="'collection-types'"
             class="nav-link"
           >
             <img
               class="menu-icon"
               src="../../assets/images/menu_icons/08.png"
               alt="menu icon"
-            ><span class="menu-title">Sample Pages</span><i class="menu-arrow" />
+            ><span class="menu-title">Collection Types</span><i class="menu-arrow" />
           </span>
-          <b-collapse id="sample-pages">
+          <b-collapse id="collection-types">
             <ul class="nav flex-column sub-menu">
               <li class="nav-item">
                 <router-link
                   class="nav-link"
-                  to="/login/"
+                  to="dashboard/maplayers"
                 >
-                  login
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/register/"
-                >
-                  register
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/404/"
-                >
-                  404
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/500/"
-                >
-                  500
+                  Map Layers
                 </router-link>
               </li>
             </ul>

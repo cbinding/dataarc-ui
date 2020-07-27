@@ -76,9 +76,10 @@ const routes = [
         component: () => import('@/views/MapLayers.vue'),
       },
       {
-        path: 'actions/create',
-        name: 'create',
-        component: () => import('@/views/Create.vue'),
+        path: 'actions/update',
+        name: 'createUpdateDelete',
+        component: () => import('@/views/CreateUpdateDelete.vue'),
+        props: true,
       },
     ],
     meta: {
