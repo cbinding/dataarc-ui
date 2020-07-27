@@ -9,7 +9,7 @@ Vue.use(VueRouter)
 const token = localStorage.getItem('jwt')
 if (token) {
   // store.commit('ADD NAME', token)
-  axios.defaults.headers.common.Authorization = `Bearer: ${token}`
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`
 }
 
 const routes = [
@@ -18,6 +18,11 @@ const routes = [
     name: 'not-found',
     component: NotFound,
     meta: { layout: defaultLayout },
+  },
+  {
+    path: '/',
+    meta: { auth: true },
+    redirect: '/dashboard',
   },
   {
     path: '/login',
@@ -71,9 +76,10 @@ const routes = [
         component: () => import('@/views/MapLayers.vue'),
       },
       {
-        path: 'actions/create',
-        name: 'create',
-        component: () => import('@/views/Create.vue'),
+        path: 'actions/update',
+        name: 'createUpdateDelete',
+        component: () => import('@/views/CreateUpdateDelete.vue'),
+        props: true,
       },
     ],
     meta: {

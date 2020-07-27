@@ -203,6 +203,7 @@
           <b-dropdown-item
             href="#"
             class="preview-item flex-wrap"
+            @click="handleLogout()"
           >
             Signout
           </b-dropdown-item>
@@ -220,12 +221,19 @@
 </template>
 
 <script lang="js">
+import { mapState, mapActions } from 'vuex'
+
 export default {
   name: 'AppHeader',
   methods: {
+    ...mapActions('account', ['login', 'logout']),
     collapedMobileSidebar: () => {
       document.querySelector('.sidebar').classList.toggle('active')
     },
+    handleLogout() {
+      this.logout()
+      this.$router.push('/login')
+    }
   },
 }
 </script>

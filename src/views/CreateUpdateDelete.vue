@@ -5,19 +5,7 @@
         class="Create"
         @submit.prevent="create()"
       >
-        <h3>Create *</h3>
-        <b-form-group
-          id="input-group-1"
-          label="Type"
-          label-for="input-1"
-        >
-          <b-form-select
-            id="input-1"
-            v-model="form.type"
-            :options="types"
-            required
-          />
-        </b-form-group>
+        <h3>{{ form.action }}</h3>
         <!-- Create Dataset -->
         <b-form-group v-if="form.type == 'Datasets'">
           <label>Name</label>
@@ -115,6 +103,7 @@
           <label>File</label>
           <b-form-file
             v-model="form.file"
+            required
             :state="Boolean(form.file)"
             placeholder="Choose a file or drop it here..."
             drop-placeholder="Drop file here..."
@@ -135,10 +124,12 @@
 <script>
 import gql from 'graphql-tag'
 export default {
+  props: ['item', 'action', 'collectionType'],
   data() {
     return {
       form: {
         type: '',
+        action: '',
         name: '',
         description: '',
         citation: '',
@@ -150,32 +141,44 @@ export default {
       category: ['Textual', 'Archaeological', 'Environmental'],
     }
   },
+  created() {
+    this.setData()
+  },
   methods: {
+    setData() {
+      if (this.item) {
+        this.form = this.item
+      }
+      this.form.type = this.collectionType
+      this.form.action = this.action
+    },
     create() {
-      const vm = this
       const formData = new FormData()
       let url = ''
-      if (this.form.type == 'Map Layers') {
+      const data = {}
+      if (this.form.type === 'Map Layers') {
         url = `${this.$baseUrl}/map-layers`
-        formData.append('name', this.form.name)
-        formData.append('description', this.form.description)
-        formData.append('file', this.form.file)
+        data.name = this.form.name
+        data.description = this.form.description
+        formData.append('files.file', this.form.file, this.form.file.name)
       }
-      else if (this.form.type == 'Datasets') {
+      else if (this.form.type === 'Datasets') {
         url = `${this.$baseUrl}/datasets`
-        formData.append('name', this.form.name)
-        formData.append('description', this.form.description)
-        formData.append('citation', this.form.citation)
-        formData.append('link', this.form.link)
-        formData.append('image', this.form.file)
-        formData.append('category', this.form.category)
+        data.name = this.form.name
+        data.description = this.form.description
+        data.citation = this.form.citation
+        data.link = this.form.link
+        data.category = this.form.category
+        formData.append('files.image', this.form.file, this.form.file.name)
       }
-      else if (this.form.type == 'Combinators') {
+      else if (this.form.type === 'Combinators') {
         url = `${this.$baseUrl}/combinators`
-        formData.append('name', this.form.name)
-        formData.append('description', this.form.description)
-        formData.append('citation', this.form.citation)
+        data.name = this.form.name
+        data.description = this.form.description
+        data.citation = this.form.citation
       }
+
+      formData.append('data', JSON.stringify(data))
 
       axios
       .post(url, formData)
@@ -183,6 +186,7 @@ export default {
         // Handle success.
         console.log('success')
         console.log(response)
+        this.$router.push('/dashboard/maplayers')
       })
       .catch((error) => {
         // Handle error.
