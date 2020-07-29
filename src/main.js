@@ -15,6 +15,7 @@ import router from '@/router'
 import store from '@/store'
 
 // Plugins
+import VueFormGenerator from 'vue-form-generator'
 import MyPlugin from './plugins/my-plugin'
 
 // Globals
@@ -26,6 +27,7 @@ Vue.use(BootstrapVueIcons)
 Vue.use(VueApollo)
 
 // Apply plugins
+Vue.use(VueFormGenerator)
 Vue.use(MyPlugin)
 
 // Log as components are created
