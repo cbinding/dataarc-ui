@@ -4,9 +4,9 @@ import VueRouter from 'vue-router'
 import NotFound from '@/components/NotFound.vue'
 import defaultLayout from '@/layouts/Default.vue'
 import dashboardLayout from '@/layouts/Dashboard.vue'
+import MapLayers from '@/views/MapLayers.vue'
 import axios from 'axios'
 import roles from './roles'
-
 import { multiselectMixin } from 'vue-multiselect'
 Vue.use(VueRouter)
 
