@@ -7,219 +7,32 @@
       <ul class="nav">
         <li class="nav-item nav-profile">
           <div class="nav-link">
-            <div class="profile-image">
-              <img
-                src="../../assets/images/faces/face4.jpg"
-                alt="image"
-              > <span class="online-status online" />
-            </div>
             <div class="profile-name">
               <p class="name">
-                Richard V.Welsh
+                {{ user.username }}
               </p>
               <p class="designation">
-                Manager
+                Role: {{ role.name }}
               </p>
-              <div class="badge badge-teal mx-auto mt-3">
-                Online
-              </div>
             </div>
           </div>
         </li>
-        <li class="nav-item">
+        <li
+          v-for="route in compileRoutes"
+          :key="route.name"
+          class="nav-item"
+        >
           <router-link
             class="nav-link"
-            to="/"
+            active-class="active"
+            :to="route.path"
+            exact
           >
             <img
               class="menu-icon"
               src="../../assets/images/menu_icons/01.png"
               alt="menu icon"
-            ><span class="menu-title">Dashboard</span>
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <router-link
-            class="nav-link"
-            to="/widgets/"
-          >
-            <img
-              class="menu-icon"
-              src="../../assets/images/menu_icons/02.png"
-              alt="menu icon"
-            ><span class="menu-title">Widgets</span>
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <span
-            v-b-toggle="'collection-types'"
-            class="nav-link"
-          >
-            <img
-              class="menu-icon"
-              src="../../assets/images/menu_icons/08.png"
-              alt="menu icon"
-            ><span class="menu-title">Collection Types</span><i class="menu-arrow" />
-          </span>
-          <b-collapse id="collection-types">
-            <ul class="nav flex-column sub-menu">
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/dashboard/maplayers"
-                >
-                  Map Layers
-                </router-link>
-              </li>
-            </ul>
-          </b-collapse>
-        </li>
-        <li class="nav-item">
-          <span
-            v-b-toggle="'ui-components'"
-            class="nav-link"
-          >
-            <img
-              class="menu-icon"
-              src="../../assets/images/menu_icons/03.png"
-              alt="menu icon"
-            ><span class="menu-title">UI Components</span><i class="menu-arrow" />
-          </span>
-          <b-collapse id="ui-components">
-            <ul class="nav flex-column sub-menu">
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/alerts/"
-                >
-                  Alerts
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/buttons/"
-                >
-                  Button
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/badges/"
-                >
-                  Badges
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/breadcrumbs/"
-                >
-                  Breadcrumbs
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/carousel/"
-                >
-                  Carousel
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/dropdowns/"
-                >
-                  Dropdowns
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/typography/"
-                >
-                  Typography
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/paginations/"
-                >
-                  Paginations
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/tooltips/"
-                >
-                  Tooltips
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/progress/"
-                >
-                  Progress
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/tabs/"
-                >
-                  Tabs
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="nav-link"
-                  to="/modals/"
-                >
-                  Modals
-                </router-link>
-              </li>
-            </ul>
-          </b-collapse>
-        </li>
-        <li class="nav-item">
-          <router-link
-            class="nav-link"
-            to="/tables/"
-          >
-            <img
-              class="menu-icon"
-              src="../../assets/images/menu_icons/06.png"
-              alt="menu icon"
-            ><span class="menu-title">Tables</span>
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <router-link
-            class="nav-link"
-            to="/icons/"
-          >
-            <img
-              class="menu-icon"
-              src="../../assets/images/menu_icons/07.png"
-              alt="menu icon"
-            ><span class="menu-title">Icons</span>
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <router-link
-            class="nav-link"
-            to="/forms/"
-          >
-            <img
-              class="menu-icon"
-              src="../../assets/images/menu_icons/04.png"
-              alt="menu icon"
-            ><span class="menu-title">Forms</span>
+            ><span class="menu-title">{{ route.name }}</span>
           </router-link>
         </li>
       </ul>
@@ -228,8 +41,45 @@
 </template>
 
 <script lang="js">
+
+import { mapState } from 'vuex'
+
 export default {
   name: 'AppSidebar',
+  data() {
+    return {
+
+    }
+  },
+  computed: {
+    ...mapState('account', ['user', 'role']),
+    contributorRoutes() {
+      return this.mapRoutes('contributor')
+    },
+    authenticatedRoutes() {
+      return this.mapRoutes('administrator')
+    },
+    compileRoutes() {
+      return [...this.contributorRoutes, ...this.authenticatedRoutes]
+    },
+  },
+  mounted() {
+    // console.log(this.user)
+  },
+  methods: {
+    mapRoutes(roleValue) {
+      if (this.role.type !== roleValue) return []
+      const paths = this.$router.options.routes.filter((route) => {
+        return route.name === roleValue
+      })[0]
+      if (paths) {
+        return paths.children.map((route) => {
+          return { path: `${paths.path}/${route.path}`, name: route.name }
+        })
+      }
+      return []
+    },
+  },
 }
 </script>
 

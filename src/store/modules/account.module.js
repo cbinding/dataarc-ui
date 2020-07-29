@@ -1,11 +1,22 @@
 import router from '@/router/index'
 import userService from '@/api/user.service'
+import Cookie from 'js-cookie'
 
-const user = localStorage.getItem('user')
+const rawUser = Cookie.get('user')
+const user = rawUser ? JSON.parse(Cookie.get('user')) : null
 
-const state = user
-  ? { status: { loggedIn: true }, user }
-  : { status: {}, user: null }
+const state = {
+  status: {
+    loggedIn: !!user,
+  },
+  user: user || null,
+  role: user ? user.role : null,
+}
+
+if (user) {
+  state.status.loggedIn = true
+  state.user = user
+}
 
 const actions = {
   login({ dispatch, commit }, { identifier, password }) {
@@ -51,18 +62,22 @@ const mutations = {
   loginRequest(state, user) {
     state.status = { loggingIn: true }
     state.user = user
+    state.role = user ? user.role : null
   },
   loginSuccess(state, user) {
     state.status = { loggedIn: true }
     state.user = user
+    state.role = user ? user.role : null
   },
   loginFailure(state) {
     state.status = {}
     state.user = null
+    state.role = null
   },
   logout(state) {
     state.status = {}
     state.user = null
+    state.role = null
   },
   registerRequest(state, user) {
     state.status = { registering: true }
