@@ -12,11 +12,7 @@
 </template>
 
 <script>
-import multiSelect from 'vue-multiselect'
 export default {
-  components: {
-    multiSelect
-  },
   props: ['item', 'action', 'collectionType', 'datasets'],
   data() {
     return {
@@ -30,7 +26,7 @@ export default {
         file: null,
         category: '',
         color: '',
-        datasets: ['test1', 'test2'],
+        datasets: [],
       },
       schema: {
         fields: [
@@ -91,25 +87,30 @@ export default {
             visible: true,
           },
           {
-            type: 'multiSelect',
+            type: 'vueMultiSelect',
+            multiSelect: true,
             label: 'Datasets',
             model: 'datasets',
-            options: this.datasets,
             values: this.datasets,
             visible: true,
-            multiSelect: true,
             selectOptions: {
+              key: 'name',
+              label: 'name',
+              multiple: true,
               searchable: true,
               clearOnSelect: true,
               hideSelected: true,
               taggable: true,
               tagPlaceholder: "tagPlaceholder",
               onNewTag(newTag, id, options, value) {
-                console.log("onNewTag", newTag, id, options, value)
                 options.push(newTag)
                 value.push(newTag)
+                this.model.datasets.push(newTag)
               },
-            }
+            },
+            onChanged: function (model, newVal, oldVal, field) {
+              model = newVal
+            },
           },
           {
             type: 'submit',
@@ -136,8 +137,6 @@ export default {
       createUrl: '',
       editUrl: '',
       routeUrl: '',
-      firstRun: true,
-      options: [],
     }
   },
   created() {
@@ -145,7 +144,6 @@ export default {
   },
   methods: {
     setData() {
-      this.model.datasets = this.datasets
       let vm = this
       if (this.item) {
         this.model = this.item
@@ -206,8 +204,6 @@ export default {
 
     deleteItem() {
       let vm = this
-      // let url = ''
-      // url = `${this.$baseUrl}/map-layers/${this.item.id}`
       axios
       .delete(this.editUrl)
       .then((response) => {
@@ -224,7 +220,6 @@ export default {
     },
     update() {
       const formData = new FormData()
-      // let url = ''
       const data = {}
       if (this.model.type === 'Map Layers') {
         this.createUrl = `${this.$baseUrl}/map-layers`
@@ -254,18 +249,6 @@ export default {
         data.name = this.model.name
         data.description = this.model.description
         data.color = this.model.color
-        const temp = this.datasets.filter((dataset) => {
-          if(dataset._id === this.model.datasets) {
-            console.log("getting here")
-            console.log(dataset)
-            return dataset
-          }
-        })
-        // console.log('temp')
-        // console.log(temp)
-        data.datasets = temp
-        // console.log("this.model.datasets")
-        // console.log(this.model.datasets)
       }
 
       formData.append('data', JSON.stringify(data))
@@ -306,6 +289,8 @@ export default {
   },
 }
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <style scoped>
 .panel {
