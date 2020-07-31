@@ -7,6 +7,7 @@ import dashboardLayout from '@/layouts/Dashboard.vue'
 import axios from 'axios'
 import roles from './roles'
 
+import { multiselectMixin } from 'vue-multiselect'
 Vue.use(VueRouter)
 
 const token = Cookies.get('jwt')
@@ -85,21 +86,51 @@ const routes = [
     component: dashboardLayout,
     children: [
       {
-        path: 'categories',
-        name: 'Categories',
-        component: () => import('@/views/Categories.vue'),
-      },
-      {
         path: 'maplayers',
         name: 'Map Layers',
-        component: () => import('@/views/MapLayers.vue'),
+        component: () => import('@/views/Collections/MapLayers.vue'),
+        props: true,
+        children:[
+          {
+            path: 'create',
+            name: 'createMapLayer',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+          {
+            path: 'edit/:id',
+            name: 'editMapLayer',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+        ]
       },
       {
-        path: 'actions/update',
-        name: 'CRUD',
-        component: () => import('@/views/CreateUpdateDelete.vue'),
+        path: 'categories',
+        name: 'categories',
+        component: () => import('@/views/Collections/Categories.vue'),
         props: true,
+        children:[
+          {
+            path: 'create',
+            name: 'createCategory',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+          {
+            path: 'edit/:id',
+            name: 'editCategory',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+        ]
       },
+      // {
+      //   path: 'actions/update',
+      //   name: 'createUpdateDelete',
+      //   component: () => import('@/views/CreateUpdateDelete.vue'),
+      //   props: true,
+      // },
     ],
     meta: {
       auth: true,

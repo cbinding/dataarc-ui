@@ -12,9 +12,8 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 export default {
-  props: ['item', 'action', 'collectionType'],
+  props: ['item', 'action', 'collectionType', 'datasets'],
   data() {
     return {
       model: {
@@ -26,14 +25,15 @@ export default {
         link: '',
         file: null,
         category: '',
+        color: '',
+        datasets: [],
       },
       schema: {
-        legend: 'Map Layers',
         fields: [
           {
             type: 'input',
             inputType: 'text',
-            label: 'Name',
+            label: 'Name*',
             model: 'name',
             featured: true,
             required: true,
@@ -80,27 +80,63 @@ export default {
             visible: true,
           },
           {
+            type: 'input',
+            inputType: 'text',
+            label: 'Color',
+            model: 'color',
+            visible: true,
+          },
+          {
+            type: 'vueMultiSelect',
+            multiSelect: true,
+            label: 'Datasets',
+            model: 'datasets',
+            values: this.datasets,
+            visible: true,
+            selectOptions: {
+              key: 'name',
+              label: 'name',
+              multiple: true,
+              searchable: true,
+              clearOnSelect: true,
+              hideSelected: true,
+              taggable: true,
+              tagPlaceholder: "tagPlaceholder",
+              onNewTag(newTag, id, options, value) {
+                options.push(newTag)
+                value.push(newTag)
+                this.model.datasets.push(newTag)
+              },
+            },
+            onChanged: function (model, newVal, oldVal, field) {
+              model = newVal
+            },
+          },
+          {
             type: 'submit',
             buttonText: 'Submit',
             inputType: 'submit',
             visible: true,
-            onSubmit: this.create,
+            onSubmit: this.update,
           },
           {
             type: 'submit',
             buttonText: 'Delete',
             inputType: 'submit',
             visible: true,
-            onSubmit: this.deleteMapLayer,
+            onSubmit: this.deleteItem,
           }
         ]
       },
       formOptions: {
         validateAfterLoad: true,
-        validateAfterChanged: true
+        validateAfterChanged: true,
       },
-      types: ['Datasets', 'Combinators', 'Map Layers'],
+      types: ['Datasets', 'Combinators', 'Map Layers', 'Categories'],
       category: ['Textual', 'Archaeological', 'Environmental'],
+      createUrl: '',
+      editUrl: '',
+      routeUrl: '',
     }
   },
   created() {
@@ -113,12 +149,14 @@ export default {
         this.model = this.item
         this.model.file = null
       }
+      this.setUrl()
+
       this.model.type = this.collectionType
       this.model.action = this.action
 
       this.schema.fields.forEach((field) => {
         if (field.buttonText === 'Submit' || field.model === 'name' || field.model === 'description' || field.buttonText === 'Delete') {
-          if (field.buttonText === 'Delete' && this.action === 'Add new Map Layer') {
+          if (field.buttonText === 'Delete' && (this.action === 'Add new Map Layer' || this.action === 'Add new Category')) {
             field.visible = false
           }
           else {
@@ -136,19 +174,43 @@ export default {
             field.visible = false
           }
         }
+        if (this.collectionType === 'Categories') {
+          if (field.model !== 'color' && field.model !== 'datasets') {
+            field.visible = false
+          }
+        }
       })
     },
-    deleteMapLayer() {
+    setUrl() {
+      if (this.collectionType === 'Map Layers') {
+        if (this.item) {
+          this.editUrl = `${this.$baseUrl}/map-layers/${this.item.id}`
+        }
+        this.routeUrl = '/dashboard/maplayers'
+      }
+      else if (this.collectionType === 'Combinators') {
+        if (this.item) {
+          this.editUrl = `${this.$baseUrl}/combinators/${this.item.id}`
+        }
+        this.routeUrl = '/dashboard/combinators'
+      }
+      else if (this.collectionType === 'Categories') {
+        if (this.item) {
+          this.editUrl = `${this.$baseUrl}/categories/${this.item.id}`
+        }
+        this.routeUrl = '/dashboard/categories'
+      }
+    },
+
+    deleteItem() {
       let vm = this
-      let url = ''
-      url = `${this.$baseUrl}/map-layers/${this.item.id}`
       axios
-      .delete(url)
+      .delete(this.editUrl)
       .then((response) => {
         // Handle success.
         console.log('success')
         console.log(response)
-        this.$router.push('/dashboard/maplayers')
+        this.$router.push(this.routeUrl)
       })
       .catch((error) => {
         // Handle error.
@@ -156,12 +218,11 @@ export default {
         console.log(error)
       })
     },
-    create() {
+    update() {
       const formData = new FormData()
-      let url = ''
       const data = {}
       if (this.model.type === 'Map Layers') {
-        url = `${this.$baseUrl}/map-layers`
+        this.createUrl = `${this.$baseUrl}/map-layers`
         data.name = this.model.name
         data.description = this.model.description
         if (this.model.file) {
@@ -169,7 +230,7 @@ export default {
         }
       }
       else if (this.model.type === 'Datasets') {
-        url = `${this.$baseUrl}/datasets`
+        this.createUrl = `${this.$baseUrl}/datasets`
         data.name = this.model.name
         data.description = this.model.description
         data.citation = this.model.citation
@@ -178,21 +239,28 @@ export default {
         formData.append('files.image', this.model.file, this.model.file.name)
       }
       else if (this.model.type === 'Combinators') {
-        url = `${this.$baseUrl}/combinators`
+        this.createUrl = `${this.$baseUrl}/combinators`
         data.name = this.model.name
         data.description = this.model.description
         data.citation = this.model.citation
       }
+      else if (this.model.type === 'Categories') {
+        this.createUrl = `${this.$baseUrl}/categories`
+        data.name = this.model.name
+        data.description = this.model.description
+        data.color = this.model.color
+      }
 
       formData.append('data', JSON.stringify(data))
-      if (this.action === 'Update Map Layer') {
+      if (this.action === 'Update Map Layer' || this.action === 'Update Category') {
         axios
-        .put(`${url}/${this.model.id}`, formData)
+        .put(this.editUrl, formData)
         .then((response) => {
           // Handle success.
           console.log('success')
           console.log(response)
-          this.$router.push('/dashboard/maplayers')
+          this.$emit('submit')
+          this.$router.push(this.routeUrl)
         })
         .catch((error) => {
           // Handle error.
@@ -202,12 +270,13 @@ export default {
       }
       else {
         axios
-        .post(url, formData)
+        .post(this.createUrl, formData)
         .then((response) => {
           // Handle success.
           console.log('success')
           console.log(response)
-          this.$router.push('/dashboard/maplayers')
+          this.$emit('submit')
+          this.$router.push(this.routeUrl)
         })
         .catch((error) => {
           // Handle error.
@@ -220,6 +289,8 @@ export default {
   },
 }
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <style scoped>
 .panel {

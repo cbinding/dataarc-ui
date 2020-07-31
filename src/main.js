@@ -14,7 +14,10 @@ import App from '@/App.vue'
 import router from '@/router'
 import store from '@/store'
 
+import Multiselect from 'vue-multiselect'
+
 // Plugins
+// import MultiSelect from 'vue-multiselect'
 import VueFormGenerator from 'vue-form-generator'
 import MyPlugin from './plugins/my-plugin'
 
@@ -25,6 +28,10 @@ window.axios = require('axios')
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.use(VueApollo)
+Vue.component('multiselect', Multiselect)
+
+
+// Vue.component('field-MultiSelect', require('vue-multiselect').default)
 
 // Apply plugins
 Vue.use(VueFormGenerator)
