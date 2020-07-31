@@ -72,8 +72,8 @@ export default {
       const paths = this.$router.options.routes.filter((route) => {
         return route.name === roleValue
       })[0]
-      if (paths) {
-        return paths.children.map((route) => {
+      if (paths.length > 0) {
+        return paths[0].children.map((route) => {
           return { path: `${paths.path}/${route.path}`, name: route.name }
         })
       }

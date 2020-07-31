@@ -15,9 +15,9 @@
     <div class="navbar-menu-wrapper d-flex align-items-center ml-auto ml-lg-0">
       <b-navbar-nav class="header-links d-none d-md-flex">
         <b-nav-item
-          v-for="route in adminRoutes"
+          v-for="route in compileRoutes"
           :key="route.name"
-          :href="'/admin/' + route.path"
+          :href="route.path"
         >
           <i class="mdi mdi-image-filter" />{{ route.name }}
         </b-nav-item>
@@ -69,12 +69,17 @@ export default {
   name: 'AppHeader',
   computed: {
     ...mapState('account', ['user', 'role']),
+    contributorRoutes() {
+      return this.mapRoutes('contributor')
+    },
+    authenticatedRoutes() {
+      return this.mapRoutes('authenticated')
+    },
     adminRoutes() {
-      if (this.role.type !== 'administrator') return []
-
-      return this.$router.options.routes.filter((route) => {
-        return route.name === 'administrators'
-      })[0].children
+      return this.mapRoutes('administrator')
+    },
+    compileRoutes() {
+      return this.adminRoutes
     },
   },
   methods: {
@@ -85,6 +90,18 @@ export default {
     handleLogout() {
       this.logout()
       this.$router.push('/login')
+    },
+    mapRoutes(roleValue) {
+      if (this.role.type !== roleValue) return []
+      const paths = this.$router.options.routes.filter((route) => {
+        return route.name === roleValue
+      })[0]
+      if (paths.length > 0) {
+        return paths[0].children.map((route) => {
+          return { path: `${paths.path}/${route.path}`, name: route.name }
+        })
+      }
+      return []
     },
   },
 }
