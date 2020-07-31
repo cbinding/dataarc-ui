@@ -31,6 +31,7 @@ function logout() {
   // remove user from local storage to log user out
   Cookies.remove('user')
   Cookies.remove('jwt')
+  axios.defaults.headers.common.Authorization = ''
 }
 
 function getAll() {
