@@ -42,43 +42,23 @@
 
 <script lang="js">
 
-import { mapState } from 'vuex'
+import roleHandlerMixin from '@/router/role-handler.mixin'
 
 export default {
   name: 'AppSidebar',
+  mixins: [roleHandlerMixin],
   data() {
     return {
 
     }
   },
   computed: {
-    ...mapState('account', ['user', 'role']),
-    contributorRoutes() {
-      return this.mapRoutes('contributor')
-    },
-    authenticatedRoutes() {
-      return this.mapRoutes('administrator')
-    },
     compileRoutes() {
       return [...this.contributorRoutes, ...this.authenticatedRoutes]
     },
   },
   mounted() {
     // console.log(this.user)
-  },
-  methods: {
-    mapRoutes(roleValue) {
-      if (this.role.type !== roleValue) return []
-      const paths = this.$router.options.routes.filter((route) => {
-        return route.name === roleValue
-      })[0]
-      if (paths.length > 0) {
-        return paths[0].children.map((route) => {
-          return { path: `${paths.path}/${route.path}`, name: route.name }
-        })
-      }
-      return []
-    },
   },
 }
 </script>

@@ -64,20 +64,13 @@
 
 <script lang="js">
 import { mapState, mapActions } from 'vuex'
+import roleHandlerMixin from '@/router/role-handler.mixin'
 
 export default {
   name: 'AppHeader',
+  mixins: [roleHandlerMixin],
   computed: {
     ...mapState('account', ['user', 'role']),
-    contributorRoutes() {
-      return this.mapRoutes('contributor')
-    },
-    authenticatedRoutes() {
-      return this.mapRoutes('authenticated')
-    },
-    adminRoutes() {
-      return this.mapRoutes('administrator')
-    },
     compileRoutes() {
       return this.adminRoutes
     },
@@ -90,18 +83,6 @@ export default {
     handleLogout() {
       this.logout()
       this.$router.push('/login')
-    },
-    mapRoutes(roleValue) {
-      if (this.role.type !== roleValue) return []
-      const paths = this.$router.options.routes.filter((route) => {
-        return route.name === roleValue
-      })[0]
-      if (paths.length > 0) {
-        return paths[0].children.map((route) => {
-          return { path: `${paths.path}/${route.path}`, name: route.name }
-        })
-      }
-      return []
     },
   },
 }
