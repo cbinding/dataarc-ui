@@ -1,4 +1,4 @@
-import Cookie from 'js-cookie'
+import Cookies from 'js-cookie'
 import authHeader from './auth-header'
 
 export default {
@@ -19,8 +19,8 @@ function login(identifier, password) {
     const { jwt } = response.data
 
     if (jwt) {
-      Cookie.set('jwt', jwt)
-      Cookie.set('user', user)
+      Cookies.set('jwt', jwt)
+      Cookies.set('user', user)
     }
 
     return user
@@ -29,8 +29,8 @@ function login(identifier, password) {
 
 function logout() {
   // remove user from local storage to log user out
-  Cookie.remove('user')
-  Cookie.remove('jwt')
+  Cookies.remove('user')
+  Cookies.remove('jwt')
 }
 
 function getAll() {

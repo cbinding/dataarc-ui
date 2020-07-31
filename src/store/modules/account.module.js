@@ -1,9 +1,9 @@
 import router from '@/router/index'
 import userService from '@/api/user.service'
-import Cookie from 'js-cookie'
+import Cookies from 'js-cookie'
 
-const rawUser = Cookie.get('user')
-const user = rawUser ? JSON.parse(Cookie.get('user')) : null
+const rawUser = Cookies.get('user')
+const user = rawUser ? JSON.parse(Cookies.get('user')) : null
 
 const state = {
   status: {

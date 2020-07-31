@@ -1,4 +1,4 @@
-import Cookie from 'js-cookie'
+import Cookies from 'js-cookie'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import NotFound from '@/components/NotFound.vue'
@@ -7,7 +7,7 @@ import dashboardLayout from '@/layouts/Dashboard.vue'
 import axios from 'axios'
 Vue.use(VueRouter)
 
-const token = Cookie.get('jwt')
+const token = Cookies.get('jwt')
 if (token) {
   // store.commit('ADD NAME', token)
   axios.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -138,8 +138,8 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some((record) => record.meta.auth)
-  const rawUser = Cookie.get('user')
-  const loggedIn = rawUser ? JSON.parse(Cookie.get('user')) : null
+  const rawUser = Cookies.get('user')
+  const loggedIn = rawUser ? JSON.parse(Cookies.get('user')) : null
 
   if (!authRequired) return next()
 
