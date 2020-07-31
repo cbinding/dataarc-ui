@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import collectionMixin from '../../mixins/collectionMixin'
 export default {
   data() {
     return {
@@ -47,6 +48,7 @@ export default {
       itemToDelete: [],
     }
   },
+  mixins: [collectionMixin],
   created() {
     this.getMapLayers()
   },
@@ -60,33 +62,13 @@ export default {
       .delete(url)
       .then((response) => {
         // Handle success.
-        console.log('success')
-        console.log(response)
         vm.getMapLayers()
       })
       .catch((error) => {
         // Handle error.
-        console.log('error')
-        console.log(error)
       })
     },
-    getMapLayers() {
-      let url = ''
-      url = `${this.$baseUrl}/map-layers`
-      axios
-      .get(url)
-      .then((response) => {
-        // Handle success.
-        this.mapLayers = response.data
-        console.log('success')
-        console.log(response)
-      })
-      .catch((error) => {
-        // Handle error.
-        console.log('error')
-        console.log(error)
-      })
-    }
+
   },
 }
 </script>

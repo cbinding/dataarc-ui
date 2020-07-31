@@ -33,6 +33,8 @@ Vue.component('multiselect', Multiselect)
 
 // Vue.component('field-MultiSelect', require('vue-multiselect').default)
 
+// Vue.component('field-MultiSelect', require('vue-multiselect').default)
+
 // Apply plugins
 Vue.use(VueFormGenerator)
 Vue.use(MyPlugin)

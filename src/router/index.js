@@ -6,7 +6,6 @@ import defaultLayout from '@/layouts/Default.vue'
 import dashboardLayout from '@/layouts/Dashboard.vue'
 import axios from 'axios'
 import roles from './roles'
-
 import { multiselectMixin } from 'vue-multiselect'
 Vue.use(VueRouter)
 
@@ -107,7 +106,7 @@ const routes = [
       },
       {
         path: 'categories',
-        name: 'categories',
+        name: 'Categories',
         component: () => import('@/views/Collections/Categories.vue'),
         props: true,
         children:[
@@ -125,12 +124,26 @@ const routes = [
           },
         ]
       },
-      // {
-      //   path: 'actions/update',
-      //   name: 'createUpdateDelete',
-      //   component: () => import('@/views/CreateUpdateDelete.vue'),
-      //   props: true,
-      // },
+      {
+        path: 'datasets',
+        name: 'Datasets',
+        component: () => import('@/views/Collections/Datasets.vue'),
+        props: true,
+        children:[
+          {
+            path: 'create',
+            name: 'createDataset',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+          {
+            path: 'edit/:id',
+            name: 'editDataset',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+        ]
+      },
     ],
     meta: {
       auth: true,
