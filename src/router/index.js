@@ -10,8 +10,8 @@ import roles from './roles'
 Vue.use(VueRouter)
 
 const token = Cookies.get('jwt')
-const rawUser = Cookies.get('user')
-const user = rawUser ? JSON.parse(rawUser) : null
+let rawUser = Cookies.get('user')
+let user = rawUser ? JSON.parse(rawUser) : null
 
 if (token) {
   // store.commit('ADD NAME', token)
@@ -148,7 +148,11 @@ router.beforeEach((to, from, next) => {
 
   if (!authRequired) return next()
 
-  if (authRequired && !user) return next('/login')
+  if (authRequired && !user) {
+    rawUser = Cookies.get('user')
+    user = rawUser ? JSON.parse(rawUser) : null
+    if (!user) return next('/login')
+  }
 
   const roleRestriction = to.matched.some((record) => {
     return roles[record.meta.role] >= roles[user.role.type]
