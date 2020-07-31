@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie'
 import authHeader from './auth-header'
 
 export default {
@@ -14,10 +15,12 @@ function login(identifier, password) {
   })
   .then((response) => {
     // Handle success.
-    const user = response.data
-    if (user.jwt) {
-      localStorage.setItem('jwt', user.jwt)
-      localStorage.setItem('user', user)
+    const { user } = response.data
+    const { jwt } = response.data
+
+    if (jwt) {
+      Cookies.set('jwt', jwt)
+      Cookies.set('user', user)
     }
 
     return user
@@ -26,8 +29,9 @@ function login(identifier, password) {
 
 function logout() {
   // remove user from local storage to log user out
-  localStorage.removeItem('user')
-  localStorage.removeItem('jwt')
+  Cookies.remove('user')
+  Cookies.remove('jwt')
+  axios.defaults.headers.common.Authorization = ''
 }
 
 function getAll() {

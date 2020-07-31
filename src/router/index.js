@@ -1,12 +1,18 @@
+import Cookies from 'js-cookie'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import NotFound from '@/components/NotFound.vue'
 import defaultLayout from '@/layouts/Default.vue'
 import dashboardLayout from '@/layouts/Dashboard.vue'
 import axios from 'axios'
+import roles from './roles'
+
 Vue.use(VueRouter)
 
-const token = localStorage.getItem('jwt')
+const token = Cookies.get('jwt')
+let rawUser = Cookies.get('user')
+let user = rawUser ? JSON.parse(rawUser) : null
+
 if (token) {
   // store.commit('ADD NAME', token)
   axios.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -21,69 +27,110 @@ const routes = [
   },
   {
     path: '/',
-    meta: { auth: true },
-    redirect: '/dashboard',
-  },
-  {
-    path: '/login',
-    name: 'login',
+    name: 'home',
     component: defaultLayout,
     children: [
       {
-        path: '',
+        path: 'login',
         name: 'login',
         component: () => import('@/views/Login.vue'),
       },
       {
-        path: '',
+        path: 'register',
         name: 'register',
         component: () => import('@/views/Pages/Register.vue'),
+      },
+      {
+        path: 'unauthorized',
+        name: 'Unauthorized',
+        component: () => import('@/views/Pages/Error401.vue'),
       },
     ],
     meta: {
       auth: false,
+      role: 'public',
     },
   },
 
   {
-    path: '/dashboard',
-    name: 'dashboard',
+    path: '/basic',
+    name: 'authenticated',
     component: dashboardLayout,
     children: [
       {
-        path: '/',
-        name: 'home',
+        path: '',
+        name: 'Dashboard',
         component: () => import('@/views/Home.vue'),
       },
       {
         path: 'about',
-        name: 'about',
+        name: 'About',
         component: () => import('@/views/About.vue'),
       },
       {
         path: 'pug',
-        name: 'pug',
+        name: 'Pug',
         component: () => import('@/views/Pug.vue'),
       },
+    ],
+    meta: {
+      auth: true,
+      role: 'authenticated',
+    },
+  },
+
+  {
+    path: '/contributor',
+    name: 'contributors',
+    component: dashboardLayout,
+    children: [
       {
         path: 'categories',
-        name: 'categories',
+        name: 'Categories',
         component: () => import('@/views/Categories.vue'),
       },
       {
         path: 'maplayers',
-        name: 'maplayers',
+        name: 'Map Layers',
         component: () => import('@/views/MapLayers.vue'),
       },
       {
         path: 'actions/update',
-        name: 'createUpdateDelete',
+        name: 'CRUD',
         component: () => import('@/views/CreateUpdateDelete.vue'),
         props: true,
       },
     ],
     meta: {
       auth: true,
+      role: 'contributor',
+    },
+  },
+
+  {
+    path: '/admin',
+    name: 'administrator',
+    component: dashboardLayout,
+    children: [
+      {
+        path: 'users',
+        name: 'Users',
+        component: () => import('@/views/Home.vue'),
+      },
+      {
+        path: 'about',
+        name: 'Permissions',
+        component: () => import('@/views/About.vue'),
+      },
+      {
+        path: 'roles',
+        name: 'Roles',
+        component: () => import('@/views/Pug.vue'),
+      },
+    ],
+    meta: {
+      auth: true,
+      role: 'administrator',
     },
   },
 ]
@@ -96,10 +143,25 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some((record) => record.meta.auth)
-  const loggedIn = localStorage.getItem('user')
+  // const rawUser = Cookies.get('user')
+  // const loggedIn = rawUser ? JSON.parse(Cookies.get('user')) : null
 
-  if (authRequired && !loggedIn) return next('/login')
+  if (!authRequired) return next()
 
+  if (authRequired && !user) {
+    rawUser = Cookies.get('user')
+    user = rawUser ? JSON.parse(rawUser) : null
+    if (!user) return next('/login')
+  }
+
+  const roleRestriction = to.matched.some((record) => {
+    return roles[record.meta.role] >= roles[user.role.type]
+  })
+
+  if (!roleRestriction) {
+    return next('/unauthorized')
+  }
+  // Are you contributor or above?
   next()
 })
 

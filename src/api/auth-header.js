@@ -1,9 +1,11 @@
+import Cookies from 'js-cookie'
+
 export default function authHeader() {
   // return authorization header with jwt token
-  const user = JSON.parse(localStorage.getItem('user'))
+  const jwt = Cookies.get('jwt')
 
-  if (user && user.token) {
-    return { Authorization: `Bearer ${user.token}` }
+  if (jwt) {
+    return { Authorization: `Bearer ${jwt}` }
   }
   return {}
 }
