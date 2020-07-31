@@ -1,10 +1,5 @@
 import { mapState } from 'vuex'
-
-const roles = {
-  administrator: 0,
-  contributor: 1,
-  authenticated: 2,
-}
+import roles from './roles'
 
 const computed = {
   ...mapState('account', ['user', 'role']),

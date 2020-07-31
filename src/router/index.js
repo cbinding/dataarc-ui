@@ -5,6 +5,7 @@ import NotFound from '@/components/NotFound.vue'
 import defaultLayout from '@/layouts/Default.vue'
 import dashboardLayout from '@/layouts/Dashboard.vue'
 import axios from 'axios'
+import roles from './roles'
 Vue.use(VueRouter)
 
 const token = Cookies.get('jwt')
@@ -143,14 +144,13 @@ router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some((record) => record.meta.auth)
   // const rawUser = Cookies.get('user')
   // const loggedIn = rawUser ? JSON.parse(Cookies.get('user')) : null
-  console.log('USER')
-  console.log(user)
+
   if (!authRequired) return next()
 
   if (authRequired && !user) return next('/login')
 
   const roleRestriction = to.matched.some((record) => {
-    return record.meta.role === user.role.type
+    return roles[record.meta.role] >= roles[user.role.type]
   })
 
   if (!roleRestriction) {
