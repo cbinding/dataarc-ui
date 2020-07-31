@@ -9,10 +9,10 @@
           <div class="nav-link">
             <div class="profile-name">
               <p class="name">
-                {{ user.username }}
+                {{ user ? user.username : '' }}
               </p>
               <p class="designation">
-                Role: {{ role.name }}
+                Role: {{ role ? role.name : '' }}
               </p>
             </div>
           </div>

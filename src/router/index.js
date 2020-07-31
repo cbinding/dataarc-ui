@@ -6,6 +6,7 @@ import defaultLayout from '@/layouts/Default.vue'
 import dashboardLayout from '@/layouts/Dashboard.vue'
 import axios from 'axios'
 import roles from './roles'
+
 Vue.use(VueRouter)
 
 const token = Cookies.get('jwt')

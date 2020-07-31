@@ -34,7 +34,7 @@
               alt="profile image"
               class="img-xs rounded-circle"
             > -->
-            <span>{{ user.email }}</span>
+            <span>{{ user ? user.email : null }}</span>
           </template>
           <b-dropdown-item
             href="#"
