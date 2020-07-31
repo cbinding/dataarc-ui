@@ -13,10 +13,6 @@ const state = {
   role: user ? user.role : null,
 }
 
-if (user) {
-  state.status.loggedIn = true
-  state.user = user
-}
 
 const actions = {
   login({ dispatch, commit }, { identifier, password }) {

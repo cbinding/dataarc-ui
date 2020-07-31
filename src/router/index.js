@@ -8,6 +8,9 @@ import axios from 'axios'
 Vue.use(VueRouter)
 
 const token = Cookies.get('jwt')
+const rawUser = Cookies.get('user')
+const user = rawUser ? JSON.parse(rawUser) : null
+
 if (token) {
   // store.commit('ADD NAME', token)
   axios.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -138,15 +141,16 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some((record) => record.meta.auth)
-  const rawUser = Cookies.get('user')
-  const loggedIn = rawUser ? JSON.parse(Cookies.get('user')) : null
-
+  // const rawUser = Cookies.get('user')
+  // const loggedIn = rawUser ? JSON.parse(Cookies.get('user')) : null
+  console.log('USER')
+  console.log(user)
   if (!authRequired) return next()
 
-  if (authRequired && !loggedIn) return next('/login')
+  if (authRequired && !user) return next('/login')
 
   const roleRestriction = to.matched.some((record) => {
-    return record.meta.role === loggedIn.role.type
+    return record.meta.role === user.role.type
   })
 
   if (!roleRestriction) {
