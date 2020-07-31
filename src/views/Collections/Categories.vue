@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import collectionMixin from '../../mixins/collectionMixin'
 export default {
   data() {
     return {
@@ -57,11 +58,15 @@ export default {
       datasets: [],
     }
   },
+  mixins: [collectionMixin],
   created() {
-    this.getCategories()
-    this.getDatasets()
+    this.getInitialData()
   },
   methods: {
+    getInitialData() {
+      this.getCategories()
+      this.getDatasets()
+    },
     deleteCategory(id) {
       this.$bvModal.hide('deleteConfirmation')
       let vm = this
@@ -71,48 +76,10 @@ export default {
       .delete(url)
       .then((response) => {
         // Handle success.
-        console.log('success')
-        console.log(response)
         vm.getCategories()
       })
       .catch((error) => {
         // Handle error.
-        console.log('error')
-        console.log(error)
-      })
-    },
-    getCategories() {
-      let url = ''
-      url = `${this.$baseUrl}/categories`
-      axios
-      .get(url)
-      .then((response) => {
-        // Handle success.
-        this.categories = response.data
-        console.log('success')
-        console.log(response)
-      })
-      .catch((error) => {
-        // Handle error.
-        console.log('error')
-        console.log(error)
-      })
-    },
-    getDatasets() {
-      console.log("getting here")
-      axios
-      .get(`${this.$baseUrl}/datasets`)
-      .then((response) => {
-        // Handle success.
-        console.log('success')
-        console.log(response)
-        this.datasets = response.data
-        console.log(this.datasets)
-      })
-      .catch((error) => {
-        // Handle error.
-        console.log('error')
-        console.log(error)
       })
     },
   },
