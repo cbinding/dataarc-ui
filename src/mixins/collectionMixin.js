@@ -1,5 +1,11 @@
 const methods = {
+
+  // this.getSource('users-permissions/roles', 'roles').then((roles) => {this.roles = roles})
+  getSource(path, key) {
+    return axios.get(`${this.$baseUrl}/${path}`).then((response) => { return response.data[key] }).catch((error) => {})
+  },
   getMapLayers() {
+    // this.getSource('users-permissions/roles', 'roles').then((roles) => {this.roles = roles})
     let url = ''
     url = `${this.$baseUrl}/map-layers`
     axios
@@ -89,16 +95,17 @@ const methods = {
     })
   },
   getRoles() {
-    axios
-    .get(`${this.$baseUrl}/users-permissions/roles`)
-    .then((response) => {
-      // Handle success.
-      this.roles = response.data.roles
-      // return response.data.roles
-    })
-    .catch((error) => {
-      // Handle error.
-    })
+    this.getSource('users-permissions/roles', 'roles').then((roles) => { this.roles = roles })
+    // axios
+    // .get(`${this.$baseUrl}/users-permissions/roles`)
+    // .then((response) => {
+    //   // Handle success.
+    //   this.roles = response.data.roles
+    //   // return response.data.roles
+    // })
+    // .catch((error) => {
+    //   // Handle error.
+    // })
   },
   getEvents() {
     axios

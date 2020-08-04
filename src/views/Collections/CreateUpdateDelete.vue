@@ -31,8 +31,8 @@ export default {
     'fields',
     'templates',
     'features',
-    'roles',
     'events',
+    'schema'
     ],
     mixins: [collectionMixin],
   data() {
@@ -64,287 +64,245 @@ export default {
         combinator_queries: [],
         dataset_templates: [],
       },
-      schema: {
-        fields: [
-          {
-            type: 'input',
-            inputType: 'text',
-            label: 'Name*',
-            model: 'name',
-            featured: true,
-            required: true,
-            visible: true,
-          },
-          {
-            type: 'input',
-            inputType: 'text',
-            label: 'Description',
-            model: 'description',
-            id: 'description',
-            featured: true,
-            visible: true,
-          },
-          {
-            type: 'input',
-            inputType: 'text',
-            label: 'Citation',
-            model: 'citation',
-            visible: true,
-          },
-          {
-            type: 'input',
-            inputType: 'url',
-            label: 'Link',
-            model: 'link',
-            visible: true,
-          },
-          {
-            type: 'upload',
-            label: 'Image',
-            model: 'image',
-            visible: true,
-            onChanged(model, schema, event) {
-              this.model.image = event.target.files[0]
-            },
-          },
-          {
-            type: 'upload',
-            label: 'File',
-            model: 'file',
-            visible: true,
-            required: false,
-            onChanged(model, schema, event) {
-              this.model.file = event.target.files[0]
-            },
-          },
-          {
-            type: 'select',
-            values: this.categories,
-            label: 'Category',
-            model: 'category',
-            visible: true,
-          },
-          {
-            type: 'input',
-            inputType: 'text',
-            label: 'Color',
-            model: 'color',
-            visible: true,
-          },
-          {
-            type: 'input',
-            inputType: 'text',
-            label: 'Username*',
-            model: 'username',
-            visible: true,
-            required: true,
-          },
-          {
-            type: 'input',
-            inputType: 'email',
-            label: 'Email*',
-            model: 'email',
-            visible: true,
-            required: true,
-          },
-          {
-            type: 'input',
-            inputType: 'text',
-            label: 'Provider',
-            model: 'provider',
-            visible: true,
-          },
-          {
-            type: 'checkbox',
-            label: 'Confirmed',
-            model: 'confirmed',
-            default: false,
-          },
-          {
-            type: 'checkbox',
-            label: 'Blocked',
-            model: 'blocked',
-            default: false,
-          },
-          {
-            type: 'select',
-            values: this.roles,
-            label: 'Role',
-            model: 'role',
-            default: false,
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Datasets',
-            model: 'datasets',
-            values: this.datasets,
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
-              trackBy: 'id',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Events',
-            model: 'events',
-            values: this.events,
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
-              trackBy: 'id',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Combinators',
-            model: 'combinators',
-            values: this.combinators,
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
-              trackBy: 'id',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Fields',
-            model: 'fields',
-            values: this.fields,
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              trackBy: 'id',
-              tagPlaceholder: 'tagPlaceholder',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Templates',
-            model: 'templates',
-            values: this.templates,
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              trackBy: 'id',
-              tagPlaceholder: 'tagPlaceholder',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Features',
-            model: 'features',
-            values: this.features,
-            visible: true,
-            selectOptions: {
-              key: 'title',
-              label: 'title',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              trackBy: 'id',
-              tagPlaceholder: 'tagPlaceholder',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'submit',
-            buttonText: 'Submit',
-            inputType: 'submit',
-            visible: true,
-            onSubmit: this.update,
-          },
-          {
-            type: 'submit',
-            buttonText: 'Delete',
-            inputType: 'submit',
-            visible: true,
-            onSubmit: this.deleteItem,
-          },
-        ],
-      },
+      // schema: {
+      //   fields: [
+      //     {
+      //       type: 'input',
+      //       inputType: 'text',
+      //       label: 'Name*',
+      //       model: 'name',
+      //       featured: true,
+      //       required: true,
+      //       visible: true,
+      //     },
+      //     {
+      //       type: 'input',
+      //       inputType: 'text',
+      //       label: 'Description',
+      //       model: 'description',
+      //       id: 'description',
+      //       featured: true,
+      //       visible: true,
+      //     },
+      //     {
+      //       type: 'input',
+      //       inputType: 'text',
+      //       label: 'Citation',
+      //       model: 'citation',
+      //       visible: true,
+      //     },
+      //     {
+      //       type: 'input',
+      //       inputType: 'url',
+      //       label: 'Link',
+      //       model: 'link',
+      //       visible: true,
+      //     },
+      //     {
+      //       type: 'upload',
+      //       label: 'Image',
+      //       model: 'image',
+      //       visible: true,
+      //       onChanged(model, schema, event) {
+      //         this.model.image = event.target.files[0]
+      //       },
+      //     },
+      //     {
+      //       type: 'upload',
+      //       label: 'File',
+      //       model: 'file',
+      //       visible: true,
+      //       required: false,
+      //       onChanged(model, schema, event) {
+      //         this.model.file = event.target.files[0]
+      //       },
+      //     },
+      //     {
+      //       type: 'select',
+      //       values: this.categories,
+      //       label: 'Category',
+      //       model: 'category',
+      //       visible: true,
+      //     },
+      //     {
+      //       type: 'input',
+      //       inputType: 'text',
+      //       label: 'Color',
+      //       model: 'color',
+      //       visible: true,
+      //     },
+      //     {
+      //       type: 'vueMultiSelect',
+      //       multiSelect: true,
+      //       label: 'Datasets',
+      //       model: 'datasets',
+      //       values: this.datasets,
+      //       visible: true,
+      //       selectOptions: {
+      //         key: 'name',
+      //         label: 'name',
+      //         multiple: true,
+      //         searchable: true,
+      //         clearOnSelect: true,
+      //         hideSelected: true,
+      //         taggable: true,
+      //         tagPlaceholder: 'tagPlaceholder',
+      //         trackBy: 'id',
+      //         onNewTag(newTag, id, options, value) {
+      //           options.push(newTag)
+      //           value.push(newTag)
+      //         },
+      //       },
+      //       onChanged(model, newVal, oldVal, field) {
+      //         model = newVal
+      //       },
+      //     },
+      //     {
+      //       type: 'vueMultiSelect',
+      //       multiSelect: true,
+      //       label: 'Events',
+      //       model: 'events',
+      //       values: this.events,
+      //       visible: true,
+      //       selectOptions: {
+      //         key: 'name',
+      //         label: 'name',
+      //         multiple: true,
+      //         searchable: true,
+      //         clearOnSelect: true,
+      //         hideSelected: true,
+      //         taggable: true,
+      //         tagPlaceholder: 'tagPlaceholder',
+      //         trackBy: 'id',
+      //         onNewTag(newTag, id, options, value) {
+      //           options.push(newTag)
+      //           value.push(newTag)
+      //         },
+      //       },
+      //       onChanged(model, newVal, oldVal, field) {
+      //         model = newVal
+      //       },
+      //     },
+      //     {
+      //       type: 'vueMultiSelect',
+      //       multiSelect: true,
+      //       label: 'Combinators',
+      //       model: 'combinators',
+      //       values: this.combinators,
+      //       visible: true,
+      //       selectOptions: {
+      //         key: 'name',
+      //         label: 'name',
+      //         multiple: true,
+      //         searchable: true,
+      //         clearOnSelect: true,
+      //         hideSelected: true,
+      //         taggable: true,
+      //         tagPlaceholder: 'tagPlaceholder',
+      //         trackBy: 'id',
+      //         onNewTag(newTag, id, options, value) {
+      //           options.push(newTag)
+      //           value.push(newTag)
+      //         },
+      //       },
+      //       onChanged(model, newVal, oldVal, field) {
+      //         model = newVal
+      //       },
+      //     },
+      //     {
+      //       type: 'vueMultiSelect',
+      //       multiSelect: true,
+      //       label: 'Fields',
+      //       model: 'fields',
+      //       values: this.fields,
+      //       visible: true,
+      //       selectOptions: {
+      //         key: 'name',
+      //         label: 'name',
+      //         multiple: true,
+      //         searchable: true,
+      //         clearOnSelect: true,
+      //         hideSelected: true,
+      //         taggable: true,
+      //         trackBy: 'id',
+      //         tagPlaceholder: 'tagPlaceholder',
+      //         onNewTag(newTag, id, options, value) {
+      //           options.push(newTag)
+      //           value.push(newTag)
+      //         },
+      //       },
+      //       onChanged(model, newVal, oldVal, field) {
+      //         model = newVal
+      //       },
+      //     },
+      //     {
+      //       type: 'vueMultiSelect',
+      //       multiSelect: true,
+      //       label: 'Templates',
+      //       model: 'templates',
+      //       values: this.templates,
+      //       visible: true,
+      //       selectOptions: {
+      //         key: 'name',
+      //         label: 'name',
+      //         multiple: true,
+      //         searchable: true,
+      //         clearOnSelect: true,
+      //         hideSelected: true,
+      //         taggable: true,
+      //         trackBy: 'id',
+      //         tagPlaceholder: 'tagPlaceholder',
+      //         onNewTag(newTag, id, options, value) {
+      //           options.push(newTag)
+      //           value.push(newTag)
+      //         },
+      //       },
+      //       onChanged(model, newVal, oldVal, field) {
+      //         model = newVal
+      //       },
+      //     },
+      //     {
+      //       type: 'vueMultiSelect',
+      //       multiSelect: true,
+      //       label: 'Features',
+      //       model: 'features',
+      //       values: this.features,
+      //       visible: true,
+      //       selectOptions: {
+      //         key: 'title',
+      //         label: 'title',
+      //         multiple: true,
+      //         searchable: true,
+      //         clearOnSelect: true,
+      //         hideSelected: true,
+      //         taggable: true,
+      //         trackBy: 'id',
+      //         tagPlaceholder: 'tagPlaceholder',
+      //         onNewTag(newTag, id, options, value) {
+      //           options.push(newTag)
+      //           value.push(newTag)
+      //         },
+      //       },
+      //       onChanged(model, newVal, oldVal, field) {
+      //         model = newVal
+      //       },
+      //     },
+      //     {
+      //       type: 'submit',
+      //       buttonText: 'Submit',
+      //       inputType: 'submit',
+      //       visible: true,
+      //       onSubmit: this.update,
+      //     },
+      //     {
+      //       type: 'submit',
+      //       buttonText: 'Delete',
+      //       inputType: 'submit',
+      //       visible: true,
+      //       onSubmit: this.deleteItem,
+      //     },
+      //   ],
+      // },
       formOptions: {
         validateAfterLoad: true,
         validateAfterChanged: true,
@@ -354,8 +312,24 @@ export default {
       createUrl: '',
       editUrl: '',
       routeUrl: '',
+      _roles: this.roles,
     }
   },
+  // asyncComputed: {
+  //   async roles() {
+  //     console.log("getting here")
+  //     // if (this._roles.length > 0) return this._roles
+  //     const response = await this.getSource('users-permissions/roles', 'roles')
+  //     // .then((roles) => {
+  //     //   // console.log(roles)
+  //     //   this._roles = roles
+  //     //   console.log(this._roles)
+  //     //   return this._roles
+  //     // })
+  //     this._roles = response
+  //     return this._roles
+  //   },
+  // },
   created() {
     this.setData()
   },

@@ -4,7 +4,7 @@
       <router-view @submit="getAllUsers"></router-view>
       <h3>Users</h3>
       <div class="d-flex justify-content-end">
-        <b-button variant="primary" :to="{name: 'createUser', params: {action:'Add new User', collectionType: 'Users', combinators: combinators, roles: roles, datasets: datasets, events: events} }"><b-icon-plus></b-icon-plus>Add new User</b-button>
+        <b-button variant="primary" :to="{name: 'createUser', params: {action:'Add new User', collectionType: 'Users', schema: schema} }"><b-icon-plus></b-icon-plus>Add new User</b-button>
       </div>
       <br>
       <b-table hover :responsive="true" head-variant="light" :items="users.items" :fields="fields">
@@ -96,17 +96,157 @@ export default {
       deleteModal: false,
       itemToDelete: [],
       combinators: [],
-      roles: [],
+      _roles: [],
       datasets: [],
       events: [],
+      schema: {
+        fields: [
+          {
+            type: 'input',
+            inputType: 'text',
+            label: 'Username*',
+            model: 'username',
+            visible: true,
+            required: true,
+          },
+          {
+            type: 'input',
+            inputType: 'email',
+            label: 'Email*',
+            model: 'email',
+            visible: true,
+            required: true,
+          },
+          {
+            type: 'input',
+            inputType: 'text',
+            label: 'Provider',
+            model: 'provider',
+            visible: true,
+          },
+          {
+            type: 'checkbox',
+            label: 'Confirmed',
+            model: 'confirmed',
+            default: false,
+          },
+          {
+            type: 'checkbox',
+            label: 'Blocked',
+            model: 'blocked',
+            default: false,
+          },
+          {
+            type: 'select',
+            values: this.roles,
+            label: 'Role',
+            model: 'role',
+            default: false,
+          },
+          {
+            type: 'vueMultiSelect',
+            multiSelect: true,
+            label: 'Datasets',
+            model: 'datasets',
+            values: this.datasets,
+            visible: true,
+            selectOptions: {
+              key: 'name',
+              label: 'name',
+              multiple: true,
+              searchable: true,
+              clearOnSelect: true,
+              hideSelected: true,
+              taggable: true,
+              tagPlaceholder: 'tagPlaceholder',
+              trackBy: 'id',
+              onNewTag(newTag, id, options, value) {
+                options.push(newTag)
+                value.push(newTag)
+              },
+            },
+            onChanged(model, newVal, oldVal, field) {
+              model = newVal
+            },
+          },
+          {
+            type: 'vueMultiSelect',
+            multiSelect: true,
+            label: 'Events',
+            model: 'events',
+            values: this.events,
+            visible: true,
+            selectOptions: {
+              key: 'name',
+              label: 'name',
+              multiple: true,
+              searchable: true,
+              clearOnSelect: true,
+              hideSelected: true,
+              taggable: true,
+              tagPlaceholder: 'tagPlaceholder',
+              trackBy: 'id',
+              onNewTag(newTag, id, options, value) {
+                options.push(newTag)
+                value.push(newTag)
+              },
+            },
+            onChanged(model, newVal, oldVal, field) {
+              model = newVal
+            },
+          },
+          {
+            type: 'vueMultiSelect',
+            multiSelect: true,
+            label: 'Combinators',
+            model: 'combinators',
+            values: this.combinators,
+            visible: true,
+            selectOptions: {
+              key: 'name',
+              label: 'name',
+              multiple: true,
+              searchable: true,
+              clearOnSelect: true,
+              hideSelected: true,
+              taggable: true,
+              tagPlaceholder: 'tagPlaceholder',
+              trackBy: 'id',
+              onNewTag(newTag, id, options, value) {
+                options.push(newTag)
+                value.push(newTag)
+              },
+            },
+            onChanged(model, newVal, oldVal, field) {
+              model = newVal
+            },
+          },
+        ]
+      }
     }
   },
+  mounted() {
+    this.roles()
+  },
   mixins: [collectionMixin],
+  asyncComputed: {
+    roles() {
+      const vm = this
+      console.log("getting here")
+      if (vm._roles && vm._roles.length > 0) return vm._roles
+      return vm.getSource('users-permissions/roles', 'roles')
+      .then((roles) => {
+        vm._roles = roles
+        console.log(vm._roles)
+        return vm._roles
+      })
+    },
+  },
   computed: {
     ...mapState({
       account: state => state.account,
       users: state => state.users.all
-    })
+    }),
   },
   created() {
     this.getInitialData()
@@ -119,7 +259,7 @@ export default {
     getInitialData() {
       this.getAllUsers()
       this.getCombinators()
-      this.getRoles()
+      // this.getRoles()
       this.getDatasets()
       this.getEvents()
     },
