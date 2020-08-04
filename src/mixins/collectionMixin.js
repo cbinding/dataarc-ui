@@ -88,6 +88,30 @@ const methods = {
       // Handle error.
     })
   },
+  getRoles() {
+    axios
+    .get(`${this.$baseUrl}/users-permissions/roles`)
+    .then((response) => {
+      // Handle success.
+      this.roles = response.data.roles
+      // return response.data.roles
+    })
+    .catch((error) => {
+      // Handle error.
+    })
+  },
+  getEvents() {
+    axios
+    .get(`${this.$baseUrl}/events`)
+    .then((response) => {
+      // Handle success.
+      this.events = response.data
+      return response.data
+    })
+    .catch((error) => {
+      // Handle error.
+    })
+  },
 }
 
 export default {

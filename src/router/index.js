@@ -159,7 +159,21 @@ const routes = [
       {
         path: 'users',
         name: 'Users',
-        component: () => import('@/views/Home.vue'),
+        component: () => import('@/views/Collections/Users.vue'),
+        children: [
+          {
+            path: 'create',
+            name: 'createUser',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+          {
+            path: 'edit/:id',
+            name: 'editUser',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+        ]
       },
       {
         path: 'about',

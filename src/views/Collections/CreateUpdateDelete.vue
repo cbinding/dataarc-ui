@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import collectionMixin from '../../mixins/collectionMixin'
 export default {
   props: [
     'item',
@@ -30,7 +31,10 @@ export default {
     'fields',
     'templates',
     'features',
+    'roles',
+    'events',
     ],
+    mixins: [collectionMixin],
   data() {
     return {
       model: {
@@ -44,12 +48,21 @@ export default {
         file: {},
         user: {},
         category: {},
-        combinators: [],
+        username: '',
+        email: '',
+        provider: '',
+        confirmed: false,
+        blocked: false,
+        role: [],
         fields: [],
         templates: [],
         features: [],
         color: '',
         datasets: [],
+        events: [],
+        combinators: [],
+        combinator_queries: [],
+        dataset_templates: [],
       },
       schema: {
         fields: [
@@ -117,6 +130,100 @@ export default {
             label: 'Color',
             model: 'color',
             visible: true,
+          },
+          {
+            type: 'input',
+            inputType: 'text',
+            label: 'Username*',
+            model: 'username',
+            visible: true,
+            required: true,
+          },
+          {
+            type: 'input',
+            inputType: 'email',
+            label: 'Email*',
+            model: 'email',
+            visible: true,
+            required: true,
+          },
+          {
+            type: 'input',
+            inputType: 'text',
+            label: 'Provider',
+            model: 'provider',
+            visible: true,
+          },
+          {
+            type: 'checkbox',
+            label: 'Confirmed',
+            model: 'confirmed',
+            default: false,
+          },
+          {
+            type: 'checkbox',
+            label: 'Blocked',
+            model: 'blocked',
+            default: false,
+          },
+          {
+            type: 'select',
+            values: this.roles,
+            label: 'Role',
+            model: 'role',
+            default: false,
+          },
+          {
+            type: 'vueMultiSelect',
+            multiSelect: true,
+            label: 'Datasets',
+            model: 'datasets',
+            values: this.datasets,
+            visible: true,
+            selectOptions: {
+              key: 'name',
+              label: 'name',
+              multiple: true,
+              searchable: true,
+              clearOnSelect: true,
+              hideSelected: true,
+              taggable: true,
+              tagPlaceholder: 'tagPlaceholder',
+              trackBy: 'id',
+              onNewTag(newTag, id, options, value) {
+                options.push(newTag)
+                value.push(newTag)
+              },
+            },
+            onChanged(model, newVal, oldVal, field) {
+              model = newVal
+            },
+          },
+          {
+            type: 'vueMultiSelect',
+            multiSelect: true,
+            label: 'Events',
+            model: 'events',
+            values: this.events,
+            visible: true,
+            selectOptions: {
+              key: 'name',
+              label: 'name',
+              multiple: true,
+              searchable: true,
+              clearOnSelect: true,
+              hideSelected: true,
+              taggable: true,
+              tagPlaceholder: 'tagPlaceholder',
+              trackBy: 'id',
+              onNewTag(newTag, id, options, value) {
+                options.push(newTag)
+                value.push(newTag)
+              },
+            },
+            onChanged(model, newVal, oldVal, field) {
+              model = newVal
+            },
           },
           {
             type: 'vueMultiSelect',
@@ -272,7 +379,9 @@ export default {
       this.schema.fields.forEach((field) => {
         if (field.buttonText === 'Submit' || field.model === 'name' || field.model === 'description' || field.buttonText === 'Delete') {
           // If adding a new **, hide Delete button
-          if (field.buttonText === 'Delete' && (this.action === 'Add new Map Layer' || this.action === 'Add new Category' || this.action === 'Add new Dataset')) {
+          if (field.buttonText === 'Delete' && (this.action === 'Add new Map Layer' || this.action === 'Add new Category' || this.action === 'Add new Dataset' || this.action === 'Add new User')) {
+            field.visible = false
+          } else if (this.collectionType === 'Users' && (field.model === 'name' || field.model === 'description')) {
             field.visible = false
           } else {
             return
@@ -306,6 +415,23 @@ export default {
 						&& field.model !== 'templates'
 						&& field.model !== 'features'
           ) {
+            field.visible = false
+          }
+        }
+        if (this.collectionType === 'Users') {
+          if (
+            field.model !== 'username'
+            && field.model !== 'email'
+            && field.model !== 'provider'
+            && field.model !== 'confirmed'
+            && field.model !== 'blocked'
+            && field.model !== 'role'
+            && field.model !== 'datasets'
+            && field.model !== 'events'
+            && field.model !== 'combinators'
+            && field.model !== 'combinator_queries'
+            && field.model !== 'dataset_templates'
+            ) {
             field.visible = false
           }
         }

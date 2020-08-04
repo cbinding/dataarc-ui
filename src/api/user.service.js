@@ -4,6 +4,7 @@ import authHeader from './auth-header'
 export default {
   login,
   logout,
+  register,
   getAll,
 }
 
@@ -32,6 +33,15 @@ function logout() {
   Cookies.remove('user')
   Cookies.remove('jwt')
   axios.defaults.headers.common.Authorization = ''
+}
+function register(user) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(user),
+  }
+
+  return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/auth/local/register`, requestOptions).then(handleResponse)
 }
 
 function getAll() {
