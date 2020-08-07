@@ -144,6 +144,26 @@ const routes = [
           },
         ]
       },
+      {
+        path: 'combinators',
+        name: 'Combinators',
+        component: () => import('@/views/Collections/Combinators.vue'),
+        props: true,
+        children:[
+          {
+            path: 'create',
+            name: 'createCombinator',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+          {
+            path: 'edit/:id',
+            name: 'editCombinator',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+        ]
+      },
     ],
     meta: {
       auth: true,

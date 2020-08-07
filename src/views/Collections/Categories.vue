@@ -1,12 +1,9 @@
 <template>
-  <div>
-    <b-container fluid>
-      <router-view></router-view>
-      <h3>Categories</h3>
-      <div class="d-flex justify-content-end">
-        <b-button variant="primary" :to="{name: 'createCategory', params: {action:'Create', collectionType: 'Categories'} }"><b-icon-plus></b-icon-plus>Add new Category</b-button>
-      </div>
-      <br>
+  <table-view-layout :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @change="updatePage" @deleteConfirmed="deleteCategory(itemToDelete)" @limitUpdated="updateLimit">
+    <template v-slot:button>
+      <b-button variant="primary" :to="{name: 'createCategory', params: {action:'Create', collectionType: 'Categories'} }"><b-icon-plus></b-icon-plus>Add new Category</b-button>
+    </template>
+    <template v-slot:table>
       <b-table v-if="categories" :responsive="true" table-variant="light" head-variant="light" :items="categories" :fields="displayFields">
         <template v-slot:cell(datasets)="datasetRow" class="Datasets">
           <ul>
@@ -26,35 +23,21 @@
           </b-link>
         </template>
       </b-table>
-    </b-container>
-    <b-modal hide-backdrop content-class="shadow" centered id="deleteConfirmation">
-      <template v-slot:modal-title>
-        Delete Confirmation
-      </template>
-      <p class="my-2">
-        Are you sure you want to delete this category?
-      </p>
-      <template v-slot:modal-footer="{ ok, cancel }">
-        <b-button size="sm" @click="cancel()">
-          Cancel
-        </b-button>
-        <b-button size="sm" variant="danger" @click="deleteCategory(itemToDelete)">
-          Delete
-        </b-button>
-      </template>
-    </b-modal>
-  </div>
+    </template>
+  </table-view-layout>
 </template>
 
 <script>
 import collectionMixin from '../../mixins/collectionMixin'
+import TableViewLayout from './templates/TableViewLayout.vue'
 export default {
+  components: {
+    TableViewLayout,
+  },
   data() {
     return {
       component: 'Categories',
       displayFields: ['id', 'name', 'title', 'description', 'color', 'datasets', 'actions'],
-      deleteModal: false,
-      itemToDelete: [],
     }
   },
   mixins: [collectionMixin],

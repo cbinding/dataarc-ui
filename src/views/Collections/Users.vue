@@ -1,12 +1,9 @@
 <template>
-  <div>
-    <b-container fluid>
-      <router-view @submit="getAllUsers"></router-view>
-      <h3>Users</h3>
-      <div class="d-flex justify-content-end">
-        <b-button variant="primary" :to="{name: 'createUser', params: {action:'Create', collectionType: 'Users'} }"><b-icon-plus></b-icon-plus>Add new User</b-button>
-      </div>
-      <br>
+  <table-view-layout :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'users')" @limitUpdated="updateLimit">
+    <template v-slot:button>
+      <b-button variant="primary" :to="{name: 'createUser', params: {action:'Create', collectionType: 'Users'} }"><b-icon-plus></b-icon-plus>Add new User</b-button>
+    </template>
+    <template v-slot:table>
       <b-table :responsive="true" table-variant="light" head-variant="light" :items="users.items" :fields="displayFields">
         <template v-slot:cell(actions)="row" class="actions">
           <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'editUser', params: {id: row.item.id, item: row.item, action:'Update', collectionType: 'Users'} }">
@@ -17,24 +14,8 @@
           </b-link>
         </template>
       </b-table>
-    </b-container>
-    <b-modal hide-backdrop content-class="shadow" centered id="deleteConfirmation">
-      <template v-slot:modal-title>
-        Delete Confirmation
-      </template>
-      <p class="my-2">
-        Are you sure you want to delete this User?
-      </p>
-      <template v-slot:modal-footer="{ ok, cancel }">
-        <b-button size="sm" @click="cancel()">
-          Cancel
-        </b-button>
-        <b-button size="sm" variant="danger" @click="deleteUser(itemToDelete)">
-          Delete
-        </b-button>
-      </template>
-    </b-modal>
-  </div>
+    </template>
+  </table-view-layout>
 </template>
 
 <script>
@@ -45,8 +26,7 @@ export default {
     return {
       component: 'Users',
       displayFields: ['id', 'username', 'email', 'confirmed', 'actions'],
-      deleteModal: false,
-      itemToDelete: [],
+      total: ''
     }
   },
   mixins: [collectionMixin],
@@ -63,6 +43,11 @@ export default {
   watch: {
     $route(to, from) {
       this.getAllUsers()
+    },
+    users(val) {
+      if(val.items){
+        this.total = val.items.length
+      }
     }
   },
   methods: {
@@ -73,21 +58,6 @@ export default {
     }),
     getInitialData() {
       this.getAllUsers()
-    },
-    deleteUser(id) {
-      this.$bvModal.hide('deleteConfirmation')
-      let vm = this
-      let url = ''
-      url = `${this.$baseUrl}/users/${id}`
-      axios
-      .delete(url)
-      .then((response) => {
-        // Handle success.
-        vm.getAllUsers()
-      })
-      .catch((error) => {
-        // Handle error.
-      })
     },
   },
 }
