@@ -7,6 +7,12 @@
           {{ action }}
         </div>
         <div class="panel-body">
+          <p v-if="errors.length">
+            <b>Please correct the following error(s):</b>
+            <ul>
+              <li v-for="error in errors">{{ error }}</li>
+            </ul>
+          </p>
           <vue-form-generator
             :schema="schema"
             :model="model"
@@ -19,45 +25,103 @@
 </template>
 
 <script>
+import collectionMixin from '../../mixins/collectionMixin'
+import userService from '../../api/user.service'
+import { mapState, mapActions } from 'vuex'
 export default {
   props: [
     'item',
     'action',
     'collectionType',
-    'datasets',
-    'categories',
-    'combinators',
-    'fields',
-    'templates',
-    'features',
-    ],
+  ],
+  mixins: [collectionMixin],
   data() {
     return {
       model: {
         type: '',
         action: '',
-        name: '',
+        title: '',
         description: '',
         citation: '',
         link: '',
         image: {},
-        file: {},
+        source: {},
         user: {},
-        category: {},
-        combinators: [],
+        category: '',
+        username: '',
+        email: '',
+        password: '',
+        provider: '',
+        confirmed: false,
+        blocked: false,
+        role: [],
         fields: [],
         templates: [],
         features: [],
         color: '',
         datasets: [],
+        events: [],
+        combinators: [],
+        combinator_queries: [],
+        dataset_templates: [],
       },
       schema: {
         fields: [
           {
             type: 'input',
             inputType: 'text',
-            label: 'Name*',
-            model: 'name',
+            label: 'Username*',
+            model: 'username',
+            visible: true,
+            required: true,
+          },
+          {
+            type: 'input',
+            inputType: 'email',
+            label: 'Email*',
+            model: 'email',
+            visible: true,
+            required: true,
+          },
+          {
+            type: 'input',
+            inputType: 'password',
+            label: 'Password*',
+            model: 'password',
+            visible: true,
+            required: true,
+          },
+          {
+            type: 'input',
+            inputType: 'text',
+            label: 'Provider',
+            model: 'provider',
+            visible: true,
+          },
+          {
+            type: 'checkbox',
+            label: 'Confirmed',
+            model: 'confirmed',
+            default: false,
+          },
+          {
+            type: 'checkbox',
+            label: 'Blocked',
+            model: 'blocked',
+            default: false,
+          },
+          {
+            type: 'select',
+            values: this.roles ? this.roles : ['1', '2'],
+            label: 'Role',
+            model: 'role',
+            default: false,
+          },
+          {
+            type: 'input',
+            inputType: 'text',
+            label: 'Title*',
+            model: 'title',
             featured: true,
             required: true,
             visible: true,
@@ -96,17 +160,17 @@ export default {
           },
           {
             type: 'upload',
-            label: 'File',
-            model: 'file',
+            label: 'Source',
+            model: 'source',
             visible: true,
             required: false,
             onChanged(model, schema, event) {
-              this.model.file = event.target.files[0]
+              this.model.source = event.target.files[0]
             },
           },
           {
             type: 'select',
-            values: this.categories,
+            values: this.categories ? this.categories : ['1', '2'],
             label: 'Category',
             model: 'category',
             visible: true,
@@ -121,9 +185,61 @@ export default {
           {
             type: 'vueMultiSelect',
             multiSelect: true,
+            label: 'Datasets',
+            model: 'datasets',
+            values: this.datasets ? this.datasets : ['1', '2'],
+            visible: true,
+            selectOptions: {
+              key: 'name',
+              label: 'name',
+              multiple: true,
+              searchable: true,
+              clearOnSelect: true,
+              hideSelected: true,
+              taggable: true,
+              tagPlaceholder: 'tagPlaceholder',
+              trackBy: 'id',
+              onNewTag(newTag, id, options, value) {
+                options.push(newTag)
+                value.push(newTag)
+              },
+            },
+            onChanged(model, newVal, oldVal, field) {
+              model = newVal
+            },
+          },
+          {
+            type: 'vueMultiSelect',
+            multiSelect: true,
+            label: 'Events',
+            model: 'events',
+            values: this.events ? this.events : ['1', '2'],
+            visible: true,
+            selectOptions: {
+              key: 'name',
+              label: 'name',
+              multiple: true,
+              searchable: true,
+              clearOnSelect: true,
+              hideSelected: true,
+              taggable: true,
+              tagPlaceholder: 'tagPlaceholder',
+              trackBy: 'id',
+              onNewTag(newTag, id, options, value) {
+                options.push(newTag)
+                value.push(newTag)
+              },
+            },
+            onChanged(model, newVal, oldVal, field) {
+              model = newVal
+            },
+          },
+          {
+            type: 'vueMultiSelect',
+            multiSelect: true,
             label: 'Combinators',
             model: 'combinators',
-            values: this.combinators,
+            values: this.combinators ? this.combinators : ['1', '2'],
             visible: true,
             selectOptions: {
               key: 'name',
@@ -149,7 +265,7 @@ export default {
             multiSelect: true,
             label: 'Fields',
             model: 'fields',
-            values: this.fields,
+            values: this.fields ? this.fields : ['1', '2'],
             visible: true,
             selectOptions: {
               key: 'name',
@@ -175,7 +291,7 @@ export default {
             multiSelect: true,
             label: 'Templates',
             model: 'templates',
-            values: this.templates,
+            values: this.templates ? this.templates : ['1', '2'],
             visible: true,
             selectOptions: {
               key: 'name',
@@ -201,7 +317,7 @@ export default {
             multiSelect: true,
             label: 'Features',
             model: 'features',
-            values: this.features,
+            values: this.features ? this.features : [],
             visible: true,
             selectOptions: {
               key: 'title',
@@ -227,6 +343,7 @@ export default {
             buttonText: 'Submit',
             inputType: 'submit',
             visible: true,
+            // validateBeforeSubmit: true,
             onSubmit: this.update,
           },
           {
@@ -243,73 +360,62 @@ export default {
         validateAfterChanged: true,
       },
       types: ['Datasets', 'Combinators', 'Map Layers', 'Categories'],
-      category: ['Textual', 'Archaeological', 'Environmental'],
       createUrl: '',
       editUrl: '',
       routeUrl: '',
+      errors: [],
+    }
+  },
+  watch: {
+    categories: function (val) {
+      this.schema.fields.filter((field) => {
+        if (field.model && field.model === 'category') {
+          field.values = val
+        }
+      })
+    },
+    roles: function (val) {
+      this.schema.fields.filter((field) => {
+        if (field.model && field.model === 'role') {
+          field.values = val
+        }
+      })
     }
   },
   created() {
     this.setData()
   },
+  computed: {
+    ...mapState('account', ['status'],
+      { account: state => state.account,
+        users: state => state.users.all,
+        user: state => state.users.user,
+      }),
+  },
   methods: {
+    ...mapActions('account', ['addNewUser'], 'users', {
+      getAllUsers: 'getAll',
+      getById: 'getById',
+      deleteUser: 'delete',
+    }),
     setData() {
       const vm = this
       // If editing, place old data into model
       if (this.item) {
         this.model = this.item
-        this.model.file = null
-        let temp = this.model.category.id
-        this.model.category = temp
+        this.model.source = null
+        if(this.model.category) {
+          let temp = this.model.category.id
+          this.model.category = temp
+        }
       }
       // Set urls used in axios depending on collectionType
       this.setUrl()
 
       this.model.type = this.collectionType
       this.model.action = this.action
+      this.limitFields()
 
-      // Keep basic fields for all forms
-      this.schema.fields.forEach((field) => {
-        if (field.buttonText === 'Submit' || field.model === 'name' || field.model === 'description' || field.buttonText === 'Delete') {
-          // If adding a new **, hide Delete button
-          if (field.buttonText === 'Delete' && (this.action === 'Add new Map Layer' || this.action === 'Add new Category' || this.action === 'Add new Dataset')) {
-            field.visible = false
-          } else {
-            return
-          }
-        }
-        // Limit fields depending on collectionType
-        if (this.collectionType === 'Map Layers') {
-          if (field.model !== 'file') {
-            field.visible = false
-          }
-        }
-        if (this.collectionType === 'Combinators') {
-          if (field.model !== 'citation') {
-            field.visible = false
-          }
-        }
-        if (this.collectionType === 'Categories') {
-          if (field.model !== 'color' && field.model !== 'datasets') {
-            field.visible = false
-          }
-        }
-        if (this.collectionType === 'Datasets') {
-          if (
-            field.model !== 'citation'
-						&& field.model !== 'link'
-						&& field.model !== 'image'
-						&& field.model !== 'file'
-						&& field.model !== 'category'
-						&& field.model !== 'combinators'
-						&& field.model !== 'fields'
-						&& field.model !== 'templates'
-						&& field.model !== 'features'
-          ) {
-            field.visible = false
-          }
-        }
-      })
     },
     setUrl() {
       if (this.collectionType === 'Map Layers') {
@@ -332,6 +438,11 @@ export default {
           this.editUrl = `${this.$baseUrl}/datasets/${this.item.id}`
         }
         this.routeUrl = '/contributor/datasets'
+      } else if (this.collectionType === 'Users') {
+        if (this.item) {
+          this.editUrl = `${process.env.VUE_APP_STRAPI_API_URL}/users/${this.item.id}`
+        }
+        this.routeUrl = '/admin/users'
       }
     },
 
@@ -347,70 +458,55 @@ export default {
         // Handle error.
       })
     },
-    update() {
-      const formData = new FormData()
-      const data = {}
-      if (this.model.type === 'Map Layers') {
-        this.createUrl = `${this.$baseUrl}/map-layers`
-        data.name = this.model.name
-        data.description = this.model.description
-        if (this.model.file) {
-          formData.append('files.file', this.model.file, this.model.file.name)
+    validEmail(email) {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      return re.test(email)
+    },
+    update(val) {
+      const vm = this
+      this.errors = []
+      if (val.type === 'Users') {
+        if (!val.username) {
+          this.errors.push('Username required.')
         }
-      } else if (this.model.type === 'Combinators') {
-        this.createUrl = `${this.$baseUrl}/combinators`
-        data.name = this.model.name
-        data.description = this.model.description
-        data.citation = this.model.citation
-      } else if (this.model.type === 'Categories') {
-        this.createUrl = `${this.$baseUrl}/categories`
-        data.name = this.model.name
-        data.description = this.model.description
-        data.color = this.model.color
-      } else if (this.model.type === 'Datasets') {
-        this.createUrl = `${this.$baseUrl}/datasets`
-        data.name = this.model.name
-        data.description = this.model.description
-        data.citation = this.model.citation
-        data.link = this.model.link
-        data.image = this.model.image
-        if (this.model.file && this.model.file.length > 0) {
-          data.file = this.model.file
+        if (!val.email) {
+          this.errors.push('Email required.')
+        } else if (!this.validEmail(val.email)) {
+          this.errors.push('Valid email required.')
         }
-        const temp = this.categories.filter((category) => {
-          if (category.id === this.model.category) {
-            return category
-          }
-        })
-        data.category = temp[0]
-        data.combinators = this.model.combinators
-        data.fields = this.model.fields
-        data.templates = this.model.templates
-        data.features = this.model.features
+        if (!val.password) {
+          this.errors.push('Password required.')
+        }
       }
 
-      formData.append('data', JSON.stringify(data))
-      if (this.action === 'Update Map Layer' || this.action === 'Update Category' || this.action === 'Update Dataset') {
+      const formData = this.setFormData(val)
+
+      if (this.action === 'Update' && !this.errors.length) {
         axios
-        .put(this.editUrl, formData)
+        .put(vm.editUrl, formData)
         .then((response) => {
           // Handle success.
-          this.$emit('submit')
-          this.$router.push(this.routeUrl)
+          vm.$emit('submit')
+          vm.$router.push(vm.routeUrl)
         })
         .catch((error) => {
           // Handle error.
         })
+      } else if (val.type === 'Users') {
+        if (!this.errors.length) {
+          this.addNewUser(formData)
+        }
       } else {
         axios
-        .post(this.createUrl, formData)
+        .post(vm.createUrl, formData)
         .then((response) => {
           // Handle success.
-          this.$emit('submit')
-          this.$router.push(this.routeUrl)
+          vm.$emit('submit')
+          vm.$router.push(vm.routeUrl)
         })
         .catch((error) => {
           // Handle error.
+          console.log('error')
         })
       }
     },

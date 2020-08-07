@@ -4,7 +4,10 @@ import authHeader from './auth-header'
 export default {
   login,
   logout,
+  register,
   getAll,
+  getById,
+  delete: _delete,
 }
 
 function login(identifier, password) {
@@ -33,6 +36,15 @@ function logout() {
   Cookies.remove('jwt')
   axios.defaults.headers.common.Authorization = ''
 }
+function register(user) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(user),
+  }
+
+  return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/auth/local/register`, requestOptions).then(handleResponse)
+}
 
 function getAll() {
   const requestOptions = {
@@ -41,6 +53,26 @@ function getAll() {
   }
 
   return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/users`, requestOptions).then(handleResponse)
+}
+
+function getById(id) {
+  const requestOptions = {
+    method: 'GET',
+    headers: authHeader()
+  };
+
+  return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/users/${id}`, requestOptions).then(handleResponse);
+}
+
+
+// prefixed function name with underscore because delete is a reserved word in javascript
+function _delete(id) {
+  const requestOptions = {
+    method: 'DELETE',
+    headers: authHeader()
+  };
+
+  return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/users/${id}`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

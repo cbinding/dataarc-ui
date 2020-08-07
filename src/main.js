@@ -20,6 +20,7 @@ import Multiselect from 'vue-multiselect'
 // import MultiSelect from 'vue-multiselect'
 import VueFormGenerator from 'vue-form-generator'
 import MyPlugin from './plugins/my-plugin'
+import AsyncComputed from 'vue-async-computed'
 
 // Globals
 window.axios = require('axios')
@@ -29,6 +30,7 @@ Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.use(VueApollo)
 Vue.component('multiselect', Multiselect)
+Vue.use(AsyncComputed)
 
 
 // Vue.component('field-MultiSelect', require('vue-multiselect').default)
@@ -42,7 +44,7 @@ Vue.use(MyPlugin)
 // Log as components are created
 Vue.mixin({
   created() {
-    console.log(`[created] ${this.$options.name}`)
+    // console.log(`[created] ${this.$options.name}`)
   },
 })
 

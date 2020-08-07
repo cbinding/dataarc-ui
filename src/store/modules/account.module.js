@@ -52,6 +52,25 @@ const actions = {
       },
     )
   },
+  addNewUser({ dispatch, commit }, user) {
+    commit('addNewUserRequest', user)
+
+    userService.register(user)
+    .then(
+      (user) => {
+        commit('addNewUserSuccess', user)
+        router.push('/admin/users')
+        setTimeout(() => {
+          // display success message after route change completes
+          dispatch('alert/success', 'New User Added', { root: true })
+        })
+      },
+      (error) => {
+        commit('addNewUserFailure', error)
+        dispatch('alert/error', error)
+      },
+    )
+  },
 }
 
 const mutations = {
@@ -82,6 +101,15 @@ const mutations = {
     state.status = {}
   },
   registerFailure(state, error) {
+    state.status = {}
+  },
+  addNewUserRequest(state, user) {
+    state.status = { registering: true }
+  },
+  addNewUserSuccess(state, user) {
+    state.status = {}
+  },
+  addNewUserFailure(state, error) {
     state.status = {}
   },
 }

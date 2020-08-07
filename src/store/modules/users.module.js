@@ -3,6 +3,7 @@ import userService from '@/api/user.service'
 
 const state = {
   all: {},
+  user: {},
 }
 
 const actions = {
@@ -13,6 +14,15 @@ const actions = {
     .then(
       (users) => commit('getAllSuccess', users),
       (error) => commit('getAllFailure', error),
+    )
+  },
+  getById({ commit }, id) {
+    commit('getByIdRequest')
+
+    userService.getById(id)
+    .then(
+      (user) => commit('getByIdSuccess', user),
+      (error) => commit('getByIdFailure', error),
     )
   },
 
@@ -31,11 +41,20 @@ const mutations = {
   getAllRequest(state) {
     state.all = { loading: true }
   },
+  getByIdRequest(state) {
+    state.user = { loading: true }
+  },
   getAllSuccess(state, users) {
     state.all = { items: users }
   },
+  getByIdSuccess(state, user) {
+    state.user = user
+  },
   getAllFailure(state, error) {
     state.all = { error }
+  },
+  getByIdFailure(state, error) {
+    state.user = { error }
   },
   deleteRequest(state, id) {
     // add 'deleting:true' property to user being deleted
