@@ -5,6 +5,8 @@
       <app-sidebar />
       <div class="main-panel">
         <div class="content-wrapper">
+          <div v-if="alert.message && alert.message[0] && alert.message[0].messages" :class="`alert ${alert.type}`">{{alert.message[0].messages[0].message}}</div>
+
           <router-view />
         </div>
         <!-- content wrapper ends -->
@@ -20,12 +22,29 @@
 import AppHeader from '@/components/partials/AppHeader'
 import AppSidebar from '@/components/partials/AppSidebar'
 import AppFooter from '@/components/partials/AppFooter'
+import { mapState, mapActions } from 'vuex'
 export default {
   name: 'Dashboard',
   components: {
     AppHeader,
     AppSidebar,
     AppFooter,
+  },
+  computed: {
+    ...mapState({
+      alert: state => state.alert
+    })
+  },
+  watch: {
+    $route (to, from) {
+      // clear alert on location change
+      this.clearAlert();
+    }
+  },
+  methods: {
+    ...mapActions({
+      clearAlert: 'alert/clear'
+    })
   },
 }
 

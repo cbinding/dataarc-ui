@@ -4,60 +4,12 @@
       <router-view @submit="getAllUsers"></router-view>
       <h3>Users</h3>
       <div class="d-flex justify-content-end">
-        <b-button variant="primary" :to="{name: 'createUser', params: {action:'Add new User', collectionType: 'Users', schema: schema} }"><b-icon-plus></b-icon-plus>Add new User</b-button>
+        <b-button variant="primary" :to="{name: 'createUser', params: {action:'Create', collectionType: 'Users'} }"><b-icon-plus></b-icon-plus>Add new User</b-button>
       </div>
       <br>
-      <b-table hover :responsive="true" head-variant="light" :items="users.items" :fields="fields">
-        <template v-slot:cell(role)="role" class="Role">
-          {{ role.item.role.name }}
-        </template>
-        <template v-slot:cell(datasets)="datasetRow" class="Datasets">
-          <ul>
-            <div v-for="dataset in datasetRow.item.datasets" :key="dataset.id">
-              <li>
-                {{ dataset.name }}
-              </li>
-            </div>
-          </ul>
-        </template>
-        <template v-slot:cell(events)="eventRow" class="Events">
-          <ul>
-            <div v-for="event in eventRow.item.events" :key="event.id">
-              <li>
-                {{ event.name }}
-              </li>
-            </div>
-          </ul>
-        </template>
-        <template v-slot:cell(combinators)="combinatorRow" class="Combinators">
-          <ul>
-            <div v-for="combinator in combinatorRow.item.combinators" :key="combinator.id">
-              <li>
-                {{ combinator.name }}
-              </li>
-            </div>
-          </ul>
-        </template>
-        <template v-slot:cell(combinator_queries)="combinator_queriesRow" class="CombinatorQueries">
-          <ul>
-            <div v-for="combinator_queries in combinator_queriesRow.item.combinator_queries" :key="combinator_queries.id">
-              <li>
-                {{ combinator_queries.name }}
-              </li>
-            </div>
-          </ul>
-        </template>
-        <template v-slot:cell(dataset_templates)="dataset_templatesRow" class="DatasetTemplates">
-          <ul>
-            <div v-for="dataset_templates in dataset_templatesRow.item.dataset_templates" :key="dataset_templates.id">
-              <li>
-                {{ dataset_templates.name }}
-              </li>
-            </div>
-          </ul>
-        </template>
+      <b-table :responsive="true" table-variant="light" head-variant="light" :items="users.items" :fields="displayFields">
         <template v-slot:cell(actions)="row" class="actions">
-          <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'editUser', params: {id: row.item.id, item: row.item, action:'Update User', collectionType: 'Users'} }">
+          <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'editUser', params: {id: row.item.id, item: row.item, action:'Update', collectionType: 'Users'} }">
             <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
           </b-link>
           <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item.id">
@@ -86,182 +38,41 @@
 </template>
 
 <script>
-import collectionMixin from '../../mixins/collectionMixin'
-import userService from '../../api/user.service'
 import { mapState, mapActions } from 'vuex'
+import collectionMixin from '../../mixins/collectionMixin'
 export default {
   data() {
     return {
-      fields: ['id', 'username', 'email', 'provider', 'confirmed', 'blocked', 'role', 'datasets', 'events', 'combinators', 'combinator_queries', 'dataset_templates', 'actions'],
+      component: 'Users',
+      displayFields: ['id', 'username', 'email', 'confirmed', 'actions'],
       deleteModal: false,
       itemToDelete: [],
-      combinators: [],
-      _roles: [],
-      datasets: [],
-      events: [],
-      schema: {
-        fields: [
-          {
-            type: 'input',
-            inputType: 'text',
-            label: 'Username*',
-            model: 'username',
-            visible: true,
-            required: true,
-          },
-          {
-            type: 'input',
-            inputType: 'email',
-            label: 'Email*',
-            model: 'email',
-            visible: true,
-            required: true,
-          },
-          {
-            type: 'input',
-            inputType: 'text',
-            label: 'Provider',
-            model: 'provider',
-            visible: true,
-          },
-          {
-            type: 'checkbox',
-            label: 'Confirmed',
-            model: 'confirmed',
-            default: false,
-          },
-          {
-            type: 'checkbox',
-            label: 'Blocked',
-            model: 'blocked',
-            default: false,
-          },
-          {
-            type: 'select',
-            values: this.roles,
-            label: 'Role',
-            model: 'role',
-            default: false,
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Datasets',
-            model: 'datasets',
-            values: this.datasets,
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
-              trackBy: 'id',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Events',
-            model: 'events',
-            values: this.events,
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
-              trackBy: 'id',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Combinators',
-            model: 'combinators',
-            values: this.combinators,
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
-              trackBy: 'id',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-        ]
-      }
     }
   },
-  mounted() {
-    this.roles()
-  },
   mixins: [collectionMixin],
-  asyncComputed: {
-    roles() {
-      const vm = this
-      console.log("getting here")
-      if (vm._roles && vm._roles.length > 0) return vm._roles
-      return vm.getSource('users-permissions/roles', 'roles')
-      .then((roles) => {
-        vm._roles = roles
-        console.log(vm._roles)
-        return vm._roles
-      })
-    },
-  },
   computed: {
     ...mapState({
       account: state => state.account,
-      users: state => state.users.all
+      users: state => state.users.all,
+      user: state => state.users.user
     }),
   },
   created() {
     this.getInitialData()
   },
+  watch: {
+    $route(to, from) {
+      this.getAllUsers()
+    }
+  },
   methods: {
     ...mapActions('users', {
       getAllUsers: 'getAll',
+      getById: 'getById',
       deleteUser: 'delete'
     }),
     getInitialData() {
       this.getAllUsers()
-      this.getCombinators()
-      // this.getRoles()
-      this.getDatasets()
-      this.getEvents()
     },
     deleteUser(id) {
       this.$bvModal.hide('deleteConfirmation')

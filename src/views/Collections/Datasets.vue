@@ -1,54 +1,20 @@
 <template>
   <div>
-    <b-container>
-      <router-view @submit="getDatasets"></router-view>
+    <b-container fluid>
+      <router-view></router-view>
       <h3>Datasets</h3>
       <div class="d-flex justify-content-end">
-        <b-button variant="primary" :to="{name: 'createDataset', params: {action:'Add new Dataset', collectionType: 'Datasets', datasets: datasets, categories: categories, combinators: combinators, fields: fields, templates: templates, features: features} }"><b-icon-plus></b-icon-plus>Add new Dataset</b-button>
+        <b-button variant="primary" :to="{name: 'createDataset', params: {action:'Create', collectionType: 'Datasets'} }"><b-icon-plus></b-icon-plus>Add new Dataset</b-button>
       </div>
       <br>
-      <b-table :responsive="true" head-variant="light" :items="datasets" :fields="tableFields">
-        <template v-slot:cell(category)="categoryRow" class="Category">
-          {{ categoryRow.item.category.name }}
-        </template>
-        <template v-slot:cell(combinators)="combinatorsRow" class="Combinators">
-          <ul>
-            <div v-for="combinator in combinatorsRow.item.combinators" :key="combinator.id">
-              <li>
-                {{ combinator.name }}
-              </li>
-            </div>
-          </ul>
-        </template>
-        <template v-slot:cell(fields)="fieldsRow" class="Fields">
-          <ul>
-            <div v-for="field in fieldsRow.item.fields" :key="field.id">
-              <li>
-                {{ field.name }}
-              </li>
-            </div>
-          </ul>
-        </template>
-        <template v-slot:cell(templates)="templatesRow" class="Templates">
-          <ul>
-            <div v-for="template in templatesRow.item.templates" :key="template.id">
-              <li>
-                {{ template.name }}
-              </li>
-            </div>
-          </ul>
-        </template>
-        <template v-slot:cell(features)="featuresRow" class="Features">
-          <ul>
-            <div v-for="feature in featuresRow.item.features" :key="feature.id">
-              <li>
-                {{ feature.title }}
-              </li>
-            </div>
-          </ul>
+      <b-table v-if="datasets" :responsive="true" table-variant="light" head-variant="light" :items="datasets" :fields="displayFields">
+        <template v-slot:cell(description)="row" class="Description">
+          <div class="w-200 text-truncate" style="max-width: 400px;" v-if="row.item.description">
+            {{ row.item.description }}
+          </div>
         </template>
         <template v-slot:cell(actions)="row" class="actions">
-          <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'editDataset', params: {id: row.item.id, item: row.item, action:'Update Dataset', collectionType: 'Datasets', datasets: datasets, categories: categories, combinators: combinators, fields: fields, templates: templates, features: features} }">
+          <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'editDataset', params: {id: row.item.id, item: row.item, action:'Update', collectionType: 'Datasets'} }">
             <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
           </b-link>
           <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item.id">
@@ -81,44 +47,26 @@ import collectionMixin from '../../mixins/collectionMixin'
 export default {
   data() {
     return {
-      datasets: [],
-      tableFields: [
+      component: 'Datasets',
+      displayFields: [
         'id',
         'name',
+        'title',
         'description',
         'citation',
-        'link',
-        'image',
-        'file',
-        'category',
-        'combinators',
-        'fields',
-        'templates',
-        'features',
-        'actions'
-        ],
+        'actions',
+      ],
       deleteModal: false,
       itemToDelete: [],
-      categories: [],
-      combinators: [],
-      fields: [],
-      templates: [],
-      features: [],
     }
   },
   mixins: [collectionMixin],
-  created() {
-    this.getInitialData()
+  watch: {
+    $route(to, from) {
+      this.$asyncComputed.datasets.update()
+    }
   },
   methods: {
-    getInitialData() {
-      this.getDatasets()
-      this.getCategories()
-      this.getCombinators()
-      this.getFields()
-      this.getTemplates()
-      this.getFeatures()
-    },
     deleteDataset(id) {
       this.$bvModal.hide('deleteConfirmation')
       let vm = this
@@ -128,7 +76,7 @@ export default {
       .delete(url)
       .then((response) => {
         // Handle success.
-        vm.getDatasets()
+        vm.$asyncComputed.datasets.update()
       })
       .catch((error) => {
         // Handle error.

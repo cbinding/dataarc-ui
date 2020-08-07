@@ -1,6 +1,6 @@
 <template>
   <div class="default-layout">
-    <div v-if="alert.message && alert.message[0]" :class="`alert ${alert.type}`">{{alert.message[0].messages[0].message}}</div>
+    <div v-if="alert.message && alert.message[0] && alert.message[0].messages" :class="`alert ${alert.type}`">{{alert.message[0].messages[0].message}}</div>
     <div class="container d-flex justify-content-center align-items-center">
       <router-view />
     </div>

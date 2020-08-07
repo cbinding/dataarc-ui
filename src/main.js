@@ -44,7 +44,7 @@ Vue.use(MyPlugin)
 // Log as components are created
 Vue.mixin({
   created() {
-    console.log(`[created] ${this.$options.name}`)
+    // console.log(`[created] ${this.$options.name}`)
   },
 })
 

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <b-container>
-      <router-view @submit="getCategories"></router-view>
+    <b-container fluid>
+      <router-view></router-view>
       <h3>Categories</h3>
       <div class="d-flex justify-content-end">
-        <b-button variant="primary" :to="{name: 'createCategory', params: {action:'Add new Category', collectionType: 'Categories', datasets: datasets} }"><b-icon-plus></b-icon-plus>Add new Category</b-button>
+        <b-button variant="primary" :to="{name: 'createCategory', params: {action:'Create', collectionType: 'Categories'} }"><b-icon-plus></b-icon-plus>Add new Category</b-button>
       </div>
       <br>
-      <b-table hover head-variant="light" :items="categories" :fields="fields">
+      <b-table v-if="categories" :responsive="true" table-variant="light" head-variant="light" :items="categories" :fields="displayFields">
         <template v-slot:cell(datasets)="datasetRow" class="Datasets">
           <ul>
             <div v-for="dataset in datasetRow.item.datasets" :key="dataset.id">
@@ -18,7 +18,7 @@
           </ul>
         </template>
         <template v-slot:cell(actions)="row" class="actions">
-          <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'editCategory', params: {id: row.item.id, item: row.item, action:'Update Category', collectionType: 'Categories'} }">
+          <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'editCategory', params: {id: row.item.id, item: row.item, action:'Update', collectionType: 'Categories'} }">
             <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
           </b-link>
           <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item.id">
@@ -51,22 +51,19 @@ import collectionMixin from '../../mixins/collectionMixin'
 export default {
   data() {
     return {
-      categories: [],
-      fields: ['id', 'name', 'description', 'color', 'datasets', 'actions'],
+      component: 'Categories',
+      displayFields: ['id', 'name', 'title', 'description', 'color', 'datasets', 'actions'],
       deleteModal: false,
       itemToDelete: [],
-      datasets: [],
     }
   },
   mixins: [collectionMixin],
-  created() {
-    this.getInitialData()
+  watch: {
+    $route(to, from) {
+      this.$asyncComputed.categories.update()
+    }
   },
   methods: {
-    getInitialData() {
-      this.getCategories()
-      this.getDatasets()
-    },
     deleteCategory(id) {
       this.$bvModal.hide('deleteConfirmation')
       let vm = this
@@ -76,7 +73,7 @@ export default {
       .delete(url)
       .then((response) => {
         // Handle success.
-        vm.getCategories()
+        vm.$asyncComputed.categories.update()
       })
       .catch((error) => {
         // Handle error.

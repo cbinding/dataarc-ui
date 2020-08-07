@@ -6,6 +6,8 @@ export default {
   logout,
   register,
   getAll,
+  getById,
+  delete: _delete,
 }
 
 function login(identifier, password) {
@@ -51,6 +53,26 @@ function getAll() {
   }
 
   return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/users`, requestOptions).then(handleResponse)
+}
+
+function getById(id) {
+  const requestOptions = {
+    method: 'GET',
+    headers: authHeader()
+  };
+
+  return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/users/${id}`, requestOptions).then(handleResponse);
+}
+
+
+// prefixed function name with underscore because delete is a reserved word in javascript
+function _delete(id) {
+  const requestOptions = {
+    method: 'DELETE',
+    headers: authHeader()
+  };
+
+  return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/users/${id}`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

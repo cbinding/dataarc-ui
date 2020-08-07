@@ -1,15 +1,15 @@
 <template>
   <div>
-    <b-container>
-      <router-view @submit="getMapLayers"></router-view>
+    <b-container fluid>
+      <router-view></router-view>
       <h3>Map Layers</h3>
       <div class="d-flex justify-content-end">
-        <b-button variant="primary" :to="{name: 'createMapLayer', params: {action:'Add new Map Layer', collectionType: 'Map Layers'} }"><b-icon-plus></b-icon-plus>Add new Map Layer</b-button>
+        <b-button variant="primary" :to="{name: 'createMapLayer', params: {action:'Create', collectionType: 'Map Layers'} }"><b-icon-plus></b-icon-plus>Add new Map Layer</b-button>
       </div>
       <br>
-      <b-table hover head-variant="light" :items="mapLayers" :fields="fields">
+      <b-table responsive table-variant="light" head-variant="light" :items="mapLayers" :fields="displayFields">
         <template v-slot:cell(actions)="row" class="actions">
-          <b-link size="sm" class="mb-2" :to="{name: 'editMapLayer', params: {id: row.item.id, item: row.item, action:'Update Map Layer', collectionType: 'Map Layers'} }">
+          <b-link size="sm" class="mb-2" :to="{name: 'editMapLayer', params: {id: row.item.id, item: row.item, action:'Update', collectionType: 'Map Layers'} }">
             <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
           </b-link>
           <b-link size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item.id">
@@ -42,15 +42,17 @@ import collectionMixin from '../../mixins/collectionMixin'
 export default {
   data() {
     return {
-      mapLayers: [],
-      fields: ['id', 'name', 'description', 'actions'],
+      component: 'MapLayers',
+      displayFields: ['id', 'name', 'title', 'description', 'actions'],
       deleteModal: false,
       itemToDelete: [],
     }
   },
   mixins: [collectionMixin],
-  created() {
-    this.getMapLayers()
+  watch: {
+    $route(to, from) {
+      this.$asyncComputed.mapLayers.update()
+    }
   },
   methods: {
     deleteMapLayer(id) {
@@ -62,7 +64,7 @@ export default {
       .delete(url)
       .then((response) => {
         // Handle success.
-        vm.getMapLayers()
+        vm.$asyncComputed.mapLayers.update()
       })
       .catch((error) => {
         // Handle error.
