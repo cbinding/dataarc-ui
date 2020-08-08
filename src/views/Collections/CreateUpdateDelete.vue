@@ -143,6 +143,14 @@ export default {
             visible: true,
           },
           {
+            type: 'select',
+            values: ['AND', 'OR'],
+            label: 'Operator',
+            model: 'operator',
+            default: 'AND',
+            visible: true,
+          },
+          {
             type: 'input',
             inputType: 'url',
             label: 'Link',
@@ -176,11 +184,70 @@ export default {
             visible: true,
           },
           {
+            type: 'select',
+            values: this.datasets ? this.datasets : ['1', '2'],
+            label: 'Dataset',
+            model: 'dataset',
+            visible: true,
+          },
+          {
             type: 'input',
             inputType: 'text',
             label: 'Color',
             model: 'color',
             visible: true,
+          },
+          {
+            type: 'vueMultiSelect',
+            multiSelect: true,
+            label: 'Queries',
+            model: 'queries',
+            values: this.queries ? this.queries : ['1', '2'],
+            visible: true,
+            selectOptions: {
+              key: 'field',
+              label: 'field',
+              multiple: true,
+              searchable: true,
+              clearOnSelect: true,
+              hideSelected: true,
+              taggable: true,
+              tagPlaceholder: 'tagPlaceholder',
+              trackBy: 'field',
+              onNewTag(newTag, id, options, value) {
+                options.push(newTag)
+                value.push(newTag)
+              },
+            },
+            onChanged(model, newVal, oldVal, field) {
+              model = newVal
+            },
+          },
+          {
+            type: 'vueMultiSelect',
+            multiSelect: true,
+            label: 'Concepts',
+            model: 'concepts',
+            values: this.concepts ? this.concepts : ['1', '2'],
+            visible: true,
+            selectOptions: {
+              key: 'name',
+              label: 'name',
+              multiple: true,
+              searchable: true,
+              clearOnSelect: true,
+              hideSelected: true,
+              taggable: true,
+              tagPlaceholder: 'tagPlaceholder',
+              trackBy: 'id',
+              onNewTag(newTag, id, options, value) {
+                options.push(newTag)
+                value.push(newTag)
+              },
+            },
+            onChanged(model, newVal, oldVal, field) {
+              model = newVal
+            },
           },
           {
             type: 'vueMultiSelect',
@@ -374,6 +441,13 @@ export default {
         }
       })
     },
+    datasets: function (val) {
+      this.schema.fields.filter((field) => {
+        if (field.model && field.model === 'dataset') {
+          field.values = val
+        }
+      })
+    },
     roles: function (val) {
       this.schema.fields.filter((field) => {
         if (field.model && field.model === 'role') {
@@ -407,6 +481,10 @@ export default {
         if(this.model.category) {
           let temp = this.model.category.id
           this.model.category = temp
+        }
+        if(this.model.dataset) {
+          let temp = this.model.dataset.id
+          this.model.dataset = temp
         }
       }
       // Set urls used in axios depending on collectionType

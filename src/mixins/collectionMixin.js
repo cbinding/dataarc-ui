@@ -1,3 +1,5 @@
+import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue'
+
 const methods = {
   getSource(path, key) {
     return axios.get(`${this.$baseUrl}/${path}`).then((response) => {
@@ -32,6 +34,11 @@ const methods = {
       data.title = val.title
       data.description = val.description
       data.citation = val.citation
+      data.operator = val.operator
+      data.dataset = val.dataset
+      data.queries = val.queries
+      data.concepts = val.concepts
+      data.features = val.features
     } else if (val.type === 'Categories') {
       this.createUrl = `${this.$baseUrl}/categories`
       data.title = val.title
@@ -73,41 +80,52 @@ const methods = {
   limitFields() {
     // Keep basic fields for all forms
     this.schema.fields.forEach((field) => {
-      if (field.buttonText === 'Submit' || field.model === 'title' || field.model === 'description' || field.buttonText === 'Delete') {
+      if (field.buttonText === 'Delete') {
         // If adding a new **, hide Delete button
-        if (field.buttonText === 'Delete' && (this.action === 'Create')) {
+        if (this.action === 'Create') {
           field.visible = false
-        } else if (this.collectionType === 'Users' && (field.model === 'title' || field.model === 'description')) {
-          field.visible = false
-        } else {
-          return
         }
+        return
+      }
+      if (field.buttonText === 'Submit') {
+        return
       }
       // Limit fields depending on collectionType
       if (this.collectionType === 'Map Layers') {
-        if (field.model !== 'source') {
+        if (field.model !== 'source' && field.model !== 'title'
+        && field.model !== 'description') {
           field.visible = false
         }
       }
       if (this.collectionType === 'Combinators') {
-        if (field.model !== 'citation') {
+        if (field.model !== 'title'
+          && field.model !== 'description'
+          && field.model !== 'citation'
+          && field.model !== 'operator'
+          && field.model !== 'queries'
+          && field.model !== 'concepts'
+          && field.model !== 'dataset'
+          && field.model !== 'features'
+        ) {
           field.visible = false
         }
       }
       if (this.collectionType === 'Categories') {
-        if (field.model !== 'color') {
+        if (field.model !== 'color' && field.model !== 'title'
+        && field.model !== 'description') {
           field.visible = false
         }
       }
       if (this.collectionType === 'Datasets') {
-        if (
-          field.model !== 'citation'
-       && field.model !== 'link'
-       && field.model !== 'category'
-       && field.model !== 'combinators'
-       && field.model !== 'fields'
-       && field.model !== 'templates'
-       && field.model !== 'features'
+        if (field.model !== 'title'
+          && field.model !== 'description'
+          && field.model !== 'citation'
+          && field.model !== 'link'
+          && field.model !== 'category'
+          && field.model !== 'combinators'
+          && field.model !== 'fields'
+          && field.model !== 'templates'
+          && field.model !== 'features'
         ) {
           field.visible = false
         }
@@ -115,23 +133,68 @@ const methods = {
       if (this.collectionType === 'Users') {
         if (
           field.model !== 'username'
-       && field.model !== 'email'
-       && field.model !== 'password'
-       && field.model !== 'provider'
-       && field.model !== 'confirmed'
-       && field.model !== 'blocked'
-       && field.model !== 'role'
-       && field.model !== 'events'
+          && field.model !== 'email'
+          && field.model !== 'password'
+          && field.model !== 'provider'
+          && field.model !== 'confirmed'
+          && field.model !== 'blocked'
+          && field.model !== 'role'
+          && field.model !== 'events'
         ) {
           field.visible = false
         }
       }
     })
   },
-
+  updatePage(val) {
+    this.currentPage = val
+  },
+  updateLimit(val) {
+    this.perPage = val
+  },
+  deleteItem(id, type) {
+    this.$bvModal.hide('deleteConfirmation')
+    let vm = this
+    let url = ''
+    url = `${this.$baseUrl}/${type}/${id}`
+    axios
+    .delete(url)
+    .then((response) => {
+      // Handle success.
+      if(type == 'users'){
+        vm.getAllUsers()
+      }
+      else if(type == 'map-layers'){
+        vm.$asyncComputed.mapLayers.update()
+      }
+      else{
+        vm.$asyncComputed[type].update()
+      }
+    })
+    .catch((error) => {
+      // Handle error.
+    })
+  },
 }
 
 const asyncComputed = {
+  rows: {
+    get() {
+      if(this.component === 'MapLayers') {
+        return this.mapLayers.length
+      }
+      if(this.component === 'Users' && this.total > 0){
+        return this.total
+      }
+      return this[this.component.toLowerCase()].length
+    },
+    shouldUpdate() {
+      if(this.component === 'MapLayers') {
+        return (this.component && this.mapLayers)
+      }
+      return (this.component && (this.component === 'Users' || this[this.component.toLowerCase()]))
+    },
+  },
   mapLayers: {
     get() {
       // if (this._mapLayers && this._mapLayers.length > 0) {
@@ -147,7 +210,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Map Layers' || this.component === 'MapLayers')
+      return this.component === 'MapLayers'
     },
   },
   datasets: {
@@ -165,7 +228,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Datasets' || this.component === 'Datasets')
+      return (this.collectionType === 'Datasets' || this.collectionType === 'Combinators' || this.component === 'Datasets')
     },
   },
   events: {
@@ -188,10 +251,10 @@ const asyncComputed = {
   },
   combinators: {
     get() {
-      if (this._combinators && this._combinators.length > 0) {
-        return this._combinators
-      }
-      return this.getSource('combinators')
+      // if (this._combinators && this._combinators.length > 0) {
+      //   return this._combinators
+      // }
+      return this.getSource('combinators?_limit=200')
       .then((combinators) => {
         this._combinators = combinators
         if (this.schema) {
@@ -201,7 +264,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Combinators' || this.collectionType === 'Datasets' || this.component === 'Combinators')
+      return (this.collectionType === 'Datasets' || this.component === 'Combinators')
     },
   },
   categories: {
@@ -220,6 +283,42 @@ const asyncComputed = {
     },
     shouldUpdate() {
       return (this.collectionType === 'Datasets' || this.collectionType === 'Categories' || this.component === 'Categories')
+    },
+  },
+  queries: {
+    get() {
+      // if (this._queries && this._queries.length > 0) {
+      //   return this._queries
+      // }
+      return this.getSource('combinator-queries')
+      .then((queries) => {
+        this._queries = queries
+        if (this.schema) {
+          this.setFormField(this._queries, 'queries')
+        }
+        return this._queries
+      })
+    },
+    shouldUpdate() {
+      return (this.collectionType === 'Combinators' || this.collectionType === 'Queries' || this.component === 'Queries')
+    },
+  },
+  concepts: {
+    get() {
+      // if (this._concepts && this._concepts.length > 0) {
+      //   return this._concepts
+      // }
+      return this.getSource('concepts')
+      .then((concepts) => {
+        this._concepts = concepts
+        if (this.schema) {
+          this.setFormField(this._concepts, 'concepts')
+        }
+        return this._concepts
+      })
+    },
+    shouldUpdate() {
+      return (this.collectionType === 'Combinators' || this.collectionType === 'Concepts' || this.component === 'Concepts')
     },
   },
   fields: {
@@ -295,7 +394,22 @@ const asyncComputed = {
     },
   },
 }
+
+const data = function() {
+  return {
+    deleteModal: false,
+    itemToDelete: [],
+    currentPage: 1,
+    perPage: 10,
+    limits: [10, 20, 50, 100],
+  }
+}
+
 export default {
   methods,
   asyncComputed,
+  data,
+  components: {
+    TableViewLayout,
+  },
 };
