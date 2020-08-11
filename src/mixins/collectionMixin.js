@@ -1,4 +1,14 @@
+import { Combinators, MapLayers, Categories, Datasets, Users } from '../models'
 import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue'
+
+const Models = {
+  'Combinators': Combinators,
+  'MapLayers': MapLayers,
+  'Categories': Categories,
+  'Datasets': Datasets,
+  'Users': Users,
+}
+
 
 const methods = {
   getSource(path, key) {
@@ -20,65 +30,21 @@ const methods = {
     })
   },
   setFormData(val) {
-    const formData = new FormData()
-    const data = {}
-    if (val.type === 'Map Layers') {
-      this.createUrl = `${this.$baseUrl}/map-layers`
-      data.title = val.title
-      data.description = val.description
-      if (val.source && val.source.name) {
-        formData.append('files.file', val.source, val.source.name)
-      }
-    } else if (val.type === 'Combinators') {
-      this.createUrl = `${this.$baseUrl}/combinators`
-      data.title = val.title
-      data.description = val.description
-      data.citation = val.citation
-      data.operator = val.operator
-      data.dataset = val.dataset
-      data.queries = val.queries
-      data.concepts = val.concepts
-      data.features = val.features
-    } else if (val.type === 'Categories') {
-      this.createUrl = `${this.$baseUrl}/categories`
-      data.title = val.title
-      data.description = val.description
-      data.color = val.color
-    } else if (val.type === 'Datasets') {
-      this.createUrl = `${this.$baseUrl}/datasets`
-      data.title = val.title
-      data.description = val.description
-      data.citation = val.citation
-      data.link = val.link
-      if(val.category) {
-        const temp = this.categories.filter((category) => {
-          if (category.id === val.category) {
-            return category
-          }
-        })
-        data.category = temp[0].name
-      }
-      data.combinators = val.combinators
-      data.fields = val.fields
-      data.templates = val.templates
-      data.features = val.features
-    } else if (val.type === 'Users') {
-      this.createUrl = `${process.env.VUE_APP_STRAPI_API_URL}/auth/local/register`
-      data.username = val.username
-      data.email = val.email
-      data.provider = val.provider
-      data.password = val.password
-      data.role = val.role
-      data.events = val.events
+    const vm = this
+    const dataModel = new Models[val.type](val)
+    if (this.action === 'Create') {
+      dataModel._create().then((value) => {
+        this.$router.push(dataModel.routeUrl)
+      })
     }
-    formData.append('data', JSON.stringify(data))
-    if (val.type !== 'Users') {
-      return formData
+    else {
+      dataModel._update().then((value) => {
+        this.$router.push(dataModel.routeUrl)
+      })
     }
-    return data
   },
   limitFields() {
-    // Keep basic fields for all forms
+    const dataModel = Models[this.collectionType]
     this.schema.fields.forEach((field) => {
       if (field.buttonText === 'Delete') {
         // If adding a new **, hide Delete button
@@ -87,62 +53,12 @@ const methods = {
         }
         return
       }
+    // Always display submit
       if (field.buttonText === 'Submit') {
         return
       }
-      // Limit fields depending on collectionType
-      if (this.collectionType === 'Map Layers') {
-        if (field.model !== 'source' && field.model !== 'title'
-        && field.model !== 'description') {
-          field.visible = false
-        }
-      }
-      if (this.collectionType === 'Combinators') {
-        if (field.model !== 'title'
-          && field.model !== 'description'
-          && field.model !== 'citation'
-          && field.model !== 'operator'
-          && field.model !== 'queries'
-          && field.model !== 'concepts'
-          && field.model !== 'dataset'
-          && field.model !== 'features'
-        ) {
-          field.visible = false
-        }
-      }
-      if (this.collectionType === 'Categories') {
-        if (field.model !== 'color' && field.model !== 'title'
-        && field.model !== 'description') {
-          field.visible = false
-        }
-      }
-      if (this.collectionType === 'Datasets') {
-        if (field.model !== 'title'
-          && field.model !== 'description'
-          && field.model !== 'citation'
-          && field.model !== 'link'
-          && field.model !== 'category'
-          && field.model !== 'combinators'
-          && field.model !== 'fields'
-          && field.model !== 'templates'
-          && field.model !== 'features'
-        ) {
-          field.visible = false
-        }
-      }
-      if (this.collectionType === 'Users') {
-        if (
-          field.model !== 'username'
-          && field.model !== 'email'
-          && field.model !== 'password'
-          && field.model !== 'provider'
-          && field.model !== 'confirmed'
-          && field.model !== 'blocked'
-          && field.model !== 'role'
-          && field.model !== 'events'
-        ) {
-          field.visible = false
-        }
+      if (field.model) {
+        field.visible = dataModel.isAttributeFillable(field.model)
       }
     })
   },
@@ -152,27 +68,21 @@ const methods = {
   updateLimit(val) {
     this.perPage = val
   },
-  deleteItem(id, type) {
+  deleteItem(item, type) {
     this.$bvModal.hide('deleteConfirmation')
-    let vm = this
-    let url = ''
-    url = `${this.$baseUrl}/${type}/${id}`
-    axios
-    .delete(url)
-    .then((response) => {
-      // Handle success.
-      if(type == 'users'){
-        vm.getAllUsers()
+    const dataModel = new Models[item.type ? item.type : type](item)
+    dataModel._delete().then((value) => {
+      if (dataModel.routeUrl === this.$router.history.current.path) {
+        if (value === 'users') {
+          this.getAllUsers()
+        }
+        else {
+          this.$asyncComputed[value].update()
+        }
       }
-      else if(type == 'map-layers'){
-        vm.$asyncComputed.mapLayers.update()
+      else {
+        this.$router.push(dataModel.routeUrl)
       }
-      else{
-        vm.$asyncComputed[type].update()
-      }
-    })
-    .catch((error) => {
-      // Handle error.
     })
   },
 }
@@ -180,21 +90,22 @@ const methods = {
 const asyncComputed = {
   rows: {
     get() {
-      if(this.component === 'MapLayers') {
+      if (this.component === 'MapLayers') {
         return this.mapLayers.length
       }
-      if(this.component === 'Users' && this.total > 0){
+      if (this.component === 'Users' && this.total > 0) {
         return this.total
       }
       return this[this.component.toLowerCase()].length
     },
     shouldUpdate() {
-      if(this.component === 'MapLayers') {
+      if (this.component === 'MapLayers') {
         return (this.component && this.mapLayers)
       }
       return (this.component && (this.component === 'Users' || this[this.component.toLowerCase()]))
     },
   },
+// Keeping _***** values to get cache working later on possibly
   mapLayers: {
     get() {
       // if (this._mapLayers && this._mapLayers.length > 0) {
@@ -210,7 +121,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return this.component === 'MapLayers'
+      return (this.component === 'MapLayers')
     },
   },
   datasets: {
@@ -228,7 +139,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Datasets' || this.collectionType === 'Combinators' || this.component === 'Datasets')
+      return (this.collectionType === 'Combinators' || this.component === 'Datasets')
     },
   },
   events: {
@@ -275,14 +186,14 @@ const asyncComputed = {
       return this.getSource('categories')
       .then((categories) => {
         this._categories = categories
-        if (this.schema) {
+        if (this.schema && this.component !== 'Categories') {
           this.setFormField(this._categories, 'category')
         }
         return this._categories
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Datasets' || this.collectionType === 'Categories' || this.component === 'Categories')
+      return (this.collectionType === 'Datasets' || this.component === 'Categories')
     },
   },
   queries: {
@@ -300,7 +211,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Combinators' || this.collectionType === 'Queries' || this.component === 'Queries')
+      return (this.collectionType === 'Combinators' || this.component === 'Queries')
     },
   },
   concepts: {
@@ -390,7 +301,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Users' || this.component === 'Users')
+      return (this.collectionType === 'Users')
     },
   },
 }

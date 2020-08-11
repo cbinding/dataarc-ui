@@ -1,5 +1,5 @@
 <template>
-  <table-view-layout :rows.sync="rows" :component="component" :limits="limits" :currentPage.sync="currentPage" :perPage.sync="perPage" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'combinators')" @limitUpdated="updateLimit">
+  <table-view-layout :rows.sync="rows" :component="component" :limits="limits" :currentPage.sync="currentPage" :perPage.sync="perPage" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'Combinators')" @limitUpdated="updateLimit">
     <template v-slot:button>
       <b-button variant="primary" :to="{name: 'createCombinator', params: {action:'Create', collectionType: 'Combinators'} }"><b-icon-plus></b-icon-plus>Add new Combinator</b-button>
     </template>
@@ -19,7 +19,7 @@
           <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'editCombinator', params: {id: row.item.id, item: row.item, action:'Update', collectionType: 'Combinators'} }">
             <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
           </b-link>
-          <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item.id">
+          <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item">
             <b-icon-trash></b-icon-trash>
           </b-link>
         </template>

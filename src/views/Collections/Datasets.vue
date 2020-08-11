@@ -1,5 +1,5 @@
 <template>
-  <table-view-layout :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'datasets')" @limitUpdated="updateLimit">
+  <table-view-layout :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'Datasets')" @limitUpdated="updateLimit">
     <template v-slot:button>
       <b-button variant="primary" :to="{name: 'createDataset', params: {action:'Create', collectionType: 'Datasets'} }"><b-icon-plus></b-icon-plus>Add new Dataset</b-button>
     </template>
@@ -14,7 +14,7 @@
           <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'editDataset', params: {id: row.item.id, item: row.item, action:'Update', collectionType: 'Datasets'} }">
             <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
           </b-link>
-          <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item.id">
+          <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item">
             <b-icon-trash></b-icon-trash>
           </b-link>
         </template>
