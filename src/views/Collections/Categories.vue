@@ -1,5 +1,5 @@
 <template>
-  <table-view-layout :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @change="updatePage" @deleteConfirmed="deleteCategory(itemToDelete)" @limitUpdated="updateLimit">
+  <table-view-layout :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'Categories')" @limitUpdated="updateLimit">
     <template v-slot:button>
       <b-button variant="primary" :to="{name: 'createCategory', params: {action:'Create', collectionType: 'Categories'} }"><b-icon-plus></b-icon-plus>Add new Category</b-button>
     </template>
@@ -18,7 +18,7 @@
           <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'editCategory', params: {id: row.item.id, item: row.item, action:'Update', collectionType: 'Categories'} }">
             <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
           </b-link>
-          <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item.id">
+          <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item">
             <b-icon-trash></b-icon-trash>
           </b-link>
         </template>
@@ -44,23 +44,6 @@ export default {
   watch: {
     $route(to, from) {
       this.$asyncComputed.categories.update()
-    }
-  },
-  methods: {
-    deleteCategory(id) {
-      this.$bvModal.hide('deleteConfirmation')
-      let vm = this
-      let url = ''
-      url = `${this.$baseUrl}/categories/${id}`
-      axios
-      .delete(url)
-      .then((response) => {
-        // Handle success.
-        vm.$asyncComputed.categories.update()
-      })
-      .catch((error) => {
-        // Handle error.
-      })
     },
   },
 }

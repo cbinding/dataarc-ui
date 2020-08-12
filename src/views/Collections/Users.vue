@@ -1,5 +1,5 @@
 <template>
-  <table-view-layout :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'users')" @limitUpdated="updateLimit">
+  <table-view-layout :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'Users')" @limitUpdated="updateLimit">
     <template v-slot:button>
       <b-button variant="primary" :to="{name: 'createUser', params: {action:'Create', collectionType: 'Users'} }"><b-icon-plus></b-icon-plus>Add new User</b-button>
     </template>
@@ -9,7 +9,7 @@
           <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'editUser', params: {id: row.item.id, item: row.item, action:'Update', collectionType: 'Users'} }">
             <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
           </b-link>
-          <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item.id">
+          <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item">
             <b-icon-trash></b-icon-trash>
           </b-link>
         </template>
@@ -45,7 +45,7 @@ export default {
       this.getAllUsers()
     },
     users(val) {
-      if(val.items){
+      if (val.items) {
         this.total = val.items.length
       }
     }

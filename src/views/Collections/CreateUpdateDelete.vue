@@ -182,6 +182,10 @@ export default {
             label: 'Category',
             model: 'category',
             visible: true,
+            selectOptions: {
+              value: 'id',
+              name: 'name',
+            },
           },
           {
             type: 'select',
@@ -426,12 +430,19 @@ export default {
         validateAfterLoad: true,
         validateAfterChanged: true,
       },
-      types: ['Datasets', 'Combinators', 'Map Layers', 'Categories'],
+      types: ['Datasets', 'Combinators', 'MapLayers', 'Categories'],
       createUrl: '',
       editUrl: '',
       routeUrl: '',
       errors: [],
     }
+  },
+  computed: {
+    ...mapState('account', ['status'],
+      { account: state => state.account,
+        users: state => state.users.all,
+        user: state => state.users.user,
+      }),
   },
   watch: {
     categories: function (val) {
@@ -459,13 +470,6 @@ export default {
   created() {
     this.setData()
   },
-  computed: {
-    ...mapState('account', ['status'],
-      { account: state => state.account,
-        users: state => state.users.all,
-        user: state => state.users.user,
-      }),
-  },
   methods: {
     ...mapActions('account', ['addNewUser'], 'users', {
       getAllUsers: 'getAll',
@@ -477,7 +481,6 @@ export default {
       // If editing, place old data into model
       if (this.item) {
         this.model = this.item
-        this.model.source = null
         if(this.model.category) {
           let temp = this.model.category.id
           this.model.category = temp
@@ -486,107 +489,20 @@ export default {
           let temp = this.model.dataset.id
           this.model.dataset = temp
         }
+        if(this.model.role) {
+          let temp = this.model.role.id
+          this.model.role = temp
+        }
       }
-      // Set urls used in axios depending on collectionType
-      this.setUrl()
-
       this.model.type = this.collectionType
       this.model.action = this.action
       this.limitFields()
-
     },
-    setUrl() {
-      if (this.collectionType === 'Map Layers') {
-        if (this.item) {
-          this.editUrl = `${this.$baseUrl}/map-layers/${this.item.id}`
-        }
-        this.routeUrl = '/contributor/maplayers'
-      } else if (this.collectionType === 'Combinators') {
-        if (this.item) {
-          this.editUrl = `${this.$baseUrl}/combinators/${this.item.id}`
-        }
-        this.routeUrl = '/contributor/combinators'
-      } else if (this.collectionType === 'Categories') {
-        if (this.item) {
-          this.editUrl = `${this.$baseUrl}/categories/${this.item.id}`
-        }
-        this.routeUrl = '/contributor/categories'
-      } else if (this.collectionType === 'Datasets') {
-        if (this.item) {
-          this.editUrl = `${this.$baseUrl}/datasets/${this.item.id}`
-        }
-        this.routeUrl = '/contributor/datasets'
-      } else if (this.collectionType === 'Users') {
-        if (this.item) {
-          this.editUrl = `${process.env.VUE_APP_STRAPI_API_URL}/users/${this.item.id}`
-        }
-        this.routeUrl = '/admin/users'
-      }
-    },
-
-    deleteItem() {
-      const vm = this
-      axios
-      .delete(this.editUrl)
-      .then((response) => {
-        // Handle success.
-        this.$router.push(this.routeUrl)
-      })
-      .catch((error) => {
-        // Handle error.
-      })
-    },
-    validEmail(email) {
-      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      return re.test(email)
+    _delete() {
+      this.deleteItem(this.model, this.model.type)
     },
     update(val) {
-      const vm = this
-      this.errors = []
-      if (val.type === 'Users') {
-        if (!val.username) {
-          this.errors.push('Username required.')
-        }
-        if (!val.email) {
-          this.errors.push('Email required.')
-        } else if (!this.validEmail(val.email)) {
-          this.errors.push('Valid email required.')
-        }
-        if (!val.password) {
-          this.errors.push('Password required.')
-        }
-      }
-
-      const formData = this.setFormData(val)
-
-      if (this.action === 'Update' && !this.errors.length) {
-        axios
-        .put(vm.editUrl, formData)
-        .then((response) => {
-          // Handle success.
-          vm.$emit('submit')
-          vm.$router.push(vm.routeUrl)
-        })
-        .catch((error) => {
-          // Handle error.
-        })
-      } else if (val.type === 'Users') {
-        if (!this.errors.length) {
-          this.addNewUser(formData)
-        }
-      } else {
-        axios
-        .post(vm.createUrl, formData)
-        .then((response) => {
-          // Handle success.
-          vm.$emit('submit')
-          vm.$router.push(vm.routeUrl)
-        })
-        .catch((error) => {
-          // Handle error.
-          console.log('error')
-        })
-      }
+      this.setFormData(val)
     },
   },
 }

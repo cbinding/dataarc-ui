@@ -86,7 +86,7 @@ const routes = [
     children: [
       {
         path: 'maplayers',
-        name: 'Map Layers',
+        name: 'MapLayers',
         component: () => import('@/views/Collections/MapLayers.vue'),
         props: true,
         children:[
