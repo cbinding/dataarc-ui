@@ -102,6 +102,7 @@ export default {
       renderSummary: false,
       sort: 'Path',
       sortList: ['Path', 'Type'],
+      randomFeature: {},
     }
   },
   methods: {
@@ -128,10 +129,17 @@ export default {
       this.setFormData(this.form)
     },
     toggleDetails() {
+      const randomInt = this.getRandomInt(this.form.features.length)
+      this.randomFeature = this.form.features[randomInt]
       this.renderDetails = !this.renderDetails
     },
     toggleSummary() {
+      const randomInt = this.getRandomInt(this.form.features.length)
+      this.randomFeature = this.form.features[randomInt]
       this.renderSummary = !this.renderSummary
+    },
+    getRandomInt(max) {
+      return Math.floor(Math.random() * Math.floor(max));
     },
   },
   mixins: [collectionMixin],

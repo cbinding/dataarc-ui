@@ -36,6 +36,18 @@ const apollo = {
           title
           type
         }
+        features{
+          title
+          properties
+          summary
+          details
+          link
+          url
+          start_date
+          end_date
+          text_date
+          keywords
+        }
       }
     }`,
     // Reactive parameters
