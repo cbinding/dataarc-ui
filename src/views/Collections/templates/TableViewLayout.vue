@@ -1,8 +1,7 @@
 <template>
   <b-container fluid>
-    <router-view/>
     <h3>{{component}}</h3>
-    <small>{{rows}} entries found</small>
+    <small>{{rows ? rows : 0 }} entries found</small>
     <div class="d-flex justify-content-end">
       <slot name="button"/>
     </div>
@@ -11,7 +10,7 @@
       v-model="currentPage"
       @change="notify"
       :total-rows="rows"
-      :per-page="perPage"
+      :per-page="(perPage === 0 ? 10 : perPage)"
       :limit="4"
       first-number
       last-number
@@ -22,7 +21,7 @@
         Delete Confirmation
       </template>
       <p class="my-2">
-        Are you sure you want to delete this combinator?
+        Are you sure you want to delete this {{ component }}?
       </p>
       <template v-slot:modal-footer="{ ok, cancel }">
         <b-button size="sm" @click="cancel()">

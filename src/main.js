@@ -17,7 +17,6 @@ import store from '@/store'
 import Multiselect from 'vue-multiselect'
 
 // Plugins
-// import MultiSelect from 'vue-multiselect'
 import VueFormGenerator from 'vue-form-generator'
 import MyPlugin from './plugins/my-plugin'
 import AsyncComputed from 'vue-async-computed'
@@ -31,11 +30,6 @@ Vue.use(BootstrapVueIcons)
 Vue.use(VueApollo)
 Vue.component('multiselect', Multiselect)
 Vue.use(AsyncComputed)
-
-
-// Vue.component('field-MultiSelect', require('vue-multiselect').default)
-
-// Vue.component('field-MultiSelect', require('vue-multiselect').default)
 
 // Apply plugins
 Vue.use(VueFormGenerator)

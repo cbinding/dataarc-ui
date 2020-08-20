@@ -23,6 +23,7 @@
           class="nav-item"
         >
           <router-link
+            v-if="route.name !== 'Dataset View'"
             class="nav-link"
             active-class="active"
             :to="route.path"
