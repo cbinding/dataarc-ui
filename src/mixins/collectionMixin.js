@@ -12,23 +12,6 @@ const Models = {
 }
 
 const apollo = {
-  // datasets: {
-  //   query: gql`
-  //     query {
-  //       datasets {
-  //         id
-  //         name
-  //         title
-  //         description
-  //         citation
-  //         processing
-  //         processedAt
-  //       }
-  //     }
-  //   `,
-  //   skip: true,
-  //   ssr: false,
-  // },
   dataset: {
     query: gql`query dataset($id: ID!) {
       dataset(id: $id) {
