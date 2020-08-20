@@ -4,7 +4,9 @@
     <b-container>
       <div class="panel panel-default">
         <div class="panel-heading">
-          {{ action }}
+          {{ model.action }} {{ model.title}}
+          <br>
+
         </div>
         <div class="panel-body">
           <p v-if="errors.length">
@@ -29,14 +31,10 @@ import collectionMixin from '../../mixins/collectionMixin'
 import userService from '../../api/user.service'
 import { mapState, mapActions } from 'vuex'
 export default {
-  props: [
-    'item',
-    'action',
-    'collectionType',
-  ],
   mixins: [collectionMixin],
   data() {
     return {
+      item: {},
       model: {
         type: '',
         action: '',
@@ -44,8 +42,8 @@ export default {
         description: '',
         citation: '',
         link: '',
-        image: {},
-        source: {},
+        image: null,
+        source: null,
         user: {},
         category: '',
         username: '',
@@ -258,7 +256,7 @@ export default {
             multiSelect: true,
             label: 'Datasets',
             model: 'datasets',
-            values: this.datasets ? this.datasets : ['1', '2'],
+            values: this.datasetList ? this.datasetList : ['1', '2'],
             visible: true,
             selectOptions: {
               key: 'name',
@@ -360,39 +358,13 @@ export default {
           {
             type: 'vueMultiSelect',
             multiSelect: true,
-            label: 'Templates',
-            model: 'templates',
-            values: this.templates ? this.templates : ['1', '2'],
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              trackBy: 'id',
-              tagPlaceholder: 'tagPlaceholder',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
             label: 'Features',
             model: 'features',
             values: this.features ? this.features : [],
             visible: true,
             selectOptions: {
-              key: 'title',
-              label: 'title',
+              key: 'properties.name',
+              label: 'properties.name',
               multiple: true,
               searchable: true,
               clearOnSelect: true,
@@ -414,7 +386,6 @@ export default {
             buttonText: 'Submit',
             inputType: 'submit',
             visible: true,
-            // validateBeforeSubmit: true,
             onSubmit: this.update,
           },
           {
@@ -435,6 +406,8 @@ export default {
       editUrl: '',
       routeUrl: '',
       errors: [],
+      action: '',
+      collectionType: '',
     }
   },
   computed: {
@@ -452,12 +425,14 @@ export default {
         }
       })
     },
-    datasets: function (val) {
-      this.schema.fields.filter((field) => {
-        if (field.model && field.model === 'dataset') {
-          field.values = val
-        }
+    datasetList: function (val) {
+      if(val) {
+        this.schema.fields.filter((field) => {
+          if (field.model && field.model === 'dataset') {
+            field.values = val
+          }
       })
+      }
     },
     roles: function (val) {
       this.schema.fields.filter((field) => {
@@ -465,9 +440,9 @@ export default {
           field.values = val
         }
       })
-    }
+    },
   },
-  created() {
+  mounted() {
     this.setData()
   },
   methods: {
@@ -477,31 +452,44 @@ export default {
       deleteUser: 'delete',
     }),
     setData() {
-      const vm = this
-      // If editing, place old data into model
-      if (this.item) {
-        this.model = this.item
-        if(this.model.category) {
-          let temp = this.model.category.id
-          this.model.category = temp
-        }
-        if(this.model.dataset) {
-          let temp = this.model.dataset.id
-          this.model.dataset = temp
-        }
-        if(this.model.role) {
-          let temp = this.model.role.id
-          this.model.role = temp
-        }
+      const variables = this.$route.name.split(' ')
+      const pathArray = this.$route.path.split('/')
+      this.action = variables[0]
+      this.collectionType = (variables[1] !== 'Category' ? `${variables[1]}s` : 'Categories')
+
+      if (this.action === 'Update' && this.collectionType !== 'Datasets') {
+        this.editUrl = `${pathArray[2]}/${this.$route.params.id}`
+        const vm = this
+        this.getSingle(this.editUrl).then((value) => {
+          vm.item = value.data
+          vm.model = vm.item
+          vm.model.image = null
+          vm.model.source = null
+          if (vm.model.category) {
+            let temp = vm.model.category.id
+            vm.model.category = temp
+          }
+          if (vm.model.dataset) {
+            let temp = vm.model.dataset.id
+            vm.model.dataset = temp
+          }
+          if (vm.model.role) {
+            let temp = vm.model.role.id
+            vm.model.role = temp
+          }
+          vm.model.type = vm.collectionType
+          vm.model.action = vm.action
+        })
       }
+
       this.model.type = this.collectionType
       this.model.action = this.action
+
       this.limitFields()
     },
-    _delete() {
-      this.deleteItem(this.model, this.model.type)
-    },
     update(val) {
+      val.type = this.model.type
+      val.action = this.model.action
       this.setFormData(val)
     },
   },

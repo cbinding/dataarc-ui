@@ -13,7 +13,7 @@
       >DataARC</a>
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center ml-auto ml-lg-0">
-      <b-navbar-nav class="header-links d-none d-md-flex">
+      <b-navbar-nav class="header-links d-none d-md-flex" v-if="role.name === 'Administrator'">
         <b-nav-item
           v-for="route in compileRoutes"
           :key="route.name"

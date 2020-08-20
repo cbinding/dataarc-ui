@@ -6,7 +6,7 @@ class Categories {
     this.color = data.color
     this.createUrl = `${process.env.VUE_APP_STRAPI_API_URL}/categories`
     this.editUrl = `${process.env.VUE_APP_STRAPI_API_URL}/categories/${this.id}`
-    this.routeUrl = '/contributor/categories'
+    this.routeUrl = '/admin/categories'
   }
 
   _create = async () => {

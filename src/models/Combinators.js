@@ -9,7 +9,6 @@ class Combinators {
     this.dataset = data.dataset
     this.queries = data.queries
     this.concepts = data.concepts
-    this.features = data.features
     this.createUrl = `${process.env.VUE_APP_STRAPI_API_URL}/combinators`
     this.editUrl = `${process.env.VUE_APP_STRAPI_API_URL}/combinators/${this.id}`
     this.routeUrl = '/contributor/combinators'
@@ -41,7 +40,6 @@ class Combinators {
       console.log(err)
     }
   }
-
 }
 
 // statics
@@ -53,8 +51,7 @@ Combinators.fillable = [
   'operator',
   'queries',
   'concepts',
-  'dataset',
-  'features']
+  'dataset']
 
 Combinators.isAttributeFillable = function (attr) {
  return (Combinators.fillable.indexOf(attr) > -1);

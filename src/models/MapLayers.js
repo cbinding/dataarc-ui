@@ -6,7 +6,7 @@ class MapLayers {
     this.description = data.description
     this.createUrl = `${process.env.VUE_APP_STRAPI_API_URL}/map-layers`
     this.editUrl = `${process.env.VUE_APP_STRAPI_API_URL}/map-layers/${this.id}`
-    this.routeUrl = '/contributor/maplayers'
+    this.routeUrl = '/admin/map-layers'
   }
 
   _create = async () => {

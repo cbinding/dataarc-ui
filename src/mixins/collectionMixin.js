@@ -1,4 +1,5 @@
-import { Combinators, MapLayers, Categories, Datasets, Users } from '../models'
+import gql from 'graphql-tag'
+import { Combinators, MapLayers, Categories, Datasets, Users, DatasetFields } from '../models'
 import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue'
 
 const Models = {
@@ -7,10 +8,117 @@ const Models = {
   'Categories': Categories,
   'Datasets': Datasets,
   'Users': Users,
+  'DatasetFields': DatasetFields,
 }
 
+const apollo = {
+  // datasets: {
+  //   query: gql`
+  //     query {
+  //       datasets {
+  //         id
+  //         name
+  //         title
+  //         description
+  //         citation
+  //         processing
+  //         processedAt
+  //       }
+  //     }
+  //   `,
+  //   skip: true,
+  //   ssr: false,
+  // },
+  dataset: {
+    query: gql`query dataset($id: ID!) {
+      dataset(id: $id) {
+        id
+        name
+        title
+        description
+        citation
+        link
+        category{
+          id
+          name
+          title
+        }
+        title_layout
+        link_layout
+        details_layout
+        summary_layout
+        fields{
+          id
+          name
+          title
+          type
+        }
+      }
+    }`,
+    // Reactive parameters
+    variables() {
+      // Use vue reactive properties here
+      return {
+        id: this.currentId,
+      }
+    },
+    skip: (this ? (this.currentDataset || !this.currentId) : true),
+    ssr: false,
+    // Variables: deep object watch
+    deep: false,
+    // We use a custom update callback because
+    // the field names don't match
+    // By default, the 'currentDataset' attribute
+    // would be used on the 'data' result object
+    // Here we know the result is in the 'id' attribute
+    // considering the way the apollo server works
+    update(data) {
+      // The returned value will update
+      // the vue property 'currentDataset'
+      return data.id
+    },
+    // Optional result hook
+    result({ data, loading, networkStatus }) {
+      if (data && data.dataset) {
+        this.currentDataset = data.dataset
+        this.fieldsCount = this.currentDataset.fields.length
+      }
+    },
+    // Error handling
+    error(error) {
+      console.error('We\'ve got an error!', error)
+    },
+    // Loading state
+    // loadingKey is the name of the data property
+    // that will be incremented when the query is loading
+    // and decremented when it no longer is.
+    loadingKey: 'loadingQueriesCount',
+    // watchLoading will be called whenever the loading state changes
+    watchLoading (isLoading, countModifier) {
+      // isLoading is a boolean
+      // countModifier is either 1 or -1
+    },
+  },
+}
 
 const methods = {
+  async process(val) {
+    this.currentId = val.id
+    val.processing = true
+    const resp = await axios.get(`${this.$baseUrl}/datasets/${val.id}/process`)
+    if (resp) {
+      val.processing = false
+      this.$apollo.queries.datasets.refetch()
+    }
+  },
+  async getSingle(path) {
+    try {
+      const temp = await axios.get(`${this.$baseUrl}/${path}`)
+      return temp
+    } catch (err) {
+      console.log(err)
+    }
+  },
   getSource(path, key) {
     return axios.get(`${this.$baseUrl}/${path}`).then((response) => {
       if (key) {
@@ -30,25 +138,32 @@ const methods = {
     })
   },
   setFormData(val) {
-    const vm = this
     const dataModel = new Models[val.type](val)
-    if (this.action === 'Create') {
+    if (val.action === 'Create') {
       dataModel._create().then((value) => {
         this.$router.push(dataModel.routeUrl)
       })
     }
     else {
       dataModel._update().then((value) => {
-        this.$router.push(dataModel.routeUrl)
+        if (val.type === 'DatasetFields') {
+          return
+        }
+        else if(val.goBack) {
+          this.$router.go(-1)
+        }
+        else {
+          this.$router.push(dataModel.routeUrl)
+        }
       })
     }
   },
   limitFields() {
-    const dataModel = Models[this.collectionType]
+    const dataModel = Models[this.model.type]
     this.schema.fields.forEach((field) => {
       if (field.buttonText === 'Delete') {
         // If adding a new **, hide Delete button
-        if (this.action === 'Create') {
+        if (this.model.action === 'Create') {
           field.visible = false
         }
         return
@@ -124,15 +239,15 @@ const asyncComputed = {
       return (this.component === 'MapLayers')
     },
   },
-  datasets: {
+  datasetList: {
     get() {
-      // if (this._datasets && this._datasets.length > 0) {
-      //   return this._datasets
-      // }
+      if (this._datasets && this._datasets.length > 0) {
+        return this._datasets
+      }
       return this.getSource('datasets')
       .then((datasets) => {
         this._datasets = datasets
-        if (this.schema) {
+        if (this.schema && this.collectionType === 'Combinators') {
           this.setFormField(this._datasets, 'datasets')
         }
         return this._datasets
@@ -175,7 +290,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Datasets' || this.component === 'Combinators')
+      return this.component === 'Combinators'
     },
   },
   categories: {
@@ -193,7 +308,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Datasets' || this.component === 'Categories')
+      return (this.collectionType === 'Datasets' || this.component === 'Categories' || this.component === 'Dataset View')
     },
   },
   queries: {
@@ -232,60 +347,6 @@ const asyncComputed = {
       return (this.collectionType === 'Combinators' || this.collectionType === 'Concepts' || this.component === 'Concepts')
     },
   },
-  fields: {
-    get() {
-      if (this._fields && this._fields.length > 0) {
-        return this._fields
-      }
-      return this.getSource('dataset-fields')
-      .then((fields) => {
-        this._fields = fields
-        if (this.schema) {
-          this.setFormField(this._fields, 'fields')
-        }
-        return this._fields
-      })
-    },
-    shouldUpdate() {
-      return (this.collectionType === 'Fields' || this.collectionType === 'Datasets' || this.component === 'Fields')
-    },
-  },
-  templates: {
-    get() {
-      if (this._templates && this._templates.length > 0) {
-        return this._templates
-      }
-      return this.getSource('dataset-templates')
-      .then((templates) => {
-        this._templates = templates
-        if (this.schema) {
-          this.setFormField(this._templates, 'templates')
-        }
-        return this._templates
-      })
-    },
-    shouldUpdate() {
-      return (this.collectionType === 'Templates' || this.collectionType === 'Datasets' || this.component === 'Templates')
-    },
-  },
-  features: {
-    get() {
-      if (this._features && this._features.length > 0) {
-        return this._features
-      }
-      return this.getSource('dataset-features')
-      .then((features) => {
-        this._features = features
-        if (this.schema && features.length > 0) {
-          this.setFormField(this._features, 'features')
-        }
-        return this._features
-      })
-    },
-    shouldUpdate() {
-      return (this.collectionType === 'Features' || this.collectionType === 'Datasets' || this.component === 'Features')
-    },
-  },
   roles: {
     get() {
       if (this._roles && this._roles.length > 0) {
@@ -313,10 +374,14 @@ const data = function() {
     currentPage: 1,
     perPage: 10,
     limits: [10, 20, 50, 100],
+    currentId: '',
+    datasets: [],
+    currentDataset: {},
   }
 }
 
 export default {
+  apollo,
   methods,
   asyncComputed,
   data,

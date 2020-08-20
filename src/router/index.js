@@ -58,7 +58,7 @@ const routes = [
     component: dashboardLayout,
     children: [
       {
-        path: '',
+        path: 'home',
         name: 'Dashboard',
         component: () => import('@/views/Home.vue'),
       },
@@ -85,46 +85,6 @@ const routes = [
     component: dashboardLayout,
     children: [
       {
-        path: 'maplayers',
-        name: 'MapLayers',
-        component: () => import('@/views/Collections/MapLayers.vue'),
-        props: true,
-        children:[
-          {
-            path: 'create',
-            name: 'createMapLayer',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-          {
-            path: 'edit/:id',
-            name: 'editMapLayer',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ]
-      },
-      {
-        path: 'categories',
-        name: 'Categories',
-        component: () => import('@/views/Collections/Categories.vue'),
-        props: true,
-        children:[
-          {
-            path: 'create',
-            name: 'createCategory',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-          {
-            path: 'edit/:id',
-            name: 'editCategory',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ]
-      },
-      {
         path: 'datasets',
         name: 'Datasets',
         component: () => import('@/views/Collections/Datasets.vue'),
@@ -132,17 +92,12 @@ const routes = [
         children:[
           {
             path: 'create',
-            name: 'createDataset',
+            name: 'Create Dataset',
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
-          {
-            path: 'edit/:id',
-            name: 'editDataset',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ]
+
+        ],
       },
       {
         path: 'combinators',
@@ -152,17 +107,31 @@ const routes = [
         children:[
           {
             path: 'create',
-            name: 'createCombinator',
+            name: 'Create Combinator',
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
           {
-            path: 'edit/:id',
-            name: 'editCombinator',
+            path: 'update/:id',
+            name: 'Update Combinator',
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
         ]
+      },
+      {
+        path: 'dataset/:id',
+        name: 'Dataset View',
+        component: () => import('@/views/Collections/DatasetView.vue'),
+        props: true,
+        children:[
+          {
+            path: 'template',
+            name: 'Update Templates',
+            component: () => import('@/views/Collections/DatasetTemplates.vue'),
+            props: true,
+          },
+        ],
       },
     ],
     meta: {
@@ -183,13 +152,13 @@ const routes = [
         children: [
           {
             path: 'create',
-            name: 'createUser',
+            name: 'Create User',
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
           {
-            path: 'edit/:id',
-            name: 'editUser',
+            path: 'update/:id',
+            name: 'Update User',
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
@@ -204,6 +173,46 @@ const routes = [
         path: 'roles',
         name: 'Roles',
         component: () => import('@/views/Pug.vue'),
+      },
+      {
+        path: 'map-layers',
+        name: 'MapLayers',
+        component: () => import('@/views/Collections/MapLayers.vue'),
+        props: true,
+        children:[
+          {
+            path: 'create',
+            name: 'Create MapLayer',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+          {
+            path: 'update/:id',
+            name: 'Update MapLayer',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+        ]
+      },
+      {
+        path: 'categories',
+        name: 'Categories',
+        component: () => import('@/views/Collections/Categories.vue'),
+        props: true,
+        children:[
+          {
+            path: 'create',
+            name: 'Create Category',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+          {
+            path: 'update/:id',
+            name: 'Update Category',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+        ]
       },
     ],
     meta: {
