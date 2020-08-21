@@ -70,7 +70,7 @@ export default {
   },
   created() {
     // reset the login status when you reach the login page
-    this.logout()
+    // this.logout()
   },
   methods: {
     ...mapActions('account', ['login', 'logout']),

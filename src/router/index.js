@@ -228,17 +228,14 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.name === 'home') return next('/login')
+  if (to.name === 'home' && !user) return next('/login')
+  if (to.name === 'home' && user) return next('/basic/home')
 
   const authRequired = to.matched.some((record) => record.meta.auth)
   // const rawUser = Cookies.get('user')
   // const loggedIn = rawUser ? JSON.parse(Cookies.get('user')) : null
 
   if (!authRequired) return next()
-
-  if (to.name === 'login' && user) {
-    return next('/basic/home')
-  }
 
   if (authRequired && !user) {
     rawUser = Cookies.get('user')

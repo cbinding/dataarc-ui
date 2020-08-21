@@ -58,10 +58,10 @@ function getAll() {
 function getById(id) {
   const requestOptions = {
     method: 'GET',
-    headers: authHeader()
-  };
+    headers: authHeader(),
+  }
 
-  return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/users/${id}`, requestOptions).then(handleResponse);
+  return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/users/${id}`, requestOptions).then(handleResponse)
 }
 
 
@@ -69,10 +69,10 @@ function getById(id) {
 function _delete(id) {
   const requestOptions = {
     method: 'DELETE',
-    headers: authHeader()
-  };
+    headers: authHeader(),
+  }
 
-  return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/users/${id}`, requestOptions).then(handleResponse);
+  return fetch(`${process.env.VUE_APP_STRAPI_API_URL}/users/${id}`, requestOptions).then(handleResponse)
 }
 
 function handleResponse(response) {
