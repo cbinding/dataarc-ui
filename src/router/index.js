@@ -169,7 +169,7 @@ const routes = [
       {
         path: 'roles',
         name: 'Roles',
-        component: () => import('@/views/Pug.vue'),
+        component: () => import('@/views/Collections/Roles.vue'),
         children: [
           {
             path: 'update/:id',
