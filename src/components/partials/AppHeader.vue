@@ -13,11 +13,14 @@
       >DataARC</a>
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center ml-auto ml-lg-0">
-      <b-navbar-nav class="header-links d-none d-md-flex" v-if="role.name === 'Administrator'">
+      <b-navbar-nav
+        v-if="role.name === 'Administrator'"
+        class="header-links d-none d-md-flex"
+      >
         <b-nav-item
           v-for="route in compileRoutes"
           :key="route.name"
-          :href="route.path"
+          :to="route.path"
         >
           <i class="mdi mdi-image-filter" />{{ route.name }}
         </b-nav-item>
