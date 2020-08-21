@@ -6,7 +6,6 @@ import defaultLayout from '@/layouts/Default.vue'
 import dashboardLayout from '@/layouts/Dashboard.vue'
 import axios from 'axios'
 import roles from './roles'
-import { multiselectMixin } from 'vue-multiselect'
 Vue.use(VueRouter)
 
 const token = Cookies.get('jwt')
@@ -89,7 +88,7 @@ const routes = [
         name: 'Datasets',
         component: () => import('@/views/Collections/Datasets.vue'),
         props: true,
-        children:[
+        children: [
           {
             path: 'create',
             name: 'Create Dataset',
@@ -104,7 +103,7 @@ const routes = [
         name: 'Combinators',
         component: () => import('@/views/Collections/Combinators.vue'),
         props: true,
-        children:[
+        children: [
           {
             path: 'create',
             name: 'Create Combinator',
@@ -117,14 +116,14 @@ const routes = [
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
-        ]
+        ],
       },
       {
         path: 'dataset/:id',
         name: 'Dataset View',
         component: () => import('@/views/Collections/DatasetView.vue'),
         props: true,
-        children:[
+        children: [
           {
             path: 'template',
             name: 'Update Templates',
@@ -162,7 +161,7 @@ const routes = [
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
-        ]
+        ],
       },
       {
         path: 'about',
@@ -179,7 +178,7 @@ const routes = [
         name: 'MapLayers',
         component: () => import('@/views/Collections/MapLayers.vue'),
         props: true,
-        children:[
+        children: [
           {
             path: 'create',
             name: 'Create MapLayer',
@@ -192,14 +191,14 @@ const routes = [
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
-        ]
+        ],
       },
       {
         path: 'categories',
         name: 'Categories',
         component: () => import('@/views/Collections/Categories.vue'),
         props: true,
-        children:[
+        children: [
           {
             path: 'create',
             name: 'Create Category',
@@ -212,7 +211,7 @@ const routes = [
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
-        ]
+        ],
       },
     ],
     meta: {
@@ -229,6 +228,9 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  if (to.name === 'home' && !user) return next('/login')
+  if (to.name === 'home' && user) return next('/basic/home')
+
   const authRequired = to.matched.some((record) => record.meta.auth)
   // const rawUser = Cookies.get('user')
   // const loggedIn = rawUser ? JSON.parse(Cookies.get('user')) : null

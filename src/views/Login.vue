@@ -32,19 +32,24 @@
       >
         Sign In
       </button>
-
-      <p v-show="status">
-        <ul class="help">
-          {{ status }}
-        </ul>
-      </p>
     </form>
+    <div
+      v-if="submitted && !status.loggedIn && status.error"
+      class="alert alert-danger mt-2"
+      role="alert"
+    >
+      >
+      {{ status.error.message }}
+    </div>
     <router-link
       to="/register"
-      class="btn btn-dark btn-lg btn-block"
+      class="btn btn-dark btn-lg btn-block mt-2"
     >
       Register
     </router-link>
+    <debug>
+      Status: {{ status }}
+    </debug>
   </div>
 </template>
 
@@ -65,7 +70,7 @@ export default {
   },
   created() {
     // reset the login status when you reach the login page
-    this.logout()
+    // this.logout()
   },
   methods: {
     ...mapActions('account', ['login', 'logout']),
