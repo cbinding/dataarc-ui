@@ -35,6 +35,7 @@ const apollo = {
           name
           title
           type
+          path
         }
         features{
           title
@@ -224,9 +225,6 @@ const asyncComputed = {
       return this.getSource('map-layers')
       .then((mapLayers) => {
         this._mapLayers = mapLayers
-        // if (this.schema) {
-        //   this.setFormField(this._mapLayers, 'mapLayers')
-        // }
         return this._mapLayers
       })
     },
@@ -249,7 +247,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Combinators' || this.component === 'Datasets')
+      return (this.collectionType === 'Combinators')
     },
   },
   events: {
