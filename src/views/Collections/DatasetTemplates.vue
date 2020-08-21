@@ -23,7 +23,7 @@
               </b-col>
               <b-col sm="7">
                 <b-jumbotron border-variant="secondary" style="height:350px;overflow-y:auto;overflow-x:auto">
-                  <div v-if="renderDetails" v-html="pug.render(form.details_layout, makeObject(form.title, randomFeature.properties))" lang="pug"/>
+                  <div v-if="renderDetails" v-html="pug.render(form.details_layout, randomFeature.properties)" lang="pug"/>
                 </b-jumbotron>
               </b-col>
             </b-row>
@@ -38,7 +38,7 @@
               </b-col>
               <b-col sm="7">
                 <b-jumbotron border-variant="secondary" style="height:350px;overflow-y:auto;overflow-x:auto">
-                  <div v-if="renderSummary" v-html="pug.render(form.summary_layout, makeObject(form.title, randomFeature.properties))" lang="pug"/>
+                  <div v-if="renderSummary" v-html="pug.render(form.summary_layout, randomFeature.properties)" lang="pug"/>
                 </b-jumbotron>
               </b-col>
             </b-row>
@@ -134,7 +134,6 @@ export default {
       this.randomFeature = _.sample(this.form.features)
       this.renderSummary = !this.renderSummary
     },
-    makeObject(keyname, value) { let newObject = {}; newObject[keyname] = value; return newObject }
   },
   mixins: [collectionMixin],
   watch: {
