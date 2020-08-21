@@ -129,17 +129,12 @@ export default {
       this.setFormData(this.form)
     },
     toggleDetails() {
-      const randomInt = this.getRandomInt(this.form.features.length)
-      this.randomFeature = this.form.features[randomInt]
+      this.randomFeature = _.sample(this.form.features)
       this.renderDetails = !this.renderDetails
     },
     toggleSummary() {
-      const randomInt = this.getRandomInt(this.form.features.length)
-      this.randomFeature = this.form.features[randomInt]
+      this.randomFeature = _.sample(this.form.features)
       this.renderSummary = !this.renderSummary
-    },
-    getRandomInt(max) {
-      return Math.floor(Math.random() * Math.floor(max));
     },
   },
   mixins: [collectionMixin],
