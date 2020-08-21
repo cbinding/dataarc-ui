@@ -12,6 +12,36 @@ const Models = {
 }
 
 const apollo = {
+  allDatasets: {
+    query: gql`
+      query {
+        datasets {
+          id
+          name
+          title
+          description
+          citation
+          process
+          process_notes
+          process_at
+          refresh
+          refresh_notes
+          refresh_at
+        }
+      }
+    `,
+    skip: (this ? (this.currentDataset || !this.currentId) : true),
+    update(data) {
+      // The returned value will update
+      // the vue property 'datasets'
+      return data.allDatasets
+    },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        this.datasets = data.datasets
+      }
+    },
+  },
   dataset: {
     query: gql`query dataset($id: ID!) {
       dataset(id: $id) {
@@ -233,24 +263,24 @@ const asyncComputed = {
       return (this.component === 'MapLayers')
     },
   },
-  datasetList: {
-    get() {
-      if (this._datasets && this._datasets.length > 0) {
-        return this._datasets
-      }
-      return this.getSource('datasets')
-      .then((datasets) => {
-        this._datasets = datasets
-        if (this.schema && this.collectionType === 'Combinators') {
-          this.setFormField(this._datasets, 'datasets')
-        }
-        return this._datasets
-      })
-    },
-    shouldUpdate() {
-      return (this.collectionType === 'Combinators')
-    },
-  },
+  // datasetList: {
+  //   get() {
+  //     if (this._datasets && this._datasets.length > 0) {
+  //       return this._datasets
+  //     }
+  //     return this.getSource('datasets')
+  //     .then((datasets) => {
+  //       this._datasets = datasets
+  //       if (this.schema && this.collectionType === 'Combinators') {
+  //         this.setFormField(this._datasets, 'datasets')
+  //       }
+  //       return this._datasets
+  //     })
+  //   },
+  //   shouldUpdate() {
+  //     return (this.collectionType === 'Combinators')
+  //   },
+  // },
   events: {
     get() {
       if (this._events && this._events.length > 0) {
@@ -271,9 +301,9 @@ const asyncComputed = {
   },
   combinators: {
     get() {
-      // if (this._combinators && this._combinators.length > 0) {
-      //   return this._combinators
-      // }
+      if (this.$route.name === 'Update Combinator') {
+        return this._combinators
+      }
       return this.getSource('combinators?_limit=200')
       .then((combinators) => {
         this._combinators = combinators

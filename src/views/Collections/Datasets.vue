@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import collectionMixin from '../../mixins/collectionMixin'
 export default {
   data() {
@@ -69,29 +68,8 @@ export default {
       processing: false,
     }
   },
-  apollo: {
-    datasets: {
-      query: gql`
-        query {
-          datasets {
-            id
-            name
-            title
-            description
-            citation
-            process
-            process_notes
-            process_at
-            refresh
-            refresh_notes
-            refresh_at
-          }
-        }
-      `,
-      skip: false,
-    },
-  },
-  mounted() {
+  created() {
+    this.$apollo.queries.allDatasets.skip = false
   },
   methods: {
     status(val) {
