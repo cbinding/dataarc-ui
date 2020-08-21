@@ -172,6 +172,14 @@ const routes = [
         path: 'roles',
         name: 'Roles',
         component: () => import('@/views/Pug.vue'),
+        children: [
+          {
+            path: 'update/:id',
+            name: 'Update Role',
+            component: () => import('@/views/Collections/CreateUpdateDelete'),
+            props: true,
+          },
+        ],
       },
       {
         path: 'map-layers',
