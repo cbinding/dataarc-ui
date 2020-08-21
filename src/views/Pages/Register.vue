@@ -1,30 +1,65 @@
 <template>
   <div>
-    <div v-if="alert && alert.message && alert.message[0]" :class="`alert ${alert.type}`">{{alert.message[0].messages[0].message}}</div>
+    <div
+      v-if="alert && alert.message && alert.message[0]"
+      :class="`alert ${alert.type}`"
+    >
+      {{ alert.message[0].messages[0].message }}
+    </div>
     <h2>Register</h2>
     <form @submit.prevent="handleSubmit">
       <p v-if="errors.length">
         <b>Please correct the following error(s):</b>
         <ul>
-          <li v-for="error in errors">{{ error }}</li>
+          <li v-for="error in errors">
+            {{ error }}
+          </li>
         </ul>
       </p>
       <div class="form-group">
         <label for="username">Username</label>
-        <input type="text" v-model="user.username" name="username" class="form-control"/>
+        <input
+          v-model="user.username"
+          type="text"
+          name="username"
+          class="form-control"
+        >
       </div>
       <div class="form-group">
         <label for="email">Email</label>
-        <input type="text" v-model="user.email" name="email" class="form-control"/>
+        <input
+          v-model="user.email"
+          type="text"
+          name="email"
+          class="form-control"
+        >
       </div>
       <div class="form-group">
         <label htmlFor="password">Password</label>
-        <input type="password" v-model="user.password" name="password" class="form-control"/>
+        <input
+          v-model="user.password"
+          type="password"
+          name="password"
+          class="form-control"
+        >
       </div>
       <div class="form-group">
-        <button class="btn btn-primary" :disabled="status.registering">Register</button>
-        <img v-show="status.registering" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-        <router-link to="/login" class="btn btn-link">Cancel</router-link>
+        <button
+          class="btn btn-primary"
+          :disabled="status.registering"
+        >
+          Register
+        </button>
+        <img
+          v-show="status.registering"
+          src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
+        >
+        <router-link
+          to="/login"
+          class="btn btn-link"
+        >
+          Cancel
+        </router-link>
       </div>
     </form>
   </div>
@@ -37,7 +72,7 @@ import userService from '../../api/user.service'
 
 export default {
   mixins: [collectionMixin],
-  data () {
+  data() {
     return {
       user: {
         username: '',
@@ -50,7 +85,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('account', ['status'], {alert: state => state.alert}),
+    ...mapState('account', ['status'], { alert: (state) => state.alert }),
   },
   watch: {
     $route(to, from) {
@@ -59,7 +94,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('account', ['register'], {clearAlert: 'alert/clear'}),
+    ...mapActions('account', ['register'], { clearAlert: 'alert/clear' }),
     validEmail(email) {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       return re.test(email)
