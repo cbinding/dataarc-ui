@@ -3,43 +3,55 @@ class Base {
 
   static baseUrl = `${process.env.VUE_APP_STRAPI_API_URL}`
 
+  static resourcePath = ''
+
   static className = 'Base'
 
   constructor(data) {
     Object.assign(this, data)
   }
 
-  get resourceUrl() {
+  get documentUrl() {
     // Computed url property
-    return `${this.baseUrl}/${this.id}`
+    return this.documentUrlConstructor(this.id)
   }
 
-  _create = async () => {
-    if (this.inArray('create', this.actions)) {
-      return axios.post(this.resourceUrl, this)
-    }
-  }
-
-  _update = async () => {
+  update = async () => {
     if (this.inArray('edit', this.actions)) {
-      return axios.put(this.resourceUrl, this)
+      return axios.put(this.documentUrl, this)
     }
   }
 
-  _delete = async () => {
+  delete = async () => {
     if (this.inArray('delete', this.actions)) {
-      return axios.delete(this.resourceUrl, this)
+      return axios.delete(this.documentUrl, this)
     }
   }
 
-  refresh = async () => {
-    const response = axios.get(this.resourceUrl)
-    return this.make(response.data)
+  fresh = async () => {
+    return this.fetch(this.id)
   }
 
-  inArray = function (item, collection) {
-    return _.find(collection, (o) => {
-      return o === item
+  static get resourceUrl() {
+    return `${this.baseUrl}/${this.resourcePath}`
+  }
+
+  static create = async (postData) => {
+    if (this.inArray('create', this.actions)) {
+      return axios.post(this.baseUrl, postData).then(({ data }) => {
+        return this.make(data)
+      })
+    }
+  }
+
+  static documentUrlConstructor = function (resourceId) {
+    return `${this.resourceUrl}/${resourceId}`
+  }
+
+  static fetch = async function (id) {
+    return axios.get(this.documentUrlConstructor(id))
+    .then(({ data }) => {
+      return this.make(data)
     })
   }
 
@@ -50,6 +62,10 @@ class Base {
         return this.make(item)
       })
     })
+  }
+
+  static isActionAllowed = function (action) {
+    return (this.actions.indexOf(action) > -1)
   }
 
   static make = function (data) {
