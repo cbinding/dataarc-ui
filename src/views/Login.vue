@@ -32,17 +32,16 @@
       >
         Sign In
       </button>
-
-      <debug>
-        {{ status }}
-      </debug>
     </form>
     <router-link
       to="/register"
-      class="btn btn-dark btn-lg btn-block"
+      class="btn btn-dark btn-lg btn-block mt-2"
     >
       Register
     </router-link>
+    <debug>
+      Status: {{ status }}
+    </debug>
   </div>
 </template>
 
@@ -76,6 +75,9 @@ export default {
         this.login({ identifier, password })
       }
     },
+  },
+  mounted() {
+    console.log(this)
   },
 }
 </script>

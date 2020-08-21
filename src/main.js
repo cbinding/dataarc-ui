@@ -50,12 +50,12 @@ const apolloProvider = new VueApollo({
 })
 
 // base url for mongodb
-Vue.prototype.$baseUrl = 'http://localhost:1337'
+Vue.prototype.$baseUrl = process.env.VUE_APP_STRAPI_API_URL
 Vue.config.productionTip = false
 Vue.prototype.$log = console.log
-Vue.prototype.$DEBUG = process.env.DEBUG
+Vue.prototype.$DEBUG = process.env
 
-new Vue({
+const app = new Vue({
   router,
   store,
   apolloProvider,
