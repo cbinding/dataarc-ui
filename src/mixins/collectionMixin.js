@@ -1,14 +1,16 @@
 import gql from 'graphql-tag'
-import { Combinators, MapLayers, Categories, Datasets, Users, DatasetFields } from '../models'
+import {
+  Combinators, MapLayers, Categories, Datasets, Users, DatasetFields,
+} from '../models'
 import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue'
 
 const Models = {
-  'Combinators': Combinators,
-  'MapLayers': MapLayers,
-  'Categories': Categories,
-  'Datasets': Datasets,
-  'Users': Users,
-  'DatasetFields': DatasetFields,
+  Combinators,
+  MapLayers,
+  Categories,
+  Datasets,
+  Users,
+  DatasetFields,
 }
 
 const apollo = {
@@ -157,7 +159,7 @@ const apollo = {
     // and decremented when it no longer is.
     loadingKey: 'loadingQueriesCount',
     // watchLoading will be called whenever the loading state changes
-    watchLoading (isLoading, countModifier) {
+    watchLoading(isLoading, countModifier) {
       // isLoading is a boolean
       // countModifier is either 1 or -1
     },
@@ -232,7 +234,7 @@ const apollo = {
     // and decremented when it no longer is.
     loadingKey: 'loadingQueriesCount',
     // watchLoading will be called whenever the loading state changes
-    watchLoading (isLoading, countModifier) {
+    watchLoading(isLoading, countModifier) {
       // isLoading is a boolean
       // countModifier is either 1 or -1
     },
@@ -263,15 +265,13 @@ const methods = {
       }
       return response.data
     }).catch((error) => {
-      console.log("error")
+      console.log('error')
       console.log(error)
     })
   },
   setFormField(val, type) {
     this.schema.fields.filter((field) => {
-      if (field.model && field.model === type) {
-        field.values = val
-      }
+      return field.model && field.model === type
     })
   },
   setFormData(val) {
@@ -283,10 +283,7 @@ const methods = {
     }
     else {
       dataModel._update().then((value) => {
-        if (val.type === 'DatasetFields') {
-          return
-        }
-        else if(val.goBack) {
+        if (val.type !== 'DatasetFields' && val.goBack) {
           this.$router.go(-1)
         }
         else {
@@ -305,7 +302,7 @@ const methods = {
         }
         return
       }
-    // Always display submit
+      // Always display submit
       if (field.buttonText === 'Submit') {
         return
       }
@@ -357,10 +354,49 @@ const asyncComputed = {
       if (this.component === 'MapLayers') {
         return (this.component && this.mapLayers)
       }
-      return (this.component && (this.component === 'Users' || this[this.component.toLowerCase()]))
+      return (
+        this.component
+        && (
+          this.component === 'Users'
+          || this[this.component.toLowerCase()]
+        )
+      )
     },
   },
-// Keeping _***** values to get cache working later on possibly
+  // Keeping _***** values to get cache working later on possibly
+  mapLayers: {
+    get() {
+      // if (this._mapLayers && this._mapLayers.length > 0) {
+      //   return this._mapLayers
+      // }
+      return this.getSource('map-layers')
+      .then((mapLayers) => {
+        this._mapLayers = mapLayers
+        return this._mapLayers
+      })
+    },
+    shouldUpdate() {
+      return (this.component === 'MapLayers')
+    },
+  },
+  datasetList: {
+    get() {
+      if (this._datasets && this._datasets.length > 0) {
+        return this._datasets
+      }
+      return this.getSource('datasets')
+      .then((datasets) => {
+        this._datasets = datasets
+        if (this.schema && this.collectionType === 'Combinators') {
+          this.setFormField(this._datasets, 'datasets')
+        }
+        return this._datasets
+      })
+    },
+    shouldUpdate() {
+      return (this.collectionType === 'Combinators')
+    },
+  },
   events: {
     get() {
       if (this._events && this._events.length > 0) {
@@ -376,7 +412,10 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Events' || this.collectionType === 'Users' || this.component === 'Events')
+      return (
+        this.collectionType === 'Events'
+        || this.collectionType === 'Users'
+        || this.component === 'Events')
     },
   },
   combinators: {
@@ -397,6 +436,27 @@ const asyncComputed = {
       return this.component === 'Combinators'
     },
   },
+  categories: {
+    get() {
+      // if (this._categories && this._categories.length > 0) {
+      //   return this._categories
+      // }
+      return this.getSource('categories')
+      .then((categories) => {
+        this._categories = categories
+        if (this.schema && this.component !== 'Categories') {
+          this.setFormField(this._categories, 'category')
+        }
+        return this._categories
+      })
+    },
+    shouldUpdate() {
+      return (
+        this.collectionType === 'Datasets'
+        || this.component === 'Categories'
+        || this.component === 'Dataset View')
+    },
+  },
   queries: {
     get() {
       // if (this._queries && this._queries.length > 0) {
@@ -412,7 +472,9 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Combinators' || this.component === 'Queries')
+      return (
+        this.collectionType === 'Combinators'
+        || this.component === 'Queries')
     },
   },
   concepts: {
@@ -430,7 +492,10 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Combinators' || this.collectionType === 'Concepts' || this.component === 'Concepts')
+      return (
+        this.collectionType === 'Combinators'
+        || this.collectionType === 'Concepts'
+        || this.component === 'Concepts')
     },
   },
   roles: {
@@ -453,7 +518,7 @@ const asyncComputed = {
   },
 }
 
-const data = function() {
+const data = function () {
   return {
     deleteModal: false,
     itemToDelete: [],
@@ -476,4 +541,4 @@ export default {
   components: {
     TableViewLayout,
   },
-};
+}

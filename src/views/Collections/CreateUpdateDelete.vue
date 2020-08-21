@@ -4,22 +4,23 @@
     <b-container>
       <div class="panel panel-default">
         <div class="panel-heading">
-          {{ model.action }} {{ model.title}}
+          {{ model.action }} {{ model.title }}
           <br>
-
         </div>
         <div class="panel-body">
           <p v-if="errors.length">
             <b>Please correct the following error(s):</b>
             <ul>
-              <li v-for="error in errors">{{ error }}</li>
+              <li v-for="error in errors">
+                {{ error }}
+              </li>
             </ul>
           </p>
           <vue-form-generator
             :schema="schema"
             :model="model"
             :options="formOptions"
-            :currentDataset="currentDataset"
+            :current-dataset="currentDataset"
           />
         </div>
       </div>
@@ -28,9 +29,9 @@
 </template>
 
 <script>
-import collectionMixin from '../../mixins/collectionMixin'
-import userService from '../../api/user.service'
 import { mapState, mapActions } from 'vuex'
+import collectionMixin from '../../mixins/collectionMixin'
+
 export default {
   mixins: [collectionMixin],
   data() {
@@ -371,43 +372,38 @@ export default {
   },
   computed: {
     ...mapState('account', ['status'],
-      { account: state => state.account,
-        users: state => state.users.all,
-        user: state => state.users.user,
+      {
+        account: (state) => state.account,
+        users: (state) => state.users.all,
+        user: (state) => state.users.user,
       }),
   },
   watch: {
-    categories: function (val) {
+    categories(val) {
       this.schema.fields.filter((field) => {
-        if (field.model && field.model === 'category') {
-          field.values = val
-        }
+        return field.model && field.model === 'category'
       })
     },
-    datasets: function (val) {
-      if(val) {
+    datasetList(val) {
+      if (val) {
         this.schema.fields.filter((field) => {
-          if (field.model && field.model === 'dataset') {
-            field.values = val
-          }
-      })
+          return field.model && field.model === 'dataset'
+        })
       }
     },
-    roles: function (val) {
+    roles(val) {
       this.schema.fields.filter((field) => {
-        if (field.model && field.model === 'role') {
-          field.values = val
-        }
+        return field.model && field.model === 'role'
       })
     },
-    model: function (val) {
-      if(val.dataset) {
+    model(val) {
+      if (val.dataset) {
         this.currentId = val.dataset
         this.$apollo.queries.dataset.skip = false
       }
     },
-    currentDataset: function (val) {
-      if(val) {
+    currentDataset(val) {
+      if (val) {
         this.schema.fields.filter((field) => {
           if (field.model && field.model === 'queries') {
             field.values = val.fields
@@ -446,15 +442,15 @@ export default {
           vm.model.image = null
           vm.model.source = null
           if (vm.model.category) {
-            let temp = vm.model.category.id
+            const temp = vm.model.category.id
             vm.model.category = temp
           }
           if (vm.model.dataset) {
-            let temp = vm.model.dataset.id
+            const temp = vm.model.dataset.id
             vm.model.dataset = temp
           }
           if (vm.model.role) {
-            let temp = vm.model.role.id
+            const temp = vm.model.role.id
             vm.model.role = temp
           }
           vm.model.type = vm.collectionType
@@ -480,27 +476,27 @@ export default {
 
 <style scoped>
 .panel {
-	margin-bottom: 20px;
-	background-color: #fff;
-	border: 1px solid transparent;
-	border-radius: 4px;
-	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-	border-color: #ddd;
+  margin-bottom: 20px;
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  border-color: #ddd;
 }
 
 .panel-heading {
-	color: #333;
-	background-color: #f5f5f5;
-	border-color: #ddd;
+  color: #333;
+  background-color: #f5f5f5;
+  border-color: #ddd;
 
-	padding: 10px 15px;
-	border-bottom: 1px solid transparent;
-	border-top-left-radius: 3px;
-	border-top-right-radius: 3px;
+  padding: 10px 15px;
+  border-bottom: 1px solid transparent;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
 }
 
 .panel-body {
-	padding: 15px;
+  padding: 15px;
 }
 </style>

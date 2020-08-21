@@ -148,23 +148,21 @@ const routes = [
         path: 'users',
         name: 'Users',
         component: () => import('@/views/Collections/Users.vue'),
-        children: [
-          {
-            path: 'create',
-            name: 'Create User',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-          {
-            path: 'update/:id',
-            name: 'Update User',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ],
       },
       {
-        path: 'about',
+        path: 'users/create',
+        name: 'Create User',
+        component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+        props: true,
+      },
+      {
+        path: 'users/update/:id',
+        name: 'Update User',
+        component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+        props: true,
+      },
+      {
+        path: 'permissions',
         name: 'Permissions',
         component: () => import('@/views/About.vue'),
       },
