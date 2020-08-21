@@ -31,7 +31,7 @@
 <!-- Fields View -->
     <table-view-layout :rows.sync="fieldsCount" component="Fields" :limits.sync="limits" :currentPage.sync="currentPage" :perPage.sync="perPage" @change="updatePage" @limitUpdated="updateLimit">
       <template v-slot:table>
-        <b-table v-if="currentDataset" :per-page="perPage" :current-page="currentPage" :responsive="true" table-variant="light" head-variant="light" :items="currentDataset.fields" :fields="fieldsList">
+        <b-table v-if="currentDataset" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="currentDataset.fields" :fields="fieldsList">
           <template v-slot:head(title)="data">
             Display Name (Title)
           </template>

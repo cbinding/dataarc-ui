@@ -6,7 +6,7 @@
         <b-button variant="primary" :to="{name: 'Create Dataset'}"><b-icon-plus></b-icon-plus>Add new Dataset</b-button>
       </template>
       <template v-slot:table>
-        <b-table v-if="datasets" :responsive="true" table-variant="light" head-variant="light" :items="datasets" :fields="displayFields">
+        <b-table v-if="datasets" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="datasets" :fields="displayFields">
           <template v-slot:cell(description)="row" class="Description">
             <div class="w-200 text-truncate" style="max-width: 400px;" v-if="row.item.description">
               {{ row.item.description }}
