@@ -102,6 +102,7 @@ export default {
       renderSummary: false,
       sort: 'Path',
       sortList: ['Path', 'Type'],
+      randomFeature: {},
     }
   },
   methods: {
@@ -128,9 +129,11 @@ export default {
       this.setFormData(this.form)
     },
     toggleDetails() {
+      this.randomFeature = _.sample(this.form.features)
       this.renderDetails = !this.renderDetails
     },
     toggleSummary() {
+      this.randomFeature = _.sample(this.form.features)
       this.renderSummary = !this.renderSummary
     },
   },

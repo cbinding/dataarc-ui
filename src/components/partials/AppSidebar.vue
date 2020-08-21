@@ -30,6 +30,7 @@
             exact
           >
             <img
+              v-if="route.name !== 'Dataset View'"
               class="menu-icon"
               src="../../assets/images/menu_icons/01.png"
               alt="menu icon"
