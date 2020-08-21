@@ -33,11 +33,9 @@
         Sign In
       </button>
 
-      <p v-show="status">
-        <ul class="help">
-          {{ status }}
-        </ul>
-      </p>
+      <debug>
+        {{ status }}
+      </debug>
     </form>
     <router-link
       to="/register"

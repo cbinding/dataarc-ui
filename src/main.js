@@ -18,8 +18,10 @@ import Multiselect from 'vue-multiselect'
 
 // Plugins
 import VueFormGenerator from 'vue-form-generator'
-import MyPlugin from './plugins/my-plugin'
 import AsyncComputed from 'vue-async-computed'
+import Debug from '@/components/partials/Debug.vue'
+import MyPlugin from './plugins/my-plugin'
+
 
 // Globals
 window.axios = require('axios')
@@ -30,6 +32,7 @@ Vue.use(BootstrapVueIcons)
 Vue.use(VueApollo)
 Vue.component('multiselect', Multiselect)
 Vue.use(AsyncComputed)
+Vue.component('Debug', Debug)
 
 // Apply plugins
 Vue.use(VueFormGenerator)
@@ -50,6 +53,7 @@ const apolloProvider = new VueApollo({
 Vue.prototype.$baseUrl = 'http://localhost:1337'
 Vue.config.productionTip = false
 Vue.prototype.$log = console.log
+Vue.prototype.$DEBUG = process.env.DEBUG
 
 new Vue({
   router,
