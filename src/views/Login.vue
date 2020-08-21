@@ -33,6 +33,14 @@
         Sign In
       </button>
     </form>
+    <div
+      v-if="submitted && !status.loggedIn && status.error"
+      class="alert alert-danger mt-2"
+      role="alert"
+    >
+      >
+      {{ status.error.message }}
+    </div>
     <router-link
       to="/register"
       class="btn btn-dark btn-lg btn-block mt-2"
@@ -75,9 +83,6 @@ export default {
         this.login({ identifier, password })
       }
     },
-  },
-  mounted() {
-    console.log(this)
   },
 }
 </script>

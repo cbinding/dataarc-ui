@@ -22,7 +22,7 @@
           v-model="user.username"
           type="text"
           name="username"
-          class="form-control"
+          class="form-control form-control-lg"
         >
       </div>
       <div class="form-group">
@@ -31,7 +31,7 @@
           v-model="user.email"
           type="text"
           name="email"
-          class="form-control"
+          class="form-control form-control-lg"
         >
       </div>
       <div class="form-group">
@@ -40,12 +40,12 @@
           v-model="user.password"
           type="password"
           name="password"
-          class="form-control"
+          class="form-control form-control-lg"
         >
       </div>
       <div class="form-group">
         <button
-          class="btn btn-primary"
+          class="btn btn-dark btn-lg mr-2"
           :disabled="status.registering"
         >
           Register
@@ -56,7 +56,7 @@
         >
         <router-link
           to="/login"
-          class="btn btn-link"
+          class="btn btn-dark btn-lg ml-2"
         >
           Cancel
         </router-link>
@@ -77,6 +77,7 @@ export default {
       user: {
         username: '',
         email: '',
+        institution: '',
         password: '',
       },
       errors: [],

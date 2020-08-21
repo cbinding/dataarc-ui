@@ -17,7 +17,7 @@ const state = {
 const actions = {
   login({ dispatch, commit }, { identifier, password }) {
     commit('loginRequest', { identifier })
-    userService.login(identifier, password)
+    return userService.login(identifier, password)
     .then(
       (user) => {
         commit('loginSuccess', user)
@@ -84,8 +84,11 @@ const mutations = {
     state.user = user
     state.role = user ? user.role : null
   },
-  loginFailure(state) {
-    state.status = {}
+  loginFailure(state, err) {
+    if (err.message === 'Request failed with status code 400') {
+      err.message = "That username or password combination doesn't exist"
+    }
+    state.status = { loggedIn: false, error: err }
     state.user = null
     state.role = null
   },
