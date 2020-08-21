@@ -12,21 +12,26 @@
               {{ row.item.description }}
             </div>
           </template>
-          <template v-slot:cell(processing)="row" class="processing">
+          <template v-slot:cell(process)="row" class="process">
             <div>
-              {{ row.item.processing }} <b-button size="sm" variant="primary" :disabled="row.item.processing" v-text="'Process'" @click="process(row.item)"></b-button>
+              <b-badge :variant="status(row.item.process)">
+                {{ row.item.process ? row.item.process : 'pending' }}
+              </b-badge>
             </div>
           </template>
-          <template v-slot:cell(processedAt)="row" class="processedAt">
+          <template v-slot:cell(refresh)="row" class="refresh">
             <div>
-              {{ row.item.processedAt }}
+              <b-badge :variant="status(row.item.refresh)">
+                {{ row.item.refresh ? row.item.refresh : 'pending' }}
+              </b-badge>
             </div>
           </template>
           <template v-slot:cell(actions)="row" class="actions">
-            <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'Dataset View', params: {id: row.item.id} }">
+            <b-button size="sm" variant="primary" :disabled="row.item.process === 'active'" v-text="'Process'" @click="process(row.item)"></b-button>
+            <b-link v-if="row.item" :disabled="row.item.process === 'active'" size="sm" class="mb-2" :to="{name: 'Dataset View', params: {id: row.item.id} }">
               <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
             </b-link>
-            <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item">
+            <b-link v-if="row.item" :disabled="row.item.process === 'active'" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item">
               <b-icon-trash></b-icon-trash>
             </b-link>
           </template>
@@ -49,10 +54,18 @@ export default {
         'title',
         'description',
         'citation',
-        'processing',
-        'processedAt',
+        'process',
+        'process_at',
+        'process_notes',
+        'refresh',
+        'refresh_at',
+        'refresh_notes',
         'actions',
       ],
+      pending: 'secondary',
+      active: 'info',
+      failed: 'danger',
+      complete: 'success',
       processing: false,
     }
   },
@@ -66,8 +79,12 @@ export default {
             title
             description
             citation
-            processing
-            processedAt
+            process
+            process_notes
+            process_at
+            refresh
+            refresh_notes
+            refresh_at
           }
         }
       `,
@@ -77,6 +94,12 @@ export default {
   mounted() {
   },
   methods: {
+    status(val) {
+      if (val) {
+        return this[val]
+      }
+      return 'secondary'
+    },
     update(val) {
       const temp = []
       temp.fieldType = val.type
@@ -95,3 +118,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+a.disabled {
+  pointer-events: none;
+}
+</style>
