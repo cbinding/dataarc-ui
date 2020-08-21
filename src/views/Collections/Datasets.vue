@@ -91,7 +91,9 @@ export default {
   mixins: [collectionMixin],
   watch: {
     $route(to, from) {
-      this.$apollo.queries.datasets.refetch()
+      if (from.name !== 'Datasets') {
+        this.$apollo.queries.allDatasets.refetch()
+      }
     }
   },
 }

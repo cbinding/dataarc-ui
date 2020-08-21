@@ -12,6 +12,58 @@ const Models = {
 }
 
 const apollo = {
+  allCategories: {
+    query: gql`
+      query {
+        categories {
+          id
+          name
+          title
+          description
+          color
+          datasets{
+            title
+          }
+        }
+      }
+    `,
+    skip: true,
+    ssr: false,
+    update(data) {
+      // The returned value will update
+      // the vue property 'datasets'
+      return data.allCategories
+    },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        this.categories = data.categories
+      }
+    },
+  },
+  allMapLayers: {
+    query: gql`
+      query {
+        mapLayers {
+          id
+          name
+          title
+          description
+        }
+      }
+    `,
+    skip: true,
+    ssr: false,
+    update(data) {
+      // The returned value will update
+      // the vue property 'datasets'
+      return data.allMapLayers
+    },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        this.mapLayers = data.mapLayers
+      }
+    },
+  },
   allDatasets: {
     query: gql`
       query {
@@ -248,39 +300,6 @@ const asyncComputed = {
     },
   },
 // Keeping _***** values to get cache working later on possibly
-  mapLayers: {
-    get() {
-      // if (this._mapLayers && this._mapLayers.length > 0) {
-      //   return this._mapLayers
-      // }
-      return this.getSource('map-layers')
-      .then((mapLayers) => {
-        this._mapLayers = mapLayers
-        return this._mapLayers
-      })
-    },
-    shouldUpdate() {
-      return (this.component === 'MapLayers')
-    },
-  },
-  // datasetList: {
-  //   get() {
-  //     if (this._datasets && this._datasets.length > 0) {
-  //       return this._datasets
-  //     }
-  //     return this.getSource('datasets')
-  //     .then((datasets) => {
-  //       this._datasets = datasets
-  //       if (this.schema && this.collectionType === 'Combinators') {
-  //         this.setFormField(this._datasets, 'datasets')
-  //       }
-  //       return this._datasets
-  //     })
-  //   },
-  //   shouldUpdate() {
-  //     return (this.collectionType === 'Combinators')
-  //   },
-  // },
   events: {
     get() {
       if (this._events && this._events.length > 0) {
@@ -315,24 +334,6 @@ const asyncComputed = {
     },
     shouldUpdate() {
       return this.component === 'Combinators'
-    },
-  },
-  categories: {
-    get() {
-      // if (this._categories && this._categories.length > 0) {
-      //   return this._categories
-      // }
-      return this.getSource('categories')
-      .then((categories) => {
-        this._categories = categories
-        if (this.schema && this.component !== 'Categories') {
-          this.setFormField(this._categories, 'category')
-        }
-        return this._categories
-      })
-    },
-    shouldUpdate() {
-      return (this.collectionType === 'Datasets' || this.component === 'Categories' || this.component === 'Dataset View')
     },
   },
   queries: {
@@ -400,6 +401,8 @@ const data = function() {
     limits: [10, 20, 50, 100],
     currentId: '',
     datasets: [],
+    mapLayers: [],
+    categories: [],
     currentDataset: {},
   }
 }

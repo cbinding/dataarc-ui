@@ -459,6 +459,9 @@ export default {
       if (this.$route.name === 'Update Combinator') {
         this.$apollo.queries.allDatasets.skip = false
       }
+      if (this.$route.name === 'Create Dataset') {
+        this.$apollo.queries.allCategories.skip = false
+      }
 
       if (this.action === 'Update' && this.collectionType !== 'Datasets') {
         this.editUrl = `${pathArray[2]}/${this.$route.params.id}`

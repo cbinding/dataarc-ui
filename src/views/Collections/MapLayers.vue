@@ -31,9 +31,14 @@ export default {
     }
   },
   mixins: [collectionMixin],
+  created() {
+    this.$apollo.queries.allMapLayers.skip = false
+  },
   watch: {
     $route(to, from) {
-      this.$asyncComputed.mapLayers.update()
+      if (from.name !== 'MapLayers') {
+        this.$apollo.queries.allMapLayers.refetch()
+      }
     },
   },
 }

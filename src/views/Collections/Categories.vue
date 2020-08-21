@@ -11,7 +11,7 @@
             <ul>
               <div v-for="dataset in datasetRow.item.datasets" :key="dataset.id">
                 <li>
-                  {{ dataset.name }}
+                  {{ dataset.title }}
                 </li>
               </div>
             </ul>
@@ -44,9 +44,14 @@ export default {
     }
   },
   mixins: [collectionMixin],
+  created() {
+    this.$apollo.queries.allCategories.skip = false
+  },
   watch: {
     $route(to, from) {
-      this.$asyncComputed.categories.update()
+      if (from.name !== 'Categories') {
+        this.$apollo.queries.allCategories.refetch()
+      }
     },
   },
 }
