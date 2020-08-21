@@ -100,7 +100,8 @@ const apollo = {
 const methods = {
   async process(val) {
     this.currentId = val.id
-    val.processing = true
+    val.process = 'active'
+    val.refresh = 'active'
     const resp = await axios.get(`${this.$baseUrl}/datasets/${val.id}/process`)
     if (resp) {
       val.processing = false
