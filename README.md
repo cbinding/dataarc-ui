@@ -26,6 +26,11 @@ cp .env.example .env
 
 Change values in `.env` to match your setup
 
+For displaying some LOGs during site testing set
+```
+DEBUG=true
+```
+
 Run yarn install:
 
 ```bash
