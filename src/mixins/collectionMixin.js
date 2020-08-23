@@ -73,12 +73,9 @@ const apollo = {
           title
           description
           citation
-          process
-          process_notes
-          process_at
-          refresh
-          refresh_notes
-          refresh_at
+          state
+          state_msg
+          state_at
         }
       }
     `,
@@ -119,17 +116,80 @@ const apollo = {
           type
           path
         }
+      }
+    }`,
+    // Reactive parameters
+    variables() {
+      // Use vue reactive properties here
+      return {
+        id: this.currentId,
+      }
+    },
+    skip: (this ? (this.currentDataset || !this.currentId) : true),
+    ssr: false,
+    // Variables: deep object watch
+    deep: false,
+    // We use a custom update callback because
+    // the field names don't match
+    // By default, the 'currentDataset' attribute
+    // would be used on the 'data' result object
+    // Here we know the result is in the 'id' attribute
+    // considering the way the apollo server works
+    update(data) {
+      // The returned value will update
+      // the vue property 'currentDataset'
+      return data.id
+    },
+    // Optional result hook
+    result({ data, loading, networkStatus }) {
+      if (data && data.dataset) {
+        this.currentDataset = data.dataset
+        this.fieldsCount = this.currentDataset.fields.length
+      }
+    },
+    // Error handling
+    error(error) {
+      console.error('We\'ve got an error!', error)
+    },
+    // Loading state
+    // loadingKey is the name of the data property
+    // that will be incremented when the query is loading
+    // and decremented when it no longer is.
+    loadingKey: 'loadingQueriesCount',
+    // watchLoading will be called whenever the loading state changes
+    watchLoading (isLoading, countModifier) {
+      // isLoading is a boolean
+      // countModifier is either 1 or -1
+    },
+  },
+  datasetWFeatures: {
+    query: gql`query dataset($id: ID!) {
+      dataset(id: $id) {
+        id
+        name
+        title
+        description
+        citation
+        link
+        category{
+          id
+          name
+          title
+        }
+        title_layout
+        link_layout
+        details_layout
+        summary_layout
+        fields{
+          id
+          name
+          title
+          type
+          path
+        }
         features{
           title
           properties
-          summary
-          details
-          link
-          url
-          start_date
-          end_date
-          text_date
-          keywords
         }
       }
     }`,
@@ -182,12 +242,10 @@ const apollo = {
 const methods = {
   async process(val) {
     this.currentId = val.id
-    val.process = 'active'
-    val.refresh = 'active'
+    val.state = 'processing'
     const resp = await axios.get(`${this.$baseUrl}/datasets/${val.id}/process`)
     if (resp) {
-      val.processing = false
-      this.$apollo.queries.datasets.refetch()
+      this.$apollo.queries.allDatasets.refetch()
     }
   },
   async getSingle(path) {
@@ -269,6 +327,9 @@ const methods = {
       if (dataModel.routeUrl === this.$router.history.current.path) {
         if (value === 'users') {
           this.getAllUsers()
+        }
+        else if (value === 'datasets') {
+          this.$apollo.queries.allDatasets.refetch()
         }
         else {
           this.$asyncComputed[value].update()

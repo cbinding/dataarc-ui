@@ -1,0 +1,106 @@
+<template>
+  <div>
+    <b-form v-model="schema.value">
+      <b-row>
+        <b-col>
+          <b-input-group v-for="query in totalQueries" :key="query" size="lg" class="mb-3">
+            <b-input-group-prepend>
+              <b-dropdown :text="form[query] ? form[query]['field'] : 'Select Field'" variant="outline-secondary" aria-placeholder="Select Field">
+                <div v-for="value in schema.values" :key="value.id">
+                  <b-dropdown-item @click="setField(query, 'field', value.path)">{{ value.path }}</b-dropdown-item>
+                </div>
+              </b-dropdown>
+              <b-dropdown :text="(form[query] && form[query]['operator']) ? form[query]['operator'] : 'Equals'" variant="outline-secondary">
+                <div v-for="operator in operators" :key="operator">
+                  <b-dropdown-item @click="setField(query, 'operator', operator)">{{ operator }}</b-dropdown-item>
+                </div>
+              </b-dropdown>
+              <b-form-input variant="outline-secondary" v-model="values[query]" @input="setField(query, 'value', values[query])" placeholder="Text Input">
+
+              </b-form-input>
+            </b-input-group-prepend>
+            <b-input-group-append>
+              <b-row>
+                <b-col>
+                  <b-button-group>
+                    <b-button variant="light" size="sm" v-if="query !== 1" @click="decrement(query)">
+                      -
+                    </b-button>
+                    <b-button variant="light" size="sm" v-if="query === totalQueries" @click="increment">
+                      <b-icon-plus-circle-fill></b-icon-plus-circle-fill>
+                    </b-button>
+                  </b-button-group>
+                </b-col>
+              </b-row>
+            </b-input-group-append>
+          </b-input-group>
+        </b-col>
+
+      </b-row>
+    </b-form>
+  </div>
+</template>
+
+<script>
+import { abstractField } from 'vue-form-generator'
+export default {
+  data() {
+    return {
+      form: {},
+      operators: ['Equals', 'Does Not Equal', 'Contains'],
+      totalQueries: 1,
+      queries: {},
+      values: {},
+    }
+  },
+  watch: {
+    form: function(val) {
+      if(val) {
+        this.queries = val
+        this.model.queries = this.queries
+      }
+    },
+  },
+  mixins: [abstractField],
+  methods: {
+    increment() {
+      this.totalQueries += 1
+    },
+    decrement(int) {
+      const length = Object.keys(this.form).length
+      let tempForm = this.form
+      for(let i = int; i < length; i++) {
+        if(this.form[(i) + 1]) {
+          tempForm[i] = this.form[(i) + 1]
+          tempForm[i].count = i
+          this.$delete(this.form, ((i) + 1))
+          this.values[i] = tempForm[i].value
+          this.$delete(this.values, ((i) + 1))
+        }
+      }
+      this.form = tempForm
+      this.totalQueries -= 1
+    },
+    setField(int, field, val) {
+      if (!this.form[int]) {
+        this.$set(this.form, int, {})
+      }
+      if (!this.form[int].count) {
+        this.$set(this.form[int], 'count', int)
+        this.$set(this.form[int], 'operator', 'Equals')
+      }
+      if (field === 'value') {
+        this.$set(this.form[int], field, this.values[int])
+      }
+      else {
+        this.$set(this.form[int], field, val)
+      }
+    },
+  },
+
+}
+</script>
+
+<style>
+
+</style>
