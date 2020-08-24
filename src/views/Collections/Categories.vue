@@ -6,12 +6,12 @@
         <b-button variant="primary" :to="{name: 'Create Category' }"><b-icon-plus></b-icon-plus>Add new Category</b-button>
       </template>
       <template v-slot:table>
-        <b-table v-if="categories" :responsive="true" table-variant="light" head-variant="light" :items="categories" :fields="displayFields">
+        <b-table v-if="categories" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="categories" :fields="displayFields">
           <template v-slot:cell(datasets)="datasetRow" class="Datasets">
             <ul>
               <div v-for="dataset in datasetRow.item.datasets" :key="dataset.id">
                 <li>
-                  {{ dataset.name }}
+                  {{ dataset.title }}
                 </li>
               </div>
             </ul>
@@ -44,9 +44,14 @@ export default {
     }
   },
   mixins: [collectionMixin],
+  created() {
+    this.$apollo.queries.allCategories.skip = false
+  },
   watch: {
     $route(to, from) {
-      this.$asyncComputed.categories.update()
+      if (from.name !== 'Categories') {
+        this.$apollo.queries.allCategories.refetch()
+      }
     },
   },
 }

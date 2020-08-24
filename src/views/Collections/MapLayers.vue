@@ -6,7 +6,7 @@
         <b-button variant="primary" :to="{name: 'Create MapLayer' }"><b-icon-plus></b-icon-plus>Add new Map Layer</b-button>
       </template>
       <template v-slot:table>
-        <b-table responsive table-variant="light" head-variant="light" :items="mapLayers" :fields="displayFields">
+        <b-table v-if="mapLayers" responsive :per-page="perPage" :current-page="currentPage" table-variant="light" head-variant="light" :items="mapLayers" :fields="displayFields">
           <template v-slot:cell(actions)="row" class="actions">
             <b-link size="sm" class="mb-2" :to="{name: 'Update MapLayer', params: {id: row.item.id} }">
               <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
@@ -31,9 +31,14 @@ export default {
     }
   },
   mixins: [collectionMixin],
+  created() {
+    this.$apollo.queries.allMapLayers.skip = false
+  },
   watch: {
     $route(to, from) {
-      this.$asyncComputed.mapLayers.update()
+      if (from.name !== 'MapLayers') {
+        this.$apollo.queries.allMapLayers.refetch()
+      }
     },
   },
 }

@@ -6,7 +6,7 @@
         <b-button variant="primary" :to="{name: 'Create Dataset'}"><b-icon-plus></b-icon-plus>Add new Dataset</b-button>
       </template>
       <template v-slot:table>
-        <b-table v-if="datasets" :responsive="true" table-variant="light" head-variant="light" :items="datasets" :fields="displayFields">
+        <b-table v-if="datasets" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="datasets" :fields="displayFields">
           <template v-slot:cell(description)="row" class="Description">
             <div class="w-200 text-truncate" style="max-width: 400px;" v-if="row.item.description">
               {{ row.item.description }}
@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import collectionMixin from '../../mixins/collectionMixin'
 export default {
   data() {
@@ -69,29 +68,8 @@ export default {
       processing: false,
     }
   },
-  apollo: {
-    datasets: {
-      query: gql`
-        query {
-          datasets {
-            id
-            name
-            title
-            description
-            citation
-            process
-            process_notes
-            process_at
-            refresh
-            refresh_notes
-            refresh_at
-          }
-        }
-      `,
-      skip: false,
-    },
-  },
-  mounted() {
+  created() {
+    this.$apollo.queries.allDatasets.skip = false
   },
   methods: {
     status(val) {
@@ -113,7 +91,9 @@ export default {
   mixins: [collectionMixin],
   watch: {
     $route(to, from) {
-      this.$apollo.queries.datasets.refetch()
+      if (from.name !== 'Datasets') {
+        this.$apollo.queries.allDatasets.refetch()
+      }
     }
   },
 }

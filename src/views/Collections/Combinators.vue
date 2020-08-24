@@ -6,7 +6,7 @@
         <b-button variant="primary" :to="{name: 'Create Combinator' }"><b-icon-plus></b-icon-plus>Add new Combinator</b-button>
       </template>
       <template v-slot:table>
-        <b-table v-if="combinators" :per-page="perPage" :current-page="currentPage" :responsive="true" table-variant="light" head-variant="light" :items="combinators" :fields="displayFields">
+        <b-table v-if="combinators" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="combinators" :fields="displayFields">
           <template v-slot:cell(description)="row" class="Description">
             <div class="w-200 text-truncate" style="max-width: 400px;" v-if="row.item.description">
               {{ row.item.description }}

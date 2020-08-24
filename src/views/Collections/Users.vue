@@ -6,7 +6,7 @@
         <b-button variant="primary" :to="{name: 'Create User' }"><b-icon-plus></b-icon-plus>Add new User</b-button>
       </template>
       <template v-slot:table>
-        <b-table :responsive="true" table-variant="light" head-variant="light" :items="users.items" :fields="displayFields">
+        <b-table v-if="users" responsive :per-page="perPage" :current-page="currentPage" table-variant="light" head-variant="light" :items="users.items" :fields="displayFields">
           <template v-slot:cell(actions)="row" class="actions">
             <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'Update User', params: {id: row.item.id} }">
               <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>

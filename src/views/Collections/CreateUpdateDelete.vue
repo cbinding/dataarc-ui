@@ -256,7 +256,7 @@ export default {
             multiSelect: true,
             label: 'Datasets',
             model: 'datasets',
-            values: this.datasetList ? this.datasetList : ['1', '2'],
+            values: this.datasets? this.datasets: ['1', '2'],
             visible: true,
             selectOptions: {
               key: 'name',
@@ -425,7 +425,7 @@ export default {
         }
       })
     },
-    datasetList: function (val) {
+    datasets: function (val) {
       if(val) {
         this.schema.fields.filter((field) => {
           if (field.model && field.model === 'dataset') {
@@ -456,6 +456,12 @@ export default {
       const pathArray = this.$route.path.split('/')
       this.action = variables[0]
       this.collectionType = (variables[1] !== 'Category' ? `${variables[1]}s` : 'Categories')
+      if (this.$route.name === 'Update Combinator') {
+        this.$apollo.queries.allDatasets.skip = false
+      }
+      if (this.$route.name === 'Create Dataset') {
+        this.$apollo.queries.allCategories.skip = false
+      }
 
       if (this.action === 'Update' && this.collectionType !== 'Datasets') {
         this.editUrl = `${pathArray[2]}/${this.$route.params.id}`
