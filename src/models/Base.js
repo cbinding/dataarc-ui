@@ -32,6 +32,10 @@ class Base {
     return this.fetch(this.id)
   }
 
+  hasMany = async (model, primaryKey, secondaryKey) => {
+    return model.where(secondaryKey, this[primaryKey]).get()
+  }
+
   static get resourceUrl() {
     return `${this.baseUrl}/${this.resourcePath}`
   }
