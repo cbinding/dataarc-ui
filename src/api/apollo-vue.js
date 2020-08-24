@@ -1,6 +1,9 @@
 import { ApolloClient } from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
+import { setContext } from 'apollo-link-context'
+
+import authHeader from './auth-header'
 
 // HTTP connection to the API
 const httpLink = createHttpLink({
@@ -11,9 +14,20 @@ const httpLink = createHttpLink({
 // Cache implementation
 const cache = new InMemoryCache()
 
+// Create a new Middleware Link using setContext
+const middlewareLink = setContext(() => {
+  return {
+    headers: {
+      authorization: authHeader().Authorization,
+    },
+  }
+})
+
+const link = middlewareLink.concat(httpLink)
+
 // Create the apollo client
 const apolloClient = new ApolloClient({
-  link: httpLink,
+  link,
   cache,
 })
 
