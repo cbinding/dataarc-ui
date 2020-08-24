@@ -414,7 +414,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (this.collectionType === 'Combinators' || this.component === 'Queries')
+      return ((this.collectionType === 'Combinators' && this.action === 'Update') || this.component === 'Queries')
     },
   },
   concepts: {

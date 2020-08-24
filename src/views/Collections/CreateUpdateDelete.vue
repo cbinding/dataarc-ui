@@ -381,13 +381,17 @@ export default {
   watch: {
     categories(val) {
       this.schema.fields.filter((field) => {
-        return field.model && field.model === 'category'
+        if(field.model && field.model === 'category') {
+          field.values = val
+        }
       })
     },
-    datasetList(val) {
+    datasets(val) {
       if (val) {
         this.schema.fields.filter((field) => {
-          return field.model && field.model === 'dataset'
+          if(field.model && field.model === 'dataset') {
+            field.values = val
+          }
         })
       }
     },

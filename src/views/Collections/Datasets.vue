@@ -41,7 +41,6 @@ export default {
     return {
       component: 'Datasets',
       displayFields: [
-        'id',
         'name',
         'title',
         'description',
@@ -51,7 +50,7 @@ export default {
         'state_at',
         'actions',
       ],
-      pending: 'secondary',
+      pending: 'warning',
       processing: 'info',
       updating: 'info',
       failed: 'danger',
