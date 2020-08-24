@@ -14,7 +14,7 @@ const Models = {
 }
 
 const apollo = {
-  categories: {
+  allCategories: {
     query: gql`
       query {
         categories {
@@ -30,18 +30,17 @@ const apollo = {
       }
     `,
     skip: true,
-    // ssr: false,
+    ssr: false,
     update(data) {
       // The returned value will update
       // the vue property 'datasets'
-      return data.categories
+      return data.allCategories
     },
-    // result({ data, loading, networkStatus }) {
-    //   // return data.categories
-    //   if (data) {
-    //     this.categories = data.categories
-    //   }
-    // },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        this.categories = data.categories
+      }
+    },
   },
   allMapLayers: {
     query: gql`
@@ -272,7 +271,9 @@ const methods = {
   },
   setFormField(val, type) {
     this.schema.fields.filter((field) => {
-      return field.model && field.model === type
+      if (field.model && field.model === type) {
+        field.values = val
+      }
     })
   },
   setFormData(val) {
@@ -284,7 +285,10 @@ const methods = {
     }
     else {
       dataModel._update().then((value) => {
-        if (val.type !== 'DatasetFields' && val.goBack) {
+        if (val.type === 'DatasetFields') {
+
+        }
+        else if (val.goBack) {
           this.$router.go(-1)
         }
         else {
@@ -355,49 +359,10 @@ const asyncComputed = {
       if (this.component === 'MapLayers') {
         return (this.component && this.mapLayers)
       }
-      return (
-        this.component
-        && (
-          this.component === 'Users'
-          || this[this.component.toLowerCase()]
-        )
-      )
+      return (this.component && (this.component === 'Users' || this[this.component.toLowerCase()]))
     },
   },
   // Keeping _***** values to get cache working later on possibly
-  mapLayers: {
-    get() {
-      // if (this._mapLayers && this._mapLayers.length > 0) {
-      //   return this._mapLayers
-      // }
-      return this.getSource('map-layers')
-      .then((mapLayers) => {
-        this._mapLayers = mapLayers
-        return this._mapLayers
-      })
-    },
-    shouldUpdate() {
-      return (this.component === 'MapLayers')
-    },
-  },
-  datasetList: {
-    get() {
-      if (this._datasets && this._datasets.length > 0) {
-        return this._datasets
-      }
-      return this.getSource('datasets')
-      .then((datasets) => {
-        this._datasets = datasets
-        if (this.schema && this.collectionType === 'Combinators') {
-          this.setFormField(this._datasets, 'datasets')
-        }
-        return this._datasets
-      })
-    },
-    shouldUpdate() {
-      return (this.collectionType === 'Combinators')
-    },
-  },
   events: {
     get() {
       if (this._events && this._events.length > 0) {
@@ -413,10 +378,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (
-        this.collectionType === 'Events'
-        || this.collectionType === 'Users'
-        || this.component === 'Events')
+      return (this.collectionType === 'Events' || this.collectionType === 'Users' || this.component === 'Events')
     },
   },
   combinators: {
@@ -452,9 +414,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (
-        this.collectionType === 'Combinators'
-        || this.component === 'Queries')
+      return (this.collectionType === 'Combinators' || this.component === 'Queries')
     },
   },
   concepts: {
@@ -472,10 +432,7 @@ const asyncComputed = {
       })
     },
     shouldUpdate() {
-      return (
-        this.collectionType === 'Combinators'
-        || this.collectionType === 'Concepts'
-        || this.component === 'Concepts')
+      return (this.collectionType === 'Combinators' || this.collectionType === 'Concepts' || this.component === 'Concepts')
     },
   },
   roles: {
