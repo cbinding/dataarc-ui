@@ -163,31 +163,6 @@ const routes = [
           },
         ],
       },
-      // {
-      //   path: 'permissions',
-      //   name: 'Permissions',
-      //   component: () => import('@/views/Collections/Container.vue'),
-      //   redirect: 'permissions/index',
-      //   children: [
-      //     {
-      //       path: 'index',
-      //       name: 'View Permissions',
-      //       component: () => import('@/views/Collections/Users-index.vue'),
-      //     },
-      //     {
-      //       path: 'create',
-      //       name: 'Create Permission',
-      //       component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-      //       props: true,
-      //     },
-      //     {
-      //       path: 'update/:id',
-      //       name: 'Update Permission',
-      //       component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-      //       props: true,
-      //     },
-      //   ],
-      // },
       {
         path: 'roles',
         name: 'Roles',
