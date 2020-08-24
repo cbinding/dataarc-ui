@@ -147,8 +147,14 @@ const routes = [
       {
         path: 'users',
         name: 'Users',
-        component: () => import('@/views/Collections/Users.vue'),
+        component: () => import('@/views/Collections/Container.vue'),
+        redirect: 'users/index',
         children: [
+          {
+            path: 'index',
+            name: 'View Users',
+            component: () => import('@/views/Collections/Users-index.vue'),
+          },
           {
             path: 'create',
             name: 'Create User',
@@ -164,14 +170,42 @@ const routes = [
         ],
       },
       {
-        path: 'about',
+        path: 'permissions',
         name: 'Permissions',
-        component: () => import('@/views/About.vue'),
+        component: () => import('@/views/Collections/Container.vue'),
+        redirect: 'permissions/index',
+        children: [
+          {
+            path: 'index',
+            name: 'View Users',
+            component: () => import('@/views/Collections/Users-index.vue'),
+          },
+          {
+            path: 'create',
+            name: 'Create User',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+          {
+            path: 'update/:id',
+            name: 'Update User',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+        ],
       },
       {
         path: 'roles',
         name: 'Roles',
-        component: () => import('@/views/Pug.vue'),
+        component: () => import('@/views/Collections/Roles.vue'),
+        children: [
+          {
+            path: 'update/:id',
+            name: 'Update Role',
+            component: () => import('@/views/Collections/CreateUpdateDelete'),
+            props: true,
+          },
+        ],
       },
       {
         path: 'map-layers',

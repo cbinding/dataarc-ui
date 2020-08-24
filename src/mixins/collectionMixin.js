@@ -1,14 +1,16 @@
 import gql from 'graphql-tag'
-import { Combinators, MapLayers, Categories, Datasets, Users, DatasetFields } from '../models'
+import {
+  Combinators, MapLayers, Categories, Datasets, Users, DatasetFields,
+} from '../models'
 import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue'
 
 const Models = {
-  'Combinators': Combinators,
-  'MapLayers': MapLayers,
-  'Categories': Categories,
-  'Datasets': Datasets,
-  'Users': Users,
-  'DatasetFields': DatasetFields,
+  Combinators,
+  MapLayers,
+  Categories,
+  Datasets,
+  Users,
+  DatasetFields,
 }
 
 const apollo = {
@@ -157,7 +159,7 @@ const apollo = {
     // and decremented when it no longer is.
     loadingKey: 'loadingQueriesCount',
     // watchLoading will be called whenever the loading state changes
-    watchLoading (isLoading, countModifier) {
+    watchLoading(isLoading, countModifier) {
       // isLoading is a boolean
       // countModifier is either 1 or -1
     },
@@ -232,7 +234,7 @@ const apollo = {
     // and decremented when it no longer is.
     loadingKey: 'loadingQueriesCount',
     // watchLoading will be called whenever the loading state changes
-    watchLoading (isLoading, countModifier) {
+    watchLoading(isLoading, countModifier) {
       // isLoading is a boolean
       // countModifier is either 1 or -1
     },
@@ -263,7 +265,7 @@ const methods = {
       }
       return response.data
     }).catch((error) => {
-      console.log("error")
+      console.log('error')
       console.log(error)
     })
   },
@@ -284,9 +286,9 @@ const methods = {
     else {
       dataModel._update().then((value) => {
         if (val.type === 'DatasetFields') {
-          return
+
         }
-        else if(val.goBack) {
+        else if (val.goBack) {
           this.$router.go(-1)
         }
         else {
@@ -305,7 +307,7 @@ const methods = {
         }
         return
       }
-    // Always display submit
+      // Always display submit
       if (field.buttonText === 'Submit') {
         return
       }
@@ -360,7 +362,7 @@ const asyncComputed = {
       return (this.component && (this.component === 'Users' || this[this.component.toLowerCase()]))
     },
   },
-// Keeping _***** values to get cache working later on possibly
+  // Keeping _***** values to get cache working later on possibly
   events: {
     get() {
       if (this._events && this._events.length > 0) {
@@ -453,7 +455,7 @@ const asyncComputed = {
   },
 }
 
-const data = function() {
+const data = function () {
   return {
     deleteModal: false,
     itemToDelete: [],
@@ -476,4 +478,4 @@ export default {
   components: {
     TableViewLayout,
   },
-};
+}

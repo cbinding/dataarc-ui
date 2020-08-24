@@ -26,7 +26,10 @@ function login(identifier, password) {
       Cookies.set('user', user)
     }
 
-    return user
+    const { Authorization } = authHeader()
+    axios.defaults.headers.common.Authorization = Authorization
+
+    return { user, jwt }
   })
 }
 
