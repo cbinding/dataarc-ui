@@ -12,6 +12,9 @@
               {{ row.item.description }}
             </div>
           </template>
+          <template v-slot:cell(fields_count)="row" class="fieldsCount">
+            {{ row.item.id }}
+          </template>
           <template v-slot:cell(state)="row" class="state">
             <div>
               <b-badge :variant="status(row.item.state)">
@@ -50,6 +53,9 @@ export default {
         'title',
         'description',
         'citation',
+        'fields_count',
+        'features_count',
+        'combinators_count',
         'state',
         'state_msg',
         'state_at',

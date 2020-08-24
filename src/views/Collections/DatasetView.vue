@@ -54,6 +54,18 @@
               </b-dropdown>
             </div>
           </template>
+          <template v-slot:cell(state)="row" class="state">
+            <div>
+              <b-badge :variant="status(row.item.state)">
+                {{ row.item.state ? row.item.state : 'pending' }}
+              </b-badge>
+            </div>
+          </template>
+          <template v-slot:cell(state_at)="row" class="state_at">
+            <div>
+              {{ getDate(row.item.state_at) }}
+            </div>
+          </template>
           <template v-slot:cell(save)="row" class="Save">
             <b-button variant="primary" @click="updateField(row.item)">Save</b-button>
           </template>
@@ -95,10 +107,16 @@ export default {
         'name',
         'title',
         'type',
+        'state',
+        'state_msg',
+        'state_at',
         'save',
       ],
       fieldsCount: 0,
       dismissSecs: 3,
+      pending: 'warning',
+      missing: 'danger',
+      done: 'success',
       dismissCountDown: 0,
       model: {
         type: '',
@@ -210,6 +228,12 @@ export default {
     },
     showAlert() {
       this.dismissCountDown = this.dismissSecs
+    },
+    status(val) {
+      if (val) {
+        return this[val]
+      }
+      return 'secondary'
     },
   },
   mixins: [collectionMixin],
