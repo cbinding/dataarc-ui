@@ -14,7 +14,7 @@ const Models = {
 }
 
 const apollo = {
-  allCategories: {
+  categories: {
     query: gql`
       query {
         categories {
@@ -30,17 +30,18 @@ const apollo = {
       }
     `,
     skip: true,
-    ssr: false,
+    // ssr: false,
     update(data) {
       // The returned value will update
       // the vue property 'datasets'
-      return data.allCategories
+      return data.categories
     },
-    result({ data, loading, networkStatus }) {
-      if (data) {
-        this.categories = data.categories
-      }
-    },
+    // result({ data, loading, networkStatus }) {
+    //   // return data.categories
+    //   if (data) {
+    //     this.categories = data.categories
+    //   }
+    // },
   },
   allMapLayers: {
     query: gql`
@@ -259,7 +260,6 @@ const methods = {
     }
   },
   getSource(path, key) {
-    console.log(`Getting source ${path} with ${key}`)
     return axios.get(`${this.$baseUrl}/${path}`).then((response) => {
       if (key) {
         return response.data[key]
@@ -435,27 +435,6 @@ const asyncComputed = {
     },
     shouldUpdate() {
       return this.component === 'Combinators'
-    },
-  },
-  categories: {
-    get() {
-      // if (this._categories && this._categories.length > 0) {
-      //   return this._categories
-      // }
-      return this.getSource('categories')
-      .then((categories) => {
-        this._categories = categories
-        if (this.schema && this.component !== 'Categories') {
-          this.setFormField(this._categories, 'category')
-        }
-        return this._categories
-      })
-    },
-    shouldUpdate() {
-      return (
-        this.collectionType === 'Datasets'
-        || this.component === 'Categories'
-        || this.component === 'Dataset View')
     },
   },
   queries: {
