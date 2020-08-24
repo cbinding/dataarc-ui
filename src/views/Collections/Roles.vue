@@ -43,7 +43,6 @@ import { mapState, mapActions } from 'vuex'
 import Role from '@/models/Role'
 import TableViewLayout from '@/views/Collections/templates/TableViewLayout.vue'
 
-
 export default {
   components: {
     TableViewLayout,
@@ -55,6 +54,7 @@ export default {
       currentPage: 1,
       perPage: 10,
       limits: [10, 20, 50, 100],
+      roles: [],
     }
   },
   computed: {
@@ -62,24 +62,14 @@ export default {
       return this.model.public
     },
   },
-  watch: {
-    $route(to, from) {
-      this.getInitialData()
-    },
-    items(val) {
-      return val.length
-    },
-  },
-  created() {
-    this.getInitialData()
-  },
-  methods: {
-    getInitialData() {
-      this.model.all().then((items) => {
-        this.items = items
-      })
-      // this.getAllUsers()
-    },
+  mounted() {
+    // this.getInitialData()
+    this.model
+    .withApollo(this.$apollo)
+    .all()
+    .then((items) => {
+      this.items = items
+    })
   },
 }
 </script>

@@ -7,6 +7,12 @@ class Base {
 
   static className = 'Base';
 
+  static gqlAllQuery = false
+
+  static gqlFetchQuery = false
+
+  static _apollo = false
+
   constructor(data) {
     Object.assign(this, data);
   }
@@ -32,10 +38,6 @@ class Base {
     return this.fetch(this.id);
   };
 
-  hasMany = async (model, primaryKey, secondaryKey) => {
-    return model.where(secondaryKey, this[primaryKey]).get();
-  };
-
   static get resourceUrl() {
     return `${this.apiUrl}/${this.resourcePath}`;
   }
@@ -53,18 +55,47 @@ class Base {
   };
 
   static fetch = async function (id) {
-    return axios.get(this.documentUrlConstructor(id)).then(({ data }) => {
-      return this.make(data);
-    });
-  };
+    if (this._apollo) return this.gqlFetch(id)
+
+    return axios.get(this.documentUrlConstructor(id))
+    .then(({ data }) => {
+      return this.make(data)
+    })
+  }
+
+  static gqlFetch = async function (id) {
+    const fetchString = this.gqlFetchQuery
+    fetchString.variables.id = id
+    return this._apollo.query(fetchString).then(({ data }) => {
+      return this.make(data.role)
+    })
+  }
+
+  static withApollo = function (apolloInstance) {
+    this._apollo = apolloInstance
+    return this
+  }
 
   static all = async function () {
-    return axios.get(this.apiUrl).then(({ data }) => {
+    if (this._apollo) return this.gqlAll()
+
+    return axios.get(this.baseUrl)
+    .then(({ data }) => {
       return data[this.indexKey].map((item) => {
         return this.make(item);
       });
     });
   };
+
+  static gqlAll = function () {
+    return this._apollo
+    .query(this.gqlAllQuery)
+    .then(({ data }) => {
+      return data[this.indexKey].map((item) => {
+        return this.make(item)
+      })
+    })
+  }
 
   static isActionAllowed = function (action) {
     return this.actions.indexOf(action) > -1;

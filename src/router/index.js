@@ -171,21 +171,19 @@ const routes = [
         children: [
           {
             path: 'index',
-            name: 'View Users',
+            name: 'View Permissions',
             component: () => import('@/views/Collections/Users-index.vue'),
           },
           {
             path: 'create',
-            name: 'Create User',
-            component: () =>
-              import('@/views/Collections/CreateUpdateDelete.vue'),
+            name: 'Create Permission',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
           {
             path: 'update/:id',
-            name: 'Update User',
-            component: () =>
-              import('@/views/Collections/CreateUpdateDelete.vue'),
+            name: 'Update Permission',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
         ],
@@ -193,8 +191,21 @@ const routes = [
       {
         path: 'roles',
         name: 'Roles',
-        component: () => import('@/views/Collections/Roles.vue'),
+        component: () => import('@/views/Collections/Container.vue'),
+        redirect: 'roles/index',
         children: [
+          {
+            path: 'index',
+            component: () => import('@/views/Collections/Roles.vue'),
+            name: 'View Roles',
+            props: true,
+          },
+          {
+            path: 'create',
+            name: 'Create Role',
+            component: () => import('@/views/Collections/CreateUpdateDelete'),
+            props: true,
+          },
           {
             path: 'update/:id',
             name: 'Update Role',

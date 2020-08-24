@@ -1,4 +1,5 @@
-import Base from '@/models/Base';
+import Base from '@/models/Base'
+import gql from 'graphql-tag'
 
 class Role extends Base {
   static indexKey = 'roles';
@@ -11,9 +12,55 @@ class Role extends Base {
 
   static public = ['name', 'totalUsers', 'actions'];
 
+  // static hasOne = []
+
+  // static hasMany = {
+  //   'users': User,
+  //   'permissions': Permission
+  // }
+
+  static gqlAllQuery = {
+    query: gql`
+      query {
+        roles {
+          id
+          name
+          description
+          users {
+            id
+          }
+        }
+      }
+    `,
+  }
+
+  static gqlFetchQuery = {
+    query: gql`
+      query roleById($id: ID!) {
+        role(id: $id) {
+          id
+          name
+          description
+          users {
+            id
+          }
+          permissions {
+            id
+          }
+        }
+      }
+    `,
+    variables: {
+      id: '',
+    },
+  }
+
   constructor(data) {
-    super(data);
-    this.totalUsers = this.nb_users ? this.nb_users : 0;
+    super(data)
+  }
+
+  get totalUsers() {
+    return this.users ? this.users.length : 0
   }
 }
 
