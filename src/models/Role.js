@@ -5,20 +5,24 @@ import gql from 'graphql-tag'
 class Role extends Base {
   static indexKey = 'roles';
 
-  static apiUrl = `${process.env.VUE_APP_API_URL}/users-permissions/roles`;
+  static baseUrl = `${process.env.VUE_APP_STRAPI_API_URL}`
 
-  static actions = ['edit'];
+  static resourcePath = 'users-permissions/roles'
 
-  static fillable = [];
+  static actions = ['edit']
+
+  static fillable = ['name', 'descriptoin']
 
   static public = ['name', 'totalUsers', 'actions'];
 
-  // static hasOne = []
+  static hasOne = []
 
-  // static hasMany = {
-  //   'users': User,
-  //   'permissions': Permission
-  // }
+  static hasMany = [
+    {
+      relation: 'users',
+      model: User
+    },
+  ]
 
   static gqlAllQuery = {
     query: gql`

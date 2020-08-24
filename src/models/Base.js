@@ -13,8 +13,34 @@ class Base {
 
   static _apollo = false
 
+  // Format is {relation: String, model: T<Base>}
+  static hasOne = []
+
+  static hasMany = [
+    {
+      relation: 'users',
+      model: User
+    },
+    {
+      relation: 'permission',
+      model: Permission
+    }
+  ]
+
   constructor(data) {
     Object.assign(this, data);
+  }
+
+  get formData () {
+    const formData = {
+      id: this.id
+    }
+    for (let index = 0; index < this.fillable.length; index++) {
+      const fillableKey = this.fillable[index];
+      if (this.hasOwnProperty(fillableKey)) {
+        formData[fillableKey] = this[fillableKey]
+      }
+    }
   }
 
   get documentUrl() {
@@ -22,36 +48,41 @@ class Base {
     return this.documentUrlConstructor(this.id);
   }
 
+  static get resourceUrl() {
+    return `${this.baseUrl}/${this.resourcePath}`
+  }
+
+  static documentUrlConstructor = function (resourceId) {
+    return `${this.resourceUrl}/${resourceId}`
+  }
+
+  fresh = async () => {
+    return this.fetch(this.id)
+  }
+
+  // CRUD METHODS
   update = async () => {
-    if (this.inArray('edit', this.actions)) {
-      return axios.put(this.documentUrl, this);
+    if (this.isActionAllowed('edit')) {
+      return axios.put(this.documentUrl, this.formData)
     }
   };
 
   delete = async () => {
-    if (this.inArray('delete', this.actions)) {
-      return axios.delete(this.documentUrl, this);
+    if (this.isActionAllowed('delete')) {
+      return axios.delete(this.documentUrl)
     }
   };
 
-  fresh = async () => {
-    return this.fetch(this.id);
-  };
-
-  static get resourceUrl() {
-    return `${this.apiUrl}/${this.resourcePath}`;
+  static make = function (data) {
+    return new this(data)
   }
 
   static create = async (postData) => {
-    if (this.inArray('create', this.actions)) {
-      return axios.post(this.apiUrl, postData).then(({ data }) => {
-        return this.make(data);
-      });
+    if (this.isActionAllowed('create')) {
+      return axios.post(this.baseUrl, postData).then(({ data }) => {
+        return this.make(data)
+      })
     }
-  };
-
-  static documentUrlConstructor = function (resourceId) {
-    return `${this.resourceUrl}/${resourceId}`;
   };
 
   static fetch = async function (id) {
@@ -63,19 +94,6 @@ class Base {
     })
   }
 
-  static gqlFetch = async function (id) {
-    const fetchString = this.gqlFetchQuery
-    fetchString.variables.id = id
-    return this._apollo.query(fetchString).then(({ data }) => {
-      return this.make(data.role)
-    })
-  }
-
-  static withApollo = function (apolloInstance) {
-    this._apollo = apolloInstance
-    return this
-  }
-
   static all = async function () {
     if (this._apollo) return this.gqlAll()
 
@@ -84,6 +102,21 @@ class Base {
       return data.map((item) => {
         return this.make(item)
       })
+    })
+  }
+
+  static withApollo = function (apolloInstance) {
+    this._apollo = apolloInstance
+    return this
+  }
+
+  // Requires this._apollo to be set
+  // Usually set by the helper method Base.withApollo($apolloInstance)
+  static gqlFetch = async function (id) {
+    const fetchString = this.gqlFetchQuery
+    fetchString.variables.id = id
+    return this._apollo.query(fetchString).then(({ data }) => {
+      return this.make(data.role)
     })
   }
 
@@ -100,10 +133,6 @@ class Base {
 
   static isActionAllowed = function (action) {
     return this.actions.indexOf(action) > -1;
-  };
-
-  static make = function (data) {
-    return new this(data);
   };
 
   static isAttributeFillable = function (attr) {

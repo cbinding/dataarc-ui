@@ -1,10 +1,14 @@
 import Base from '@/models/Base'
+import Role from '@/models/Role'
+import Permission from '@/models/Role'
 import gql from 'graphql-tag'
 
 class User extends Base {
   static indexKey = 'users'
 
-  static baseUrl = `${process.env.VUE_APP_STRAPI_API_URL}/users`
+  static baseUrl = `${process.env.VUE_APP_STRAPI_API_URL}`
+
+  static resourcePath = 'users'
 
   static actions = ['edit']
 
@@ -12,12 +16,19 @@ class User extends Base {
 
   static public = ['userName', 'email', 'confirmed', 'roleAssigned']
 
-  // static hasOne = []
+  static hasOne = [
+    {
+      relation: 'role',
+      model: Role
+    },
+  ]
 
-  // static hasMany = {
-  //   'users': User,
-  //   'permissions': Permission
-  // }
+  static hasMany = [
+    {
+      relation: 'permission',
+      model: Permission
+    }
+  ]
 
   static gqlAllQuery = {
     query: gql`
