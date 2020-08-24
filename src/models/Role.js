@@ -1,4 +1,5 @@
 import Base from '@/models/Base'
+import User from '@/models/User'
 import gql from 'graphql-tag'
 
 class Role extends Base {
@@ -43,6 +44,7 @@ class Role extends Base {
           description
           users {
             id
+            name
           }
           permissions {
             id
@@ -55,12 +57,37 @@ class Role extends Base {
     },
   }
 
-  constructor(data) {
-    super(data)
-  }
-
   get totalUsers() {
     return this.users ? this.users.length : 0
+  }
+
+  static makeSchema() {
+    return User.withApollo(this._apollo)
+    .all()
+    .then((users) => {
+      return {
+        fields: [
+          {
+            type: 'input',
+            inputType: 'text',
+            label: 'Username*',
+            model: 'username',
+            visible: true,
+            required: true,
+          },
+          {
+            type: 'select',
+            values: users,
+            label: 'Users',
+            model: 'users',
+            default: false,
+            selectOptions: {
+              name: 'username',
+            },
+          },
+        ],
+      }
+    })
   }
 }
 

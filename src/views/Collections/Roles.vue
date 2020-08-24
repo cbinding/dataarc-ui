@@ -7,7 +7,10 @@
       :current-page="currentPage"
       :per-page="perPage"
     >
-      <template v-slot:button>
+      <template
+        v-if="model.isActionAllowed('create')"
+        v-slot:button
+      >
         <b-button
           variant="primary"
           :to="{name: 'Create Role' }"

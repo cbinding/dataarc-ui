@@ -81,16 +81,17 @@ class Base {
 
     return axios.get(this.baseUrl)
     .then(({ data }) => {
-      return data[this.indexKey].map((item) => {
-        return this.make(item);
-      });
-    });
-  };
+      return data.map((item) => {
+        return this.make(item)
+      })
+    })
+  }
 
   static gqlAll = function () {
     return this._apollo
     .query(this.gqlAllQuery)
     .then(({ data }) => {
+      console.log(data)
       return data[this.indexKey].map((item) => {
         return this.make(item)
       })

@@ -163,31 +163,31 @@ const routes = [
           },
         ],
       },
-      {
-        path: 'permissions',
-        name: 'Permissions',
-        component: () => import('@/views/Collections/Container.vue'),
-        redirect: 'permissions/index',
-        children: [
-          {
-            path: 'index',
-            name: 'View Permissions',
-            component: () => import('@/views/Collections/Users-index.vue'),
-          },
-          {
-            path: 'create',
-            name: 'Create Permission',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-          {
-            path: 'update/:id',
-            name: 'Update Permission',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ],
-      },
+      // {
+      //   path: 'permissions',
+      //   name: 'Permissions',
+      //   component: () => import('@/views/Collections/Container.vue'),
+      //   redirect: 'permissions/index',
+      //   children: [
+      //     {
+      //       path: 'index',
+      //       name: 'View Permissions',
+      //       component: () => import('@/views/Collections/Users-index.vue'),
+      //     },
+      //     {
+      //       path: 'create',
+      //       name: 'Create Permission',
+      //       component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+      //       props: true,
+      //     },
+      //     {
+      //       path: 'update/:id',
+      //       name: 'Update Permission',
+      //       component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+      //       props: true,
+      //     },
+      //   ],
+      // },
       {
         path: 'roles',
         name: 'Roles',
@@ -198,18 +198,12 @@ const routes = [
             path: 'index',
             component: () => import('@/views/Collections/Roles.vue'),
             name: 'View Roles',
-            props: true,
-          },
-          {
-            path: 'create',
-            name: 'Create Role',
-            component: () => import('@/views/Collections/CreateUpdateDelete'),
-            props: true,
+            props: { test: 'value' },
           },
           {
             path: 'update/:id',
             name: 'Update Role',
-            component: () => import('@/views/Collections/CreateUpdateDelete'),
+            component: () => import('@/views/Collections/Roles-update.vue'),
             props: true,
           },
         ],
