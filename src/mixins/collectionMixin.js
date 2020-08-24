@@ -342,6 +342,13 @@ const methods = {
       }
     })
   },
+  getDate(val) {
+    if (!val) {
+      return ''
+    }
+    const newDate = new Date(val)
+    return newDate.toLocaleString()
+  },
 }
 
 const asyncComputed = {

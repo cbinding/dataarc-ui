@@ -19,6 +19,11 @@
               </b-badge>
             </div>
           </template>
+          <template v-slot:cell(state_at)="row" class="state_at">
+            <div>
+              {{ getDate(row.item.state_at) }}
+            </div>
+          </template>
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group>
               <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Process'" @click="process(row.item)"></b-button>
