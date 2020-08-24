@@ -19,14 +19,19 @@
               </b-badge>
             </div>
           </template>
+          <template v-slot:cell(state_at)="row" class="state_at">
+            <div>
+              {{ getDate(row.item.state_at) }}
+            </div>
+          </template>
           <template v-slot:cell(actions)="row" class="actions">
-            <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Process'" @click="process(row.item)"></b-button>
-            <b-link v-if="row.item" :disabled="row.item.state === 'processing'" size="sm" class="mb-2" :to="{name: 'Dataset View', params: {id: row.item.id} }">
-              <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
-            </b-link>
-            <b-link v-if="row.item" :disabled="row.item.state === 'processing'" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item">
-              <b-icon-trash></b-icon-trash>
-            </b-link>
+            <b-button-group>
+              <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Process'" @click="process(row.item)"></b-button>
+              <router-link :to="{name: 'Dataset View', params: {id: row.item.id} }">
+                <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Edit'"></b-button>
+              </router-link>
+              <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
+            </b-button-group>
           </template>
         </b-table>
       </template>
@@ -41,7 +46,6 @@ export default {
     return {
       component: 'Datasets',
       displayFields: [
-        'id',
         'name',
         'title',
         'description',
@@ -51,7 +55,7 @@ export default {
         'state_at',
         'actions',
       ],
-      pending: 'secondary',
+      pending: 'warning',
       processing: 'info',
       updating: 'info',
       failed: 'danger',

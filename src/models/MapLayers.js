@@ -30,7 +30,7 @@ class MapLayers {
   _delete = async () => {
     try {
       const resp = await axios.delete(`${process.env.VUE_APP_STRAPI_API_URL}/map-layers/${this.id}`)
-      return 'mapLayers'
+      return 'allMapLayers'
     } catch (err) {
       console.log(err)
     }

@@ -8,10 +8,9 @@ class Users {
     this.confirmed = data.confirmed
     this.blocked = data.blocked
     this.role = data.role
-    this.events = data.events
     this.createUrl = `${process.env.VUE_APP_STRAPI_API_URL}/auth/local/register`
     this.editUrl = `${process.env.VUE_APP_STRAPI_API_URL}/users/${this.id}`
-    this.routeUrl = '/admin/users'
+    this.routeUrl = '/admin/users/index'
   }
 
   _create = async () => {
@@ -52,7 +51,6 @@ Users.fillable = [
   'confirmed',
   'blocked',
   'role',
-  'events',
 ]
 
 Users.isAttributeFillable = function (attr) {

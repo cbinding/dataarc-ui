@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       form: {},
-      operators: ['Equals', 'Does Not Equal', 'Contains'],
+      operators: ['equals', 'not_equals', 'contains', 'not_contains', 'greater_than', 'less_than'],
       totalQueries: 1,
       queries: {},
       values: {},

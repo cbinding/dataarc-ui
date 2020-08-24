@@ -46,7 +46,7 @@ class Datasets {
   _delete = async () => {
     try {
       const resp = await axios.delete(`${process.env.VUE_APP_STRAPI_API_URL}/datasets/${this.id}`)
-      return 'datasets'
+      return 'allDatasets'
     } catch (err) {
       console.log(err)
     }

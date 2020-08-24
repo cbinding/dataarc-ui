@@ -56,21 +56,6 @@ const routes = [
     name: 'authenticated',
     component: dashboardLayout,
     children: [
-      {
-        path: 'home',
-        name: 'Dashboard',
-        component: () => import('@/views/Home.vue'),
-      },
-      {
-        path: 'about',
-        name: 'About',
-        component: () => import('@/views/About.vue'),
-      },
-      {
-        path: 'pug',
-        name: 'Pug',
-        component: () => import('@/views/Pug.vue'),
-      },
     ],
     meta: {
       auth: true,

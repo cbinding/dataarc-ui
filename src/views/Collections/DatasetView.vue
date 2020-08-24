@@ -92,7 +92,6 @@ export default {
       sortList: ['Path', 'Type'],
       fieldTypes: ['string', 'number', 'boolean', 'array', 'url', 'start_date', 'end_date', 'text_date'],
       fieldsList: [
-        'id',
         'name',
         'title',
         'type',

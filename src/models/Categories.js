@@ -30,7 +30,7 @@ class Categories {
   _delete = async () => {
     try {
       const resp = await axios.delete(`${process.env.VUE_APP_STRAPI_API_URL}/categories/${this.id}`)
-      return 'categories'
+      return 'allCategories'
     } catch (err) {
       console.log(err)
     }
