@@ -330,8 +330,8 @@ const methods = {
         if (value === 'users') {
           this.getAllUsers()
         }
-        else if (value === 'datasets') {
-          this.$apollo.queries.allDatasets.refetch()
+        else if (value === 'allDatasets' || value === 'allMapLayers' || value === 'allCategories') {
+          this.$apollo.queries[value].refetch()
         }
         else {
           this.$asyncComputed[value].update()

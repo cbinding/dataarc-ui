@@ -18,12 +18,12 @@
             </div>
           </template>
           <template v-slot:cell(actions)="row" class="actions">
-            <b-link v-if="row.item" size="sm" class="mb-2" :to="{name: 'Update Combinator', params: {id: row.item.id} }">
-              <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
-            </b-link>
-            <b-link v-if="row.item" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item">
-              <b-icon-trash></b-icon-trash>
-            </b-link>
+            <b-button-group>
+              <router-link :to="{name: 'Update Combinator', params: {id: row.item.id} }">
+                <b-button size="sm" variant="primary" :disabled="row.item.state === 'running'" v-text="'Edit'"></b-button>
+              </router-link>
+              <b-button size="sm" variant="primary" :disabled="row.item.state === 'running'" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
+            </b-button-group>
           </template>
         </b-table>
       </template>
@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       component: 'Combinators',
-      displayFields: ['id', 'name', 'title', 'description', 'citation', 'actions'],
+      displayFields: ['name', 'title', 'description', 'citation', 'actions'],
     }
   },
   mixins: [collectionMixin],

@@ -397,7 +397,9 @@ export default {
     },
     roles(val) {
       this.schema.fields.filter((field) => {
-        return field.model && field.model === 'role'
+        if(field.model && field.model === 'role') {
+          field.values = val
+        }
       })
     },
     model(val) {

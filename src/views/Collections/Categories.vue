@@ -45,27 +45,13 @@
               </div>
             </ul>
           </template>
-          <template
-            v-slot:cell(actions)="row"
-            class="actions"
-          >
-            <b-link
-              v-if="row.item"
-              size="sm"
-              class="mb-2"
-              :to="{name: 'Update Category', params: {id: row.item.id} }"
-            >
-              <b-icon-pencil-square style="padding=50px;" />
-            </b-link>
-            <b-link
-              v-if="row.item"
-              v-b-modal.deleteConfirmation
-              size="sm"
-              class="mb-2"
-              @click="itemToDelete = row.item"
-            >
-              <b-icon-trash />
-            </b-link>
+           <template v-slot:cell(actions)="row" class="actions">
+            <b-button-group>
+              <router-link :to="{name: 'Update Category', params: {id: row.item.id} }">
+                <b-button size="sm" variant="primary" v-text="'Edit'"></b-button>
+              </router-link>
+              <b-button size="sm" variant="primary" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
+            </b-button-group>
           </template>
         </b-table>
       </template>
@@ -84,7 +70,7 @@ export default {
   data() {
     return {
       component: 'Categories',
-      displayFields: ['id', 'name', 'title', 'description', 'color', 'datasets', 'actions'],
+      displayFields: ['name', 'title', 'description', 'color', 'datasets', 'actions'],
     }
   },
   watch: {
