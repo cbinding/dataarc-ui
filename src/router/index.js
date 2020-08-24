@@ -147,24 +147,52 @@ const routes = [
       {
         path: 'users',
         name: 'Users',
-        component: () => import('@/views/Collections/Users.vue'),
-      },
-      {
-        path: 'users/create',
-        name: 'Create User',
-        component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-        props: true,
-      },
-      {
-        path: 'users/update/:id',
-        name: 'Update User',
-        component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-        props: true,
+        component: () => import('@/views/Collections/Container.vue'),
+        redirect: 'users/index',
+        children: [
+          {
+            path: 'index',
+            name: 'View Users',
+            component: () => import('@/views/Collections/Users-index.vue'),
+          },
+          {
+            path: 'create',
+            name: 'Create User',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+          {
+            path: 'update/:id',
+            name: 'Update User',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+        ],
       },
       {
         path: 'permissions',
         name: 'Permissions',
-        component: () => import('@/views/About.vue'),
+        component: () => import('@/views/Collections/Container.vue'),
+        redirect: 'permissions/index',
+        children: [
+          {
+            path: 'index',
+            name: 'View Users',
+            component: () => import('@/views/Collections/Users-index.vue'),
+          },
+          {
+            path: 'create',
+            name: 'Create User',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+          {
+            path: 'update/:id',
+            name: 'Update User',
+            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true,
+          },
+        ],
       },
       {
         path: 'roles',

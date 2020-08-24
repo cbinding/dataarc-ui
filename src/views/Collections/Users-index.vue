@@ -1,6 +1,5 @@
 <template>
   <b-container fluid>
-    <router-view />
     <table-view-layout
       :rows="rows"
       :component="component"
@@ -8,43 +7,35 @@
       :current-page="currentPage"
       :per-page="perPage"
       @change="updatePage"
-      @deleteConfirmed="deleteItem(itemToDelete, 'Categories')"
+      @deleteConfirmed="deleteItem(itemToDelete, 'Users')"
       @limitUpdated="updateLimit"
     >
       <template v-slot:button>
         <b-button
           variant="primary"
-          :to="{name: 'Create Category' }"
+          :to="{name: 'Create User' }"
         >
-          <b-icon-plus />Add new Category
+          <b-icon-plus />Add new User
         </b-button>
       </template>
       <template v-slot:table>
         <b-table
-          v-if="categories"
-          :per-page="perPage"
-          :current-page="currentPage"
-          responsive
+          :responsive="true"
           table-variant="light"
           head-variant="light"
-          :items="categories"
+          :items="users.items"
           :fields="displayFields"
         >
           <template
-            v-slot:cell(datasets)="datasetRow"
-            class="Datasets"
+            v-slot:cell(role)="row"
           >
-            <ul>
-              <div
-                v-for="dataset in datasetRow.item.datasets"
-                :key="dataset.id"
-              >
-                <li>
-                  {{ dataset.title }}
-                </li>
-              </div>
-            </ul>
+            <b-link
+              :to="{ name: 'Update Role', params: {id: row.item.role.id }}"
+            >
+              {{ row.item.role.name }}
+            </b-link>
           </template>
+
           <template
             v-slot:cell(actions)="row"
             class="actions"
@@ -53,7 +44,7 @@
               v-if="row.item"
               size="sm"
               class="mb-2"
-              :to="{name: 'Update Category', params: {id: row.item.id} }"
+              :to="{name: 'Update User', params: {id: row.item.id} }"
             >
               <b-icon-pencil-square style="padding=50px;" />
             </b-link>
@@ -74,28 +65,46 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import collectionMixin from '../../mixins/collectionMixin'
-import TableViewLayout from './templates/TableViewLayout.vue'
 export default {
-  components: {
-    TableViewLayout,
-  },
   mixins: [collectionMixin],
   data() {
     return {
-      component: 'Categories',
-      displayFields: ['id', 'name', 'title', 'description', 'color', 'datasets', 'actions'],
+      component: 'Users',
+      displayFields: ['username', 'email', 'confirmed', 'role', 'actions'],
+      total: '',
     }
+  },
+  computed: {
+    ...mapState({
+      account: (state) => state.account,
+      users: (state) => state.users.all,
+      user: (state) => state.users.user,
+    }),
   },
   watch: {
     $route(to, from) {
-      if (from.name !== 'Categories') {
-        this.$apollo.queries.allCategories.refetch()
+      this.getAllUsers()
+    },
+    users(val) {
+      if (val.items) {
+        this.total = val.items.length
       }
     },
   },
   created() {
-    this.$apollo.queries.allCategories.skip = false
+    this.getInitialData()
+  },
+  methods: {
+    ...mapActions('users', {
+      getAllUsers: 'getAll',
+      getById: 'getById',
+      deleteUser: 'delete',
+    }),
+    getInitialData() {
+      this.getAllUsers()
+    },
   },
 }
 </script>

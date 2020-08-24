@@ -4,7 +4,6 @@ import Cookies from 'js-cookie'
 
 const rawUser = Cookies.get('user')
 const user = rawUser ? JSON.parse(Cookies.get('user')) : null
-const token = rawUser ? Cookies.get('jwt') : null
 
 const state = {
   status: {
