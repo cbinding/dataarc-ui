@@ -140,6 +140,8 @@ export default {
     currentDataset(val) {
       if (val) {
         this.form = val
+        let temp = this.form.category.id
+        this.form.category = temp
         this.form.type = 'Datasets'
         this.form.action = 'Update'
         this.form.goBack = true
@@ -148,7 +150,7 @@ export default {
   },
   mounted() {
     this.currentId = this.$route.params.id
-    this.$apollo.queries.dataset.skip = false
+    this.$apollo.queries.datasetWFeatures.skip = false
   }
 }
 </script>

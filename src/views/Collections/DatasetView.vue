@@ -224,10 +224,20 @@ export default {
         this.model.action = 'Update'
       }
     },
+    categories: function(val) {
+      if(val) {
+        this.schema.fields.filter((field) => {
+          if (field.model && field.model === 'category') {
+            field.values = val
+          }
+        })
+      }
+    }
   },
   mounted() {
     this.currentId = this.$route.params.id
     this.$apollo.queries.dataset.skip = false
+    this.$apollo.queries.allCategories.skip = false
   },
 
 }

@@ -19,6 +19,7 @@
             :schema="schema"
             :model="model"
             :options="formOptions"
+            :currentDataset="currentDataset"
           />
         </div>
       </div>
@@ -60,11 +61,18 @@ export default {
         datasets: [],
         events: [],
         combinators: [],
-        combinator_queries: [],
+        queries: [],
         dataset_templates: [],
       },
       schema: {
         fields: [
+          {
+            type: 'select',
+            values: this.datasets ? this.datasets : [''],
+            label: 'Dataset',
+            model: 'dataset',
+            visible: true,
+          },
           {
             type: 'input',
             inputType: 'text',
@@ -186,13 +194,6 @@ export default {
             },
           },
           {
-            type: 'select',
-            values: this.datasets ? this.datasets : ['1', '2'],
-            label: 'Dataset',
-            model: 'dataset',
-            visible: true,
-          },
-          {
             type: 'input',
             inputType: 'text',
             label: 'Color',
@@ -200,29 +201,13 @@ export default {
             visible: true,
           },
           {
-            type: 'vueMultiSelect',
-            multiSelect: true,
+            type: 'query',
             label: 'Queries',
             model: 'queries',
-            values: this.queries ? this.queries : ['1', '2'],
-            visible: true,
+            values: ['field1', 'field2'],
             selectOptions: {
-              key: 'field',
-              label: 'field',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
-              trackBy: 'field',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
+              value: 'id',
+              path: 'path',
             },
           },
           {
@@ -256,7 +241,7 @@ export default {
             multiSelect: true,
             label: 'Datasets',
             model: 'datasets',
-            values: this.datasets? this.datasets: ['1', '2'],
+            values: this.datasets ? this.datasets : ['1', '2'],
             visible: true,
             selectOptions: {
               key: 'name',
@@ -356,32 +341,6 @@ export default {
             },
           },
           {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Features',
-            model: 'features',
-            values: this.features ? this.features : [],
-            visible: true,
-            selectOptions: {
-              key: 'properties.name',
-              label: 'properties.name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              trackBy: 'id',
-              tagPlaceholder: 'tagPlaceholder',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
             type: 'submit',
             buttonText: 'Submit',
             inputType: 'submit',
@@ -441,6 +400,21 @@ export default {
         }
       })
     },
+    model: function (val) {
+      if(val.dataset) {
+        this.currentId = val.dataset
+        this.$apollo.queries.dataset.skip = false
+      }
+    },
+    currentDataset: function (val) {
+      if(val) {
+        this.schema.fields.filter((field) => {
+          if (field.model && field.model === 'queries') {
+            field.values = val.fields
+          }
+        })
+      }
+    },
   },
   mounted() {
     this.setData()
@@ -456,7 +430,7 @@ export default {
       const pathArray = this.$route.path.split('/')
       this.action = variables[0]
       this.collectionType = (variables[1] !== 'Category' ? `${variables[1]}s` : 'Categories')
-      if (this.$route.name === 'Update Combinator') {
+      if (this.$route.name === 'Update Combinator' || 'Create Combinator') {
         this.$apollo.queries.allDatasets.skip = false
       }
       if (this.$route.name === 'Create Dataset') {

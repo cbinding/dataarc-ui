@@ -21,6 +21,7 @@ import VueFormGenerator from 'vue-form-generator'
 import AsyncComputed from 'vue-async-computed'
 import Debug from '@/components/partials/Debug.vue'
 import MyPlugin from './plugins/my-plugin'
+import fieldQuery from './views/Collections/templates/fieldQuery.vue'
 
 
 // Globals
@@ -33,6 +34,7 @@ Vue.use(VueApollo)
 Vue.component('multiselect', Multiselect)
 Vue.use(AsyncComputed)
 Vue.component('Debug', Debug)
+Vue.component('fieldQuery', fieldQuery)
 
 // Apply plugins
 Vue.use(VueFormGenerator)

@@ -12,26 +12,19 @@
               {{ row.item.description }}
             </div>
           </template>
-          <template v-slot:cell(process)="row" class="process">
+          <template v-slot:cell(state)="row" class="state">
             <div>
-              <b-badge :variant="status(row.item.process)">
-                {{ row.item.process ? row.item.process : 'pending' }}
-              </b-badge>
-            </div>
-          </template>
-          <template v-slot:cell(refresh)="row" class="refresh">
-            <div>
-              <b-badge :variant="status(row.item.refresh)">
-                {{ row.item.refresh ? row.item.refresh : 'pending' }}
+              <b-badge :variant="status(row.item.state)">
+                {{ row.item.state ? row.item.state : 'pending' }}
               </b-badge>
             </div>
           </template>
           <template v-slot:cell(actions)="row" class="actions">
-            <b-button size="sm" variant="primary" :disabled="row.item.process === 'active'" v-text="'Process'" @click="process(row.item)"></b-button>
-            <b-link v-if="row.item" :disabled="row.item.process === 'active'" size="sm" class="mb-2" :to="{name: 'Dataset View', params: {id: row.item.id} }">
+            <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Process'" @click="process(row.item)"></b-button>
+            <b-link v-if="row.item" :disabled="row.item.state === 'processing'" size="sm" class="mb-2" :to="{name: 'Dataset View', params: {id: row.item.id} }">
               <b-icon-pencil-square style="padding=50px;"></b-icon-pencil-square>
             </b-link>
-            <b-link v-if="row.item" :disabled="row.item.process === 'active'" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item">
+            <b-link v-if="row.item" :disabled="row.item.state === 'processing'" size="sm" class="mb-2" v-b-modal.deleteConfirmation @click="itemToDelete = row.item">
               <b-icon-trash></b-icon-trash>
             </b-link>
           </template>
@@ -53,19 +46,16 @@ export default {
         'title',
         'description',
         'citation',
-        'process',
-        'process_at',
-        'process_notes',
-        'refresh',
-        'refresh_at',
-        'refresh_notes',
+        'state',
+        'state_msg',
+        'state_at',
         'actions',
       ],
       pending: 'secondary',
-      active: 'info',
+      processing: 'info',
+      updating: 'info',
       failed: 'danger',
-      complete: 'success',
-      processing: false,
+      done: 'success',
     }
   },
   created() {
@@ -91,9 +81,9 @@ export default {
   mixins: [collectionMixin],
   watch: {
     $route(to, from) {
-      if (from.name !== 'Datasets') {
+      // if (from.name !== 'Datasets') {
         this.$apollo.queries.allDatasets.refetch()
-      }
+      // }
     }
   },
 }
