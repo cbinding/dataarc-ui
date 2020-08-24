@@ -4,6 +4,7 @@ import Cookies from 'js-cookie'
 
 const rawUser = Cookies.get('user')
 const user = rawUser ? JSON.parse(Cookies.get('user')) : null
+const token = rawUser ? Cookies.get('jwt') : null
 
 const state = {
   status: {
@@ -19,8 +20,8 @@ const actions = {
     commit('loginRequest', { identifier })
     return userService.login(identifier, password)
     .then(
-      (user) => {
-        commit('loginSuccess', user)
+      (response) => {
+        commit('loginSuccess', response)
         router.push('/basic')
       },
       (error) => {
@@ -79,9 +80,10 @@ const mutations = {
     state.user = user
     state.role = user ? user.role : null
   },
-  loginSuccess(state, user) {
+  loginSuccess(state, response) {
     state.status = { loggedIn: true }
-    state.user = user
+    state.user = response.user
+    state.jwt = response.jwt
     state.role = user ? user.role : null
   },
   loginFailure(state, err) {
@@ -91,10 +93,12 @@ const mutations = {
     state.status = { loggedIn: false, error: err }
     state.user = null
     state.role = null
+    state.jwt = null
   },
   logout(state) {
     state.status = {}
     state.user = null
+    state.jwt = null
     state.role = null
   },
   registerRequest(state, user) {

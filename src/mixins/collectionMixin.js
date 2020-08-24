@@ -259,6 +259,7 @@ const methods = {
     }
   },
   getSource(path, key) {
+    console.log(`Getting source ${path} with ${key}`)
     return axios.get(`${this.$baseUrl}/${path}`).then((response) => {
       if (key) {
         return response.data[key]
