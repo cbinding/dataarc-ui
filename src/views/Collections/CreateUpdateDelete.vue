@@ -151,11 +151,15 @@ export default {
           },
           {
             type: 'select',
-            values: ['AND', 'OR'],
+            values: [{type: 'and', value: 'And'}, {type: 'or', value: 'Or'}],
             label: 'Operator',
             model: 'operator',
-            default: 'AND',
+            default: 'and',
             visible: true,
+            selectOptions: {
+              value: 'type',
+              name: 'value',
+            }
           },
           {
             type: 'input',

@@ -406,24 +406,6 @@ const asyncComputed = {
       return this.component === 'Combinators'
     },
   },
-  queries: {
-    get() {
-      // if (this._queries && this._queries.length > 0) {
-      //   return this._queries
-      // }
-      return this.getSource('combinator-queries')
-      .then((queries) => {
-        this._queries = queries
-        if (this.schema) {
-          this.setFormField(this._queries, 'queries')
-        }
-        return this._queries
-      })
-    },
-    shouldUpdate() {
-      return ((this.collectionType === 'Combinators' && this.action === 'Update') || this.component === 'Queries')
-    },
-  },
   concepts: {
     get() {
       // if (this._concepts && this._concepts.length > 0) {
