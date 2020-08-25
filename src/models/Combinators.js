@@ -37,19 +37,14 @@ class Combinators {
     }
   }
 
-  _createQueries = async (val) => {
+  _createOrUpdateQuery = async (val) => {
     try {
-      const resp = await axios.post(`${process.env.VUE_APP_STRAPI_API_URL}/combinator-queries`, val)
-      return resp
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  _updateQuery = async (val) => {
-    try {
-      const resp = await axios.put(`${process.env.VUE_APP_STRAPI_API_URL}/combinator-queries/${val.id}`, val)
-      return resp
+      if(val) {
+        let url = val.id ? `${process.env.VUE_APP_STRAPI_API_URL}/combinator-queries/${val.id}` : `${process.env.VUE_APP_STRAPI_API_URL}/combinator-queries`
+        let action = val.id ? 'put' : 'post'
+        const resp = await axios[action](url, val)
+        return resp
+      }
     } catch (err) {
       console.log(err)
     }
@@ -59,36 +54,26 @@ class Combinators {
     try {
       let promises = []
       if (this.queries) {
-        let _queries = this.queries
-        let length = 0
-        if(_queries.length) {
-          length = _queries.length
-        }
-        else{
-          length = Object.keys(_queries).length
-        }
+        let _queries = Object.assign(this.queries)
+        let length = Object.keys(_queries).length
         this.queries = []
         for (let i = 0; i <= length; i++) {
-          if (_queries[i].id) {
-            promises.push(
-              this._updateQuery(_queries[i]).then((response) => {
-                this.queries.push(_queries[i].id)
-              }),
-            )
-          }
-          else {
-            promises.push(
-              this._createQueries(_queries[i]).then((response) => {
-                this.queries.push(response.data.id)
-              }),
-            )
-          }
+          promises.push(
+            this._createOrUpdateQuery(_queries[i])
+            .then((response) => {
+              if (response) {
+                let id = _queries[i].id ? _queries[i].id : response.data.id
+                this.queries.push(id)
+              }
+            },
+            ),
+          )
         }
       }
-      Promise.all(promises).then(() => {
+      return Promise.all(promises).then(() => {
         const resp = axios.put(this.editUrl, this)
         return resp
-      });
+      })
     } catch (err) {
       console.log(err)
     }
