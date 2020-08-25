@@ -13,7 +13,7 @@
             </div>
           </template>
           <template v-slot:cell(fields_count)="row" class="fieldsCount">
-            {{ row.item.id }}
+            {{ getFieldsCount(row.item.id) }}
           </template>
           <template v-slot:cell(state)="row" class="state">
             <div>
@@ -86,6 +86,9 @@ export default {
       temp.type = 'DatasetFields'
       temp.action = 'Update'
       this.setFormData(temp)
+    },
+    getFieldsCount(val) {
+      this.$apollo.queries.datasetFieldsCount.setVariables({id: val})
     },
   },
   mixins: [collectionMixin],
