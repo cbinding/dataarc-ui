@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
 import collectionMixin from '../../mixins/collectionMixin'
 export default {
   data() {
@@ -66,6 +67,7 @@ export default {
       updating: 'info',
       failed: 'danger',
       done: 'success',
+
     }
   },
   created() {
@@ -87,8 +89,26 @@ export default {
       temp.action = 'Update'
       this.setFormData(temp)
     },
-    getFieldsCount(val) {
-      this.$apollo.queries.datasetFieldsCount.setVariables({id: val})
+    async getFieldsCount(val) {
+      const fetchString = {
+        query: gql`
+          query datasetFieldsCount($id: ID!) {
+            datasetFieldsCount(where: {dataset: $id})
+          }
+        `,
+        variables: {
+          id: val,
+        },
+      }
+      const test = await this.$apollo.query(fetchString).then(({ data }) => {
+        if (data && data.datasetFieldsCount) {
+          return data.datasetFieldsCount
+        }
+      })
+      if (test && test > 0) {
+        console.log(test)
+        return test
+      }
     },
   },
   mixins: [collectionMixin],
