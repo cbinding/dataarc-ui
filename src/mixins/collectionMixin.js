@@ -81,6 +81,7 @@ const apollo = {
         }
       }
     `,
+    pollInterval: 5000,
     skip: (this ? (this.currentDataset || !this.currentId) : true),
     update(data) {
       // The returned value will update
@@ -89,6 +90,17 @@ const apollo = {
     },
     result({ data, loading, networkStatus }) {
       if (data) {
+        let stopQuery = data.datasets.filter((dataset) => {
+          if (!(dataset.state === 'done' || dataset.state === 'pending' || dataset.state === 'failed')) {
+            return dataset
+          }
+        })
+        if(stopQuery.length === 0) {
+          this.$apollo.queries.allDatasets.stopPolling()
+        }
+        else {
+          this.$apollo.queries.allDatasets.startPolling(5000)
+        }
         this.datasets = data.datasets
       }
     },
