@@ -6,8 +6,6 @@ class MapLayer extends Base {
 
   static resourcePath = 'mapLayers'
 
-  static baseUrl = `${process.env.VUE_APP_STRAPI_API_URL}/map-layers`
-
   static actions = ['create', 'edit', 'delete']
 
   static fillable = ['name', 'title', 'description']

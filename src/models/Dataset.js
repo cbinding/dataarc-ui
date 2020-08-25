@@ -7,15 +7,11 @@ class Dataset extends Base {
 
   static resourcePath = 'datasets'
 
-  static baseUrl = `${process.env.VUE_APP_STRAPI_API_URL}/datasets`
-
   static actions = ['create', 'edit', 'delete']
 
   static fillable = ['name', 'title', 'description', 'citation', 'state', 'state_msg', 'state_at']
 
   static public = ['name', 'title', 'description', 'citation', 'state', 'state_msg', 'state_at']
-
-  static hasOne = []
 
   static hasMany = [
     {

@@ -1,5 +1,8 @@
 class Base {
-  static indexKey = false;
+  
+  // CLASS PROPERTIES
+
+  static indexKey = false
 
   static apiUrl = `${process.env.VUE_APP_API_URL}`;
 
@@ -13,40 +16,14 @@ class Base {
 
   static _apollo = false
 
+  static raw_data = {}
+
+  static model = false
+
   // Format is {relation: String, model: T<Base>}
   static hasOne = []
 
-  static hasMany = [
-    {
-      relation: 'users',
-      model: User
-    },
-    {
-      relation: 'permission',
-      model: Permission
-    }
-  ]
-
-  constructor(data) {
-    Object.assign(this, data);
-  }
-
-  get formData () {
-    const formData = {
-      id: this.id
-    }
-    for (let index = 0; index < this.fillable.length; index++) {
-      const fillableKey = this.fillable[index];
-      if (this.hasOwnProperty(fillableKey)) {
-        formData[fillableKey] = this[fillableKey]
-      }
-    }
-  }
-
-  get documentUrl() {
-    // Computed url property
-    return this.documentUrlConstructor(this.id);
-  }
+  static hasMany = []
 
   static get resourceUrl() {
     return `${this.baseUrl}/${this.resourcePath}`
@@ -54,6 +31,45 @@ class Base {
 
   static documentUrlConstructor = function (resourceId) {
     return `${this.resourceUrl}/${resourceId}`
+  }
+
+  // INSTANCE CONSTRUCTOR
+
+  constructor(data) {
+    Object.assign(this.raw_data, data)
+
+    const remainingData = this._compileRelationships()
+
+    Object.assign(this, remainingData)
+
+  }
+
+  // PUBLIC INSTANCE PROPERTIES
+
+  get documentUrl() {
+    // Computed url property
+    return this.documentUrlConstructor(this.id);
+  }
+
+  // PUBLIC INSTANCE METHODS
+
+  model () {
+    if (!this.id) return this.model
+    
+    const model = {
+      id: this.id
+    }
+
+    const fields = this.model ? this.model.keys() : this.fillable
+    
+    for (let index = 0; index < fields.length; index++) {
+      const fieldKey = fields[index];
+      if (this.hasOwnProperty(fieldKey)) {
+        model[fieldKey] = this[fieldKey]
+      }
+    }
+
+    return model
   }
 
   fresh = async () => {
@@ -72,6 +88,8 @@ class Base {
       return axios.delete(this.documentUrl)
     }
   };
+
+  // PUBLIC CLASS METHODS
 
   static make = function (data) {
     return new this(data)
@@ -136,8 +154,57 @@ class Base {
   };
 
   static isAttributeFillable = function (attr) {
-    return this.fillable.indexOf(attr) > -1;
-  };
+    return (this.fillable.indexOf(attr) > -1)
+  }
+
+  // PRIVAITE METHODS
+  _compileRelationships (data) {
+    const remainingData = this._compileHasManyRelations(data)
+    return this._compileHasOneRelations(remainingData)
+  }
+
+  _compileHasOneRelations (data) {
+    for (let relatedIndex = 0; relatedIndex < this.hasOne.length; relatedIndex++) {
+      
+      // Get connection definition
+      const {relation, model} = this.hasOne[relatedIndex];
+      
+      if (data.hasOwnProperty(relation)) {
+        // Convert into our model
+        this[relation] = new model(data[relation][attachedIndex])
+
+        // Remove the key
+        delete data[relation]
+      }
+    
+    }
+    return data
+  }
+
+  _compileHasManyRelations (data) {
+    for (let relatedIndex = 0; relatedIndex < this.hasMany.length; relatedIndex++) {
+      
+      // Get connection definition
+      const {relation, model} = this.hasMany[relatedIndex];
+      
+      if (data.hasOwnProperty(relation)) {
+        // Make the empty many relation
+        this[relation] = []
+        
+        for (let attachedIndex = 0; attachedIndex < data[relation].length; attachedIndex++) {
+          // Push our formatted instance
+          this[relation].push(
+            new model(data[relation][attachedIndex])
+          )
+        }
+
+        // Remove the key
+        delete data[relation]
+      }
+    
+    }
+    return data
+  }
 }
 
 export default Base;

@@ -2,11 +2,10 @@ import Base from '@/models/Base'
 import Role from '@/models/Role'
 import Permission from '@/models/Role'
 import gql from 'graphql-tag'
+import UserForm from './forms/user.form'
 
 class User extends Base {
   static indexKey = 'users'
-
-  static baseUrl = `${process.env.VUE_APP_STRAPI_API_URL}`
 
   static resourcePath = 'users'
 
@@ -15,6 +14,16 @@ class User extends Base {
   static fillable = ['username', 'email', 'confirmed', 'blocked', 'role']
 
   static public = ['userName', 'email', 'confirmed', 'roleAssigned']
+
+  static model = {
+    username,
+    email,
+    password,
+    provider,
+    confirmed,
+    blocked,
+    role
+  }
 
   static hasOne = [
     {
@@ -71,9 +80,17 @@ class User extends Base {
     return this.hasOwnProperty('role') ? this.role.name : 'Unknown'
   }
 
-  get schema() {
-
+  static form = async () => {
+    let promises = [
+      Role.withApollo(this._apollo).all(),
+      this.withApollo(this._apollo).all()
+    ]
+    return new Promise.all(promises)
+      .then((data) => {
+        return new UserForm(data).fields
+      })
   }
+
 }
 
 export default User

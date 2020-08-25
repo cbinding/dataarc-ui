@@ -5,8 +5,6 @@ import gql from 'graphql-tag'
 class Category extends Base {
   static indexKey = 'categories'
 
-  static baseUrl = `${process.env.VUE_APP_STRAPI_API_URL}`
-
   static resourcePath = 'categories'
 
   static actions = ['create', 'edit', 'delete']

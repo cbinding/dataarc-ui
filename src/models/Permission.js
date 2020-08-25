@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 class Permission extends Base {
   static indexKey = 'permissions'
 
-  static baseUrl = `${process.env.VUE_APP_STRAPI_API_URL}/users-permissions`
+  static resourcePath = 'users-permissions'
 
   static actions = []
 
