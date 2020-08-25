@@ -12,8 +12,8 @@
               {{ row.item.description }}
             </div>
           </template>
-          <template v-slot:cell(fields_count)="row" class="fieldsCount">
-            {{ getFieldsCount(row.item.id) }}
+          <template v-slot:cell(fields_count)="row" class="fieldsCount" >
+            {{ tempDatasets[row.index] ? tempDatasets[row.index] : 0 }}
           </template>
           <template v-slot:cell(state)="row" class="state">
             <div>
@@ -67,6 +67,7 @@ export default {
       updating: 'info',
       failed: 'danger',
       done: 'success',
+      tempDatasets: [],
 
     }
   },
@@ -100,13 +101,12 @@ export default {
           id: val,
         },
       }
-      const test = await this.$apollo.query(fetchString).then(({ data }) => {
-        if (data && data.datasetFieldsCount) {
+      const test = await this.$apollo.query(fetchString).then(({ data, loading }) => {
+        if (!loading && data && data.datasetFieldsCount) {
           return data.datasetFieldsCount
         }
       })
-      if (test && test > 0) {
-        console.log(test)
+      if (test) {
         return test
       }
     },
@@ -117,6 +117,26 @@ export default {
       // if (from.name !== 'Datasets') {
         this.$apollo.queries.allDatasets.refetch()
       // }
+    },
+    datasets: async function(val) {
+      if (val) {
+        let promises = []
+        let test = []
+        for(let i = 0; i < val.length; i++) {
+          if(!test[i]){
+            promises.push(
+              this.getFieldsCount(val[i].id).then((response) => {
+                test[i] = response ? response : 0
+              })
+            )
+          }
+        }
+        Promise.all(promises).then((data) => {
+          for(let i = 0; i < test.length; i++) {
+            this.$set(this.tempDatasets, i, test[i])
+          }
+        })
+      }
     }
   },
 }
