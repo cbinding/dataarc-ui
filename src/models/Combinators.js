@@ -22,13 +22,13 @@ class Combinators {
         this.queries = []
         for (let i = 1; i <= Object.keys(_queries).length; i++) {
           promises.push(
-            this._createQueries(_queries[i]).then((response) => {
+            this._createOrUpdateQuery(_queries[i]).then((response) => {
               this.queries.push(response.data.id)
             }),
           )
         }
       }
-      Promise.all(promises).then(() => {
+      return Promise.all(promises).then(() => {
         const resp = axios.post(this.createUrl, this)
         return resp
       });

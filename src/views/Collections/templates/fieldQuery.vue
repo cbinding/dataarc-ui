@@ -69,9 +69,11 @@ export default {
     },
     model: function(val) {
       if(val && val.queries) {
+        this.totalQueries = 0
         for(let i = 0; i < val.queries.length; i++) {
           this.form[i + 1] = val.queries[i]
           this.values[i + 1] = this.form[i + 1].value
+          this.totalQueries += 1
         }
       }
     },
