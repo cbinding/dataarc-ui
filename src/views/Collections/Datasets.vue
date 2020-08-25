@@ -13,7 +13,13 @@
             </div>
           </template>
           <template v-slot:cell(fields_count)="row" class="fieldsCount" >
-            {{ tempDatasets[row.index] ? tempDatasets[row.index] : 0 }}
+            {{ fieldsCount[row.index] ? fieldsCount[row.index] : 0 }}
+          </template>
+          <template v-slot:cell(features_count)="row" class="featuresCount" >
+            {{ featuresCount[row.index] ? featuresCount[row.index] : 0 }}
+          </template>
+          <template v-slot:cell(combinators_count)="row" class="combinatorsCount" >
+            {{ combinatorsCount[row.index] ? combinatorsCount[row.index] : 0 }}
           </template>
           <template v-slot:cell(state)="row" class="state">
             <div>
@@ -67,8 +73,9 @@ export default {
       updating: 'info',
       failed: 'danger',
       done: 'success',
-      tempDatasets: [],
-
+      fieldsCount: [],
+      featuresCount: [],
+      combinatorsCount: [],
     }
   },
   created() {
@@ -101,39 +108,96 @@ export default {
           id: val,
         },
       }
-      const test = await this.$apollo.query(fetchString).then(({ data, loading }) => {
+      const fields = await this.$apollo.query(fetchString).then(({ data, loading }) => {
         if (!loading && data && data.datasetFieldsCount) {
           return data.datasetFieldsCount
         }
       })
-      if (test) {
-        return test
+      if (fields) {
+        return fields
+      }
+    },
+    async getFeaturesCount(val) {
+      const fetchString = {
+        query: gql`
+          query featuresCount($id: ID!) {
+            featuresCount(where: {dataset: $id})
+          }
+        `,
+        variables: {
+          id: val,
+        },
+      }
+      const features = await this.$apollo.query(fetchString).then(({ data, loading }) => {
+        if (!loading && data && data.featuresCount) {
+          return data.featuresCount
+        }
+      })
+      if (features) {
+        return features
+      }
+    },
+    async getCombinatorsCount(val) {
+      const fetchString = {
+        query: gql`
+          query combinatorsCount($id: ID!) {
+            combinatorsCount(where: {dataset: $id})
+          }
+        `,
+        variables: {
+          id: val,
+        },
+      }
+      const combinators = await this.$apollo.query(fetchString).then(({ data, loading }) => {
+        if (!loading && data && data.combinatorsCount) {
+          return data.combinatorsCount
+        }
+      })
+      if (combinators) {
+        return combinators
       }
     },
   },
   mixins: [collectionMixin],
   watch: {
     $route(to, from) {
-      // if (from.name !== 'Datasets') {
-        this.$apollo.queries.allDatasets.refetch()
-      // }
+      this.$apollo.queries.allDatasets.refetch()
     },
     datasets: async function(val) {
       if (val) {
         let promises = []
-        let test = []
+        let fields = []
+        let features = []
+        let combinators = []
         for(let i = 0; i < val.length; i++) {
-          if(!test[i]){
+          if(!fields[i]){
             promises.push(
               this.getFieldsCount(val[i].id).then((response) => {
-                test[i] = response ? response : 0
+                fields[i] = response ? response : 0
+              })
+
+            )
+            promises.push(
+              this.getFeaturesCount(val[i].id).then((response) => {
+                features[i] = response ? response : 0
+              })
+            )
+            promises.push(
+              this.getCombinatorsCount(val[i].id).then((response) => {
+                combinators[i] = response ? response : 0
               })
             )
           }
         }
         Promise.all(promises).then((data) => {
-          for(let i = 0; i < test.length; i++) {
-            this.$set(this.tempDatasets, i, test[i])
+          for(let i = 0; i < fields.length; i++) {
+            this.$set(this.fieldsCount, i, fields[i])
+          }
+          for(let i = 0; i < features.length; i++) {
+            this.$set(this.featuresCount, i, features[i])
+          }
+          for(let i = 0; i < combinators.length; i++) {
+            this.$set(this.combinatorsCount, i, combinators[i])
           }
         })
       }
