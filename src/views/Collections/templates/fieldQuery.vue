@@ -5,14 +5,14 @@
         <b-col>
           <b-input-group v-for="query in totalQueries" :key="query" size="lg" class="mb-3">
             <b-input-group-prepend>
-              <b-dropdown :text="form[query] ? form[query]['field'] : 'Select Field'" variant="outline-secondary" aria-placeholder="Select Field">
+              <b-dropdown :text="form[query] ? form[query]['property'] : 'Select Field'" variant="outline-secondary" aria-placeholder="Select Field">
                 <div v-for="value in schema.values" :key="value.id">
-                  <b-dropdown-item @click="setField(query, 'field', value.path)">{{ value.path }}</b-dropdown-item>
+                  <b-dropdown-item @click="setField(query, 'property', value.path)">{{ value.path }}</b-dropdown-item>
                 </div>
               </b-dropdown>
-              <b-dropdown :text="(form[query] && form[query]['operator']) ? form[query]['operator'] : 'Equals'" variant="outline-secondary">
-                <div v-for="operator in operators" :key="operator">
-                  <b-dropdown-item @click="setField(query, 'operator', operator)">{{ operator }}</b-dropdown-item>
+              <b-dropdown :text="(form[query] && form[query]['operator']) ? form[query]['operator'] : 'equals'" variant="outline-secondary">
+                <div v-for="operator in operators" :key="operator.value">
+                  <b-dropdown-item @click="setField(query, 'operator', operator.value)">{{ operator.type }}</b-dropdown-item>
                 </div>
               </b-dropdown>
               <b-form-input variant="outline-secondary" v-model="values[query]" @input="setField(query, 'value', values[query])" placeholder="Text Input">
@@ -47,7 +47,14 @@ export default {
   data() {
     return {
       form: {},
-      operators: ['equals', 'not_equals', 'contains', 'not_contains', 'greater_than', 'less_than'],
+      operators: [
+        {type: 'Equals', value: 'equals'},
+        {type: 'Not Equals', value: 'not_equals' },
+        {type: 'Contains', value: 'contains'},
+        {type: 'Not Contains', value: 'not_contains'},
+        {type: 'Greater Than', value: 'greater_than'},
+        {type: 'Less Than', value: 'less_than'},
+        ],
       totalQueries: 1,
       queries: {},
       values: {},
@@ -58,6 +65,19 @@ export default {
       if(val) {
         this.queries = val
         this.model.queries = this.queries
+      }
+    },
+    model: function(val) {
+      if(val && val.queries) {
+        this.totalQueries = 0
+        for(let i = 0; i < val.queries.length; i++) {
+          this.form[i + 1] = val.queries[i]
+          this.values[i + 1] = this.form[i + 1].value
+          this.totalQueries += 1
+        }
+        if(this.totalQueries === 0) {
+          this.totalQueries = 1
+        }
       }
     },
   },
@@ -87,7 +107,9 @@ export default {
       }
       if (!this.form[int].count) {
         this.$set(this.form[int], 'count', int)
-        this.$set(this.form[int], 'operator', 'Equals')
+        if(!this.form[int]['operator']) {
+          this.$set(this.form[int], 'operator', 'equals')
+        }
       }
       if (field === 'value') {
         this.$set(this.form[int], field, this.values[int])

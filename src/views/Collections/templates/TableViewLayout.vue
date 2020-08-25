@@ -35,7 +35,7 @@
     <div>
       <b-dropdown id="dropdown-1" :text="perPage.toString()" class="m-md-2">
         <div v-for="limit in limits" :key="limit">
-          <b-dropdown-item @click="$emit('limitUpdated', limit)">{{limit}}</b-dropdown-item>
+          <b-dropdown-item @click="$emit('limitUpdated', limit, component)">{{limit}}</b-dropdown-item>
         </div>
       </b-dropdown>
       <small>entries per Page</small>
@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     notify(val) {
-      this.$emit('change', val)
+      this.$emit('change', val, this.component)
     }
   },
 

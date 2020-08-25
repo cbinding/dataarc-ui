@@ -22,13 +22,13 @@ class Combinators {
         this.queries = []
         for (let i = 1; i <= Object.keys(_queries).length; i++) {
           promises.push(
-            this._createQueries(_queries[i]).then((response) => {
+            this._createOrUpdateQuery(_queries[i]).then((response) => {
               this.queries.push(response.data.id)
             }),
           )
         }
       }
-      Promise.all(promises).then(() => {
+      return Promise.all(promises).then(() => {
         const resp = axios.post(this.createUrl, this)
         return resp
       });
@@ -37,10 +37,14 @@ class Combinators {
     }
   }
 
-  _createQueries = async (val) => {
+  _createOrUpdateQuery = async (val) => {
     try {
-      const resp = await axios.post(`${process.env.VUE_APP_STRAPI_API_URL}/combinator-queries`, val)
-      return resp
+      if(val) {
+        let url = val.id ? `${process.env.VUE_APP_STRAPI_API_URL}/combinator-queries/${val.id}` : `${process.env.VUE_APP_STRAPI_API_URL}/combinator-queries`
+        let action = val.id ? 'put' : 'post'
+        const resp = await axios[action](url, val)
+        return resp
+      }
     } catch (err) {
       console.log(err)
     }
@@ -48,8 +52,28 @@ class Combinators {
 
   _update = async () => {
     try {
-      const resp = await axios.put(this.editUrl, this)
-      return resp
+      let promises = []
+      if (this.queries) {
+        let _queries = Object.assign(this.queries)
+        let length = Object.keys(_queries).length
+        this.queries = []
+        for (let i = 0; i <= length; i++) {
+          promises.push(
+            this._createOrUpdateQuery(_queries[i])
+            .then((response) => {
+              if (response) {
+                let id = _queries[i].id ? _queries[i].id : response.data.id
+                this.queries.push(id)
+              }
+            },
+            ),
+          )
+        }
+      }
+      return Promise.all(promises).then(() => {
+        const resp = axios.put(this.editUrl, this)
+        return resp
+      })
     } catch (err) {
       console.log(err)
     }
