@@ -371,6 +371,25 @@ const methods = {
     const newDate = new Date(val)
     return newDate.toLocaleString()
   },
+  updateFilter(val, component) {
+    if (this.$route.name === 'Dataset View') {
+      this[`filter${component}`] = val
+    }
+    else {
+      this.filter = val
+    }
+  },
+  updatePagination(array, val) {
+    if (this.$route.name === 'Dataset View') {
+      if (array[0].__typename === 'DatasetField') {
+        this.fieldsCount = val
+      }
+      else {
+        this.combinatorsCount = val
+      }
+    }
+    this.rows = val
+  },
 }
 
 const asyncComputed = {
@@ -479,6 +498,7 @@ const data = function () {
     currentCombinatorsPage: 1,
     currentFieldsLimit: 10,
     currentCombinatorsLimit: 10,
+    filter: '',
   }
 }
 

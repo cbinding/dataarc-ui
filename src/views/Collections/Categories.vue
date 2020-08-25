@@ -7,6 +7,7 @@
       :limits="limits"
       :current-page="currentPage"
       :per-page="perPage"
+      @inputChanged="updateFilter"
       @change="updatePage"
       @deleteConfirmed="deleteItem(itemToDelete, 'Categories')"
       @limitUpdated="updateLimit"
@@ -24,11 +25,13 @@
           v-if="categories"
           :per-page="perPage"
           :current-page="currentPage"
+          :filter="filter"
           responsive
           table-variant="light"
           head-variant="light"
           :items="categories"
           :fields="displayFields"
+          @filtered="updatePagination"
         >
           <template
             v-slot:cell(datasets)="datasetRow"

@@ -6,6 +6,7 @@
       :limits="limits"
       :current-page="currentPage"
       :per-page="perPage"
+      @inputChanged="updateFilter"
       @change="updatePage"
       @deleteConfirmed="deleteItem(itemToDelete, 'Users')"
       @limitUpdated="updateLimit"
@@ -23,8 +24,10 @@
           :responsive="true"
           table-variant="light"
           head-variant="light"
+          :filter="filter"
           :items="users.items"
           :fields="displayFields"
+          @filtered="updatePagination"
         >
           <template
             v-slot:cell(role)="row"

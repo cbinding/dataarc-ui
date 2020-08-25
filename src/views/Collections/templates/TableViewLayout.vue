@@ -6,15 +6,25 @@
       <slot name="button"/>
     </div>
     <br>
-    <b-pagination
-      v-model="currentPage"
-      @change="notify"
-      :total-rows="rows"
-      :per-page="(perPage === 0 ? 10 : perPage)"
-      :limit="4"
-      first-number
-      last-number
-    />
+    <b-row>
+      <div class="d-flex justify-content-start">
+        <b-pagination
+          v-model="currentPage"
+          @change="notify"
+          :total-rows="rows"
+          :per-page="(perPage === 0 ? 10 : perPage)"
+          :limit="4"
+          first-number
+          last-number
+        />
+      </div>
+      <div size="lg" class="justify-content-center">
+        <b-input-group>
+          <b-input v-model="filters" @update="$emit('inputChanged', filters, component)" placeholder="Filter Columns"></b-input>
+          <b-button v-if="filters" @click="clear">Clear<b-icon-x></b-icon-x></b-button>
+        </b-input-group>
+      </div>
+    </b-row>
     <slot name="table"/>
     <b-modal hide-backdrop content-class="shadow" centered id="deleteConfirmation">
       <template v-slot:modal-title>
@@ -55,13 +65,17 @@ export default {
   ],
   data() {
     return {
-
+      filters: '',
     }
   },
   methods: {
     notify(val) {
       this.$emit('change', val, this.component)
-    }
+    },
+    clear() {
+      this.filters = ''
+      this.$emit('inputChanged', this.filters, this.component)
+    },
   },
 
 }

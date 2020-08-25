@@ -1,12 +1,12 @@
 <template>
   <b-container fluid>
     <router-view/>
-    <table-view-layout :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'MapLayers')" @limitUpdated="updateLimit">
+    <table-view-layout :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @inputChanged="updateFilter" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'MapLayers')" @limitUpdated="updateLimit">
       <template v-slot:button>
         <b-button variant="primary" :to="{name: 'Create MapLayer' }"><b-icon-plus></b-icon-plus>Add new Map Layer</b-button>
       </template>
       <template v-slot:table>
-        <b-table v-if="mapLayers" responsive :per-page="perPage" :current-page="currentPage" table-variant="light" head-variant="light" :items="mapLayers" :fields="displayFields">
+        <b-table v-if="mapLayers" responsive :filter="filter" :per-page="perPage" :current-page="currentPage" table-variant="light" head-variant="light" :items="mapLayers" :fields="displayFields" @filtered="updatePagination">
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group>
               <router-link :to="{name: 'Update MapLayer', params: {id: row.item.id} }">

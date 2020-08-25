@@ -1,12 +1,12 @@
 <template>
   <b-container fluid>
     <router-view/>
-    <table-view-layout :rows.sync="rows" :component="component" :limits="limits" :currentPage.sync="currentPage" :perPage.sync="perPage" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'Combinators')" @limitUpdated="updateLimit">
+    <table-view-layout :rows.sync="rows" :component="component" :limits="limits" :currentPage.sync="currentPage" :perPage.sync="perPage" @change="updatePage" @inputChanged="updateFilter" @deleteConfirmed="deleteItem(itemToDelete, 'Combinators')" @limitUpdated="updateLimit">
       <template v-slot:button>
         <b-button variant="primary" :to="{name: 'Create Combinator' }"><b-icon-plus></b-icon-plus>Add new Combinator</b-button>
       </template>
       <template v-slot:table>
-        <b-table v-if="combinators" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="combinators" :fields="displayFields">
+        <b-table v-if="combinators" :filter="filter" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="combinators" :fields="displayFields" @filtered="updatePagination">
           <template v-slot:cell(description)="row" class="Description">
             <div class="w-200 text-truncate" style="max-width: 400px;" v-if="row.item.description">
               {{ row.item.description }}
