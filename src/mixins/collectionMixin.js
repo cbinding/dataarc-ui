@@ -118,6 +118,13 @@ const apollo = {
           type
           path
         }
+        combinators{
+          id
+          name
+          title
+          description
+          citation
+        }
       }
     }`,
     // Reactive parameters
@@ -147,6 +154,7 @@ const apollo = {
       if (data && data.dataset) {
         this.currentDataset = data.dataset
         this.fieldsCount = this.currentDataset.fields.length
+        this.combinatorsCount = this.currentDataset.combinators.length
       }
     },
     // Error handling
@@ -192,6 +200,13 @@ const apollo = {
         features{
           title
           properties
+        }
+        combinators{
+          id
+          name
+          title
+          description
+          citation
         }
       }
     }`,
@@ -286,13 +301,10 @@ const methods = {
     else {
       dataModel._update().then((value) => {
         if (val.type === 'DatasetFields') {
-
-        }
-        else if (val.goBack) {
-          this.$router.go(-1)
+          return
         }
         else {
-          this.$router.push(dataModel.routeUrl)
+          this.$router.go(-1)
         }
       })
     }
@@ -316,11 +328,21 @@ const methods = {
       }
     })
   },
-  updatePage(val) {
-    this.currentPage = val
+  updatePage(val, component) {
+    if (this.$route.name === 'Dataset View') {
+      this[`current${component}Page`] = val
+    }
+    else {
+      this.currentPage = val
+    }
   },
-  updateLimit(val) {
-    this.perPage = val
+  updateLimit(val, component) {
+    if (this.$route.name === 'Dataset View') {
+      this[`current${component}Limit`] = val
+    }
+    else {
+      this.perPage = val
+    }
   },
   deleteItem(item, type) {
     this.$bvModal.hide('deleteConfirmation')
@@ -390,9 +412,6 @@ const asyncComputed = {
   },
   combinators: {
     get() {
-      if (this.$route.name === 'Update Combinator') {
-        return this._combinators
-      }
       return this.getSource('combinators?_limit=200')
       .then((combinators) => {
         this._combinators = combinators
@@ -456,6 +475,10 @@ const data = function () {
     mapLayers: [],
     categories: [],
     currentDataset: {},
+    currentFieldsPage: 1,
+    currentCombinatorsPage: 1,
+    currentFieldsLimit: 10,
+    currentCombinatorsLimit: 10,
   }
 }
 

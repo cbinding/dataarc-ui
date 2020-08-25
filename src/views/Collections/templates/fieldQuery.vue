@@ -75,6 +75,9 @@ export default {
           this.values[i + 1] = this.form[i + 1].value
           this.totalQueries += 1
         }
+        if(this.totalQueries === 0) {
+          this.totalQueries = 1
+        }
       }
     },
   },

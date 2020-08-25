@@ -29,9 +29,9 @@
     </b-col>
 
 <!-- Fields View -->
-    <table-view-layout :rows.sync="fieldsCount" component="Fields" :limits.sync="limits" :currentPage.sync="currentPage" :perPage.sync="perPage" @change="updatePage" @limitUpdated="updateLimit">
+    <table-view-layout :rows.sync="fieldsCount" component="Fields" :limits.sync="limits" :currentPage.sync="currentFieldsPage" :perPage.sync="currentFieldsLimit" @change="updatePage" @limitUpdated="updateLimit">
       <template v-slot:table>
-        <b-table v-if="currentDataset" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="currentDataset.fields" :fields="fieldsList">
+        <b-table v-if="currentDataset" :per-page="currentFieldsLimit" :current-page="currentFieldsPage" responsive table-variant="light" head-variant="light" :items="currentDataset.fields" :fields="fieldsList">
           <template v-slot:head(title)="data">
             Display Name (Title)
           </template>
@@ -68,6 +68,53 @@
           </template>
           <template v-slot:cell(save)="row" class="Save">
             <b-button variant="primary" @click="updateField(row.item)">Save</b-button>
+          </template>
+        </b-table>
+      </template>
+    </table-view-layout>
+    <br>
+<!-- Combinators View -->
+    <table-view-layout :rows.sync="combinatorsCount" component="Combinators" :limits.sync="limits" :currentPage.sync="currentCombinatorsPage" :perPage.sync="currentCombinatorsLimit" @change="updatePage" @limitUpdated="updateLimit">
+      <template v-slot:table>
+        <b-table v-if="currentDataset" :per-page="currentCombinatorsLimit" :current-page="currentCombinatorsPage" responsive table-variant="light" head-variant="light" :items="currentDataset.combinators" :fields="combinatorsList">
+          <template v-slot:head(title)="data">
+            Display Name (Title)
+          </template>
+          <template v-slot:head(type)="data">
+            Field Type
+          </template>
+          <template v-slot:cell(title)="row" class="Title">
+            <div style="max-width: 400px;" v-if="row.item.title">
+              {{ row.item.title }}
+            </div>
+          </template>
+          <template v-slot:cell(type)="row" class="Type">
+            <div style="max-width: 400px;" v-if="row.item.type">
+              <b-dropdown :text="row.item.type">
+                <div v-for="type in fieldTypes" :key="type">
+                  <b-dropdown-item v-model="row.item.type" @click="row.item.type = type">
+                    {{type}}
+                  </b-dropdown-item>
+                </div>
+              </b-dropdown>
+            </div>
+          </template>
+          <template v-slot:cell(state)="row" class="state">
+            <div>
+              <b-badge :variant="status(row.item.state)">
+                {{ row.item.state ? row.item.state : 'pending' }}
+              </b-badge>
+            </div>
+          </template>
+          <template v-slot:cell(state_at)="row" class="state_at">
+            <div>
+              {{ getDate(row.item.state_at) }}
+            </div>
+          </template>
+          <template v-slot:cell(actions)="row" class="Actions">
+            <router-link :to="{name: 'Update Combinator', params: {id: row.item.id} }">
+              <b-button variant="primary">Edit</b-button>
+            </router-link>
           </template>
         </b-table>
       </template>
@@ -112,7 +159,18 @@ export default {
         'state_at',
         'save',
       ],
+      combinatorsList: [
+        'name',
+        'title',
+        'description',
+        'citation',
+        'state',
+        'state_msg',
+        'state_at',
+        'actions',
+      ],
       fieldsCount: 0,
+      combinatorsCount: 0,
       dismissSecs: 3,
       pending: 'warning',
       missing: 'danger',
@@ -241,14 +299,16 @@ export default {
     currentDataset(val) {
       if (val) {
         this.model = val
-        let temp = this.model.category.id
-        this.model.category = temp
+        if(this.model.category.id) {
+          let temp = this.model.category.id
+          this.model.category = temp
+        }
         this.model.type = 'Datasets'
         this.model.action = 'Update'
       }
     },
-    categories: function(val) {
-      if(val) {
+    categories(val) {
+      if (val) {
         this.schema.fields.filter((field) => {
           if (field.model && field.model === 'category') {
             field.values = val
