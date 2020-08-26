@@ -1,20 +1,20 @@
-import Cookies from 'js-cookie'
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import NotFound from '@/components/NotFound.vue'
-import defaultLayout from '@/layouts/Default.vue'
-import dashboardLayout from '@/layouts/Dashboard.vue'
-import axios from 'axios'
-import roles from './roles'
-Vue.use(VueRouter)
+import Cookies from 'js-cookie';
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import NotFound from '@/components/NotFound.vue';
+import defaultLayout from '@/layouts/Default.vue';
+import dashboardLayout from '@/layouts/Dashboard.vue';
+import axios from 'axios';
+import roles from './roles';
+Vue.use(VueRouter);
 
-const token = Cookies.get('jwt')
-let rawUser = Cookies.get('user')
-let user = rawUser ? JSON.parse(rawUser) : null
+const token = Cookies.get('jwt');
+let rawUser = Cookies.get('user');
+let user = rawUser ? JSON.parse(rawUser) : null;
 
 if (token) {
   // store.commit('ADD NAME', token)
-  axios.defaults.headers.common.Authorization = `Bearer ${token}`
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 }
 
 const routes = [
@@ -60,7 +60,7 @@ const routes = [
         path: '',
         name: 'blank',
         component: defaultLayout,
-      }
+      },
     ],
     meta: {
       auth: true,
@@ -82,10 +82,10 @@ const routes = [
           {
             path: 'create',
             name: 'Create Dataset',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
-
         ],
       },
       {
@@ -97,13 +97,15 @@ const routes = [
           {
             path: 'create',
             name: 'Create Combinator',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
           {
             path: 'update/:id',
             name: 'Update Combinator',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
         ],
@@ -148,13 +150,15 @@ const routes = [
           {
             path: 'create',
             name: 'Create User',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
           {
             path: 'update/:id',
             name: 'Update User',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
         ],
@@ -173,13 +177,15 @@ const routes = [
           {
             path: 'create',
             name: 'Create User',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
           {
             path: 'update/:id',
             name: 'Update User',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
         ],
@@ -206,13 +212,15 @@ const routes = [
           {
             path: 'create',
             name: 'Create MapLayer',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
           {
             path: 'update/:id',
             name: 'Update MapLayer',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
         ],
@@ -226,13 +234,15 @@ const routes = [
           {
             path: 'create',
             name: 'Create Category',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
           {
             path: 'update/:id',
             name: 'Update Category',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
         ],
@@ -243,39 +253,38 @@ const routes = [
       role: 'administrator',
     },
   },
-]
+];
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
   routes,
-})
+});
 
 router.beforeEach((to, from, next) => {
-  if (to.name === 'home' && !user) return next('/login')
-  if (to.name === 'home' && user) return next('/basic/home')
+  if (to.name === 'home' && !user) return next('/login');
+  if (to.name === 'home' && user) return next('/basic/home');
 
-  const authRequired = to.matched.some((record) => record.meta.auth)
+  const authRequired = to.matched.some((record) => record.meta.auth);
   // const rawUser = Cookies.get('user')
   // const loggedIn = rawUser ? JSON.parse(Cookies.get('user')) : null
 
-  if (!authRequired) return next()
+  if (!authRequired) return next();
 
   if (authRequired && !user) {
-    rawUser = Cookies.get('user')
-    user = rawUser ? JSON.parse(rawUser) : null
-    if (!user) return next('/login')
+    rawUser = Cookies.get('user');
+    user = rawUser ? JSON.parse(rawUser) : null;
+    if (!user) return next('/login');
   }
 
   const roleRestriction = to.matched.some((record) => {
-    return roles[record.meta.role] >= roles[user.role.type]
-  })
+    return roles[record.meta.role] >= roles[user.role.type];
+  });
 
   if (!roleRestriction) {
-    return next('/unauthorized')
+    return next('/unauthorized');
   }
   // Are you contributor or above?
-  next()
-})
+  next();
+});
 
-export default router
+export default router;

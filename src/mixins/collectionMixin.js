@@ -1,8 +1,13 @@
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 import {
-  Combinators, MapLayers, Categories, Datasets, Users, DatasetFields,
-} from '../models'
-import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue'
+  Combinators,
+  MapLayers,
+  Categories,
+  Datasets,
+  Users,
+  DatasetFields,
+} from '../models';
+import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue';
 
 const Models = {
   Combinators,
@@ -11,7 +16,7 @@ const Models = {
   Datasets,
   Users,
   DatasetFields,
-}
+};
 
 const apollo = {
   allCategories: {
@@ -23,7 +28,7 @@ const apollo = {
           title
           description
           color
-          datasets{
+          datasets {
             title
           }
         }
@@ -34,11 +39,11 @@ const apollo = {
     update(data) {
       // The returned value will update
       // the vue property 'datasets'
-      return data.allCategories
+      return data.allCategories;
     },
     result({ data, loading, networkStatus }) {
       if (data) {
-        this.categories = data.categories
+        this.categories = data.categories;
       }
     },
   },
@@ -58,11 +63,11 @@ const apollo = {
     update(data) {
       // The returned value will update
       // the vue property 'datasets'
-      return data.allMapLayers
+      return data.allMapLayers;
     },
     result({ data, loading, networkStatus }) {
       if (data) {
-        this.mapLayers = data.mapLayers
+        this.mapLayers = data.mapLayers;
       }
     },
   },
@@ -85,39 +90,48 @@ const apollo = {
       }
     `,
     pollInterval: 5000,
-    skip: (this ? (this.currentDataset || !this.currentId) : true),
+    skip: this ? this.currentDataset || !this.currentId : true,
     update(data) {
       // The returned value will update
       // the vue property 'datasets'
-      return data.allDatasets
+      return data.allDatasets;
     },
     result({ data, loading, networkStatus }) {
       if (data) {
         let stopQuery = data.datasets.filter((dataset) => {
-          if (!(dataset.state === 'done' || dataset.state === 'pending' || dataset.state === 'failed' || dataset.state === '' || dataset.state === null)) {
-            return dataset
+          if (
+            !(
+              dataset.state === 'done' ||
+              dataset.state === 'pending' ||
+              dataset.state === 'failed' ||
+              dataset.state === '' ||
+              dataset.state === null
+            )
+          ) {
+            return dataset;
           }
-        })
-        if(stopQuery.length === 0) {
-          this.$apollo.queries.allDatasets.stopPolling()
+        });
+        if (stopQuery.length === 0) {
+          this.$apollo.queries.allDatasets.stopPolling();
+        } else {
+          this.$apollo.queries.allDatasets.startPolling(5000);
         }
-        else {
-          this.$apollo.queries.allDatasets.startPolling(5000)
-        }
-        this.datasets = data.datasets
+        this.datasets = data.datasets;
       }
     },
   },
   datasetFieldsCount: {
-    query: gql`query datasetFieldsCount($id: ID!) {
-      datasetFieldsCount(where:{dataset: $id})
-    }`,
+    query: gql`
+      query datasetFieldsCount($id: ID!) {
+        datasetFieldsCount(where: { dataset: $id })
+      }
+    `,
     // Reactive parameters
     variables(val) {
       // Use vue reactive properties here
       return {
         id: val ? val : '5f3c210f90b2942f30b8d2a1',
-      }
+      };
     },
     skip: false,
     ssr: false,
@@ -132,17 +146,17 @@ const apollo = {
     update(data) {
       // The returned value will update
       // the vue property 'currentDataset'
-      return data.datasetFieldsCount
+      return data.datasetFieldsCount;
     },
     // Optional result hook
     result({ data, loading, networkStatus }) {
       if (data) {
-        return data.datasetFieldsCount
+        return data.datasetFieldsCount;
       }
     },
     // Error handling
     error(error) {
-      console.error('We\'ve got an error!', error)
+      console.error("We've got an error!", error);
     },
     // Loading state
     // loadingKey is the name of the data property
@@ -156,47 +170,49 @@ const apollo = {
     },
   },
   dataset: {
-    query: gql`query dataset($id: ID!) {
-      dataset(id: $id) {
-        id
-        name
-        title
-        description
-        citation
-        link
-        category{
-          id
-          name
-          title
-        }
-        title_layout
-        link_layout
-        details_layout
-        summary_layout
-        fields{
-          id
-          name
-          title
-          type
-          path
-        }
-        combinators{
+    query: gql`
+      query dataset($id: ID!) {
+        dataset(id: $id) {
           id
           name
           title
           description
           citation
+          link
+          category {
+            id
+            name
+            title
+          }
+          title_layout
+          link_layout
+          details_layout
+          summary_layout
+          fields {
+            id
+            name
+            title
+            type
+            path
+          }
+          combinators {
+            id
+            name
+            title
+            description
+            citation
+          }
         }
       }
-    }`,
+    `,
     // Reactive parameters
     variables() {
       // Use vue reactive properties here
       return {
         id: this.currentId,
-      }
+      };
     },
-    skip: (this ? (this.currentDataset || !this.currentId) : true),
+    skip: this ? this.currentDataset || !this.currentId : true,
     ssr: false,
     // Variables: deep object watch
     deep: false,
@@ -209,19 +225,19 @@ const apollo = {
     update(data) {
       // The returned value will update
       // the vue property 'currentDataset'
-      return data.id
+      return data.id;
     },
     // Optional result hook
     result({ data, loading, networkStatus }) {
       if (data && data.dataset) {
-        this.currentDataset = data.dataset
-        this.fieldsCount = this.currentDataset.fields.length
-        this.combinatorsCount = this.currentDataset.combinators.length
+        this.currentDataset = data.dataset;
+        this.fieldsCount = this.currentDataset.fields.length;
+        this.combinatorsCount = this.currentDataset.combinators.length;
       }
     },
     // Error handling
     error(error) {
-      console.error('We\'ve got an error!', error)
+      console.error("We've got an error!", error);
     },
     // Loading state
     // loadingKey is the name of the data property
@@ -235,51 +251,53 @@ const apollo = {
     },
   },
   datasetWFeatures: {
-    query: gql`query dataset($id: ID!) {
-      dataset(id: $id) {
-        id
-        name
-        title
-        description
-        citation
-        link
-        category{
-          id
-          name
-          title
-        }
-        title_layout
-        link_layout
-        details_layout
-        summary_layout
-        fields{
-          id
-          name
-          title
-          type
-          path
-        }
-        features{
-          title
-          properties
-        }
-        combinators{
+    query: gql`
+      query dataset($id: ID!) {
+        dataset(id: $id) {
           id
           name
           title
           description
           citation
+          link
+          category {
+            id
+            name
+            title
+          }
+          title_layout
+          link_layout
+          details_layout
+          summary_layout
+          fields {
+            id
+            name
+            title
+            type
+            path
+          }
+          features {
+            title
+            properties
+          }
+          combinators {
+            id
+            name
+            title
+            description
+            citation
+          }
         }
       }
-    }`,
+    `,
     // Reactive parameters
     variables() {
       // Use vue reactive properties here
       return {
         id: this.currentId,
-      }
+      };
     },
-    skip: (this ? (this.currentDataset || !this.currentId) : true),
+    skip: this ? this.currentDataset || !this.currentId : true,
     ssr: false,
     // Variables: deep object watch
     deep: false,
@@ -292,18 +310,18 @@ const apollo = {
     update(data) {
       // The returned value will update
       // the vue property 'currentDataset'
-      return data.id
+      return data.id;
     },
     // Optional result hook
     result({ data, loading, networkStatus }) {
       if (data && data.dataset) {
-        this.currentDataset = data.dataset
-        this.fieldsCount = this.currentDataset.fields.length
+        this.currentDataset = data.dataset;
+        this.fieldsCount = this.currentDataset.fields.length;
       }
     },
     // Error handling
     error(error) {
-      console.error('We\'ve got an error!', error)
+      console.error("We've got an error!", error);
     },
     // Loading state
     // loadingKey is the name of the data property
@@ -316,194 +334,197 @@ const apollo = {
       // countModifier is either 1 or -1
     },
   },
-}
+};
 
 const methods = {
   async process(val) {
-    this.currentId = val.id
-    val.state = 'processing'
-    const resp = await axios.get(`${this.$baseUrl}/datasets/${val.id}/process`)
+    this.currentId = val.id;
+    val.state = 'processing';
+    const resp = await axios.get(`${this.$apiUrl}/datasets/${val.id}/process`);
     if (resp) {
-      this.$apollo.queries.allDatasets.refetch()
+      this.$apollo.queries.allDatasets.refetch();
     }
   },
   async getSingle(path) {
     try {
-      const temp = await axios.get(`${this.$baseUrl}/${path}`)
-      return temp
+      const temp = await axios.get(`${this.$apiUrl}/${path}`);
+      return temp;
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   },
   getSource(path, key) {
-    return axios.get(`${this.$baseUrl}/${path}`).then((response) => {
-      if (key) {
-        return response.data[key]
-      }
-      return response.data
-    }).catch((error) => {
-      console.log('error')
-      console.log(error)
-    })
+    return axios
+      .get(`${this.$apiUrl}/${path}`)
+      .then((response) => {
+        if (key) {
+          return response.data[key];
+        }
+        return response.data;
+      })
+      .catch((error) => {
+        console.log('error');
+        console.log(error);
+      });
   },
   setFormField(val, type) {
     this.schema.fields.filter((field) => {
       if (field.model && field.model === type) {
-        field.values = val
+        field.values = val;
       }
-    })
+    });
   },
   setFormData(val) {
-    const dataModel = new Models[val.type](val)
+    const dataModel = new Models[val.type](val);
     if (val.action === 'Create') {
       dataModel._create().then((value) => {
-        this.$router.push(dataModel.routeUrl)
-      })
-    }
-    else {
+        this.$router.push(dataModel.routeUrl);
+      });
+    } else {
       dataModel._update().then((value) => {
         if (val.type === 'DatasetFields') {
-          return
+          return;
+        } else {
+          this.$router.go(-1);
         }
-        else {
-          this.$router.go(-1)
-        }
-      })
+      });
     }
   },
   limitFields() {
-    const dataModel = Models[this.model.type]
+    const dataModel = Models[this.model.type];
     this.schema.fields.forEach((field) => {
       if (field.buttonText === 'Delete') {
         // If adding a new **, hide Delete button
         if (this.model.action === 'Create') {
-          field.visible = false
+          field.visible = false;
         }
-        return
+        return;
       }
       // Always display submit
       if (field.buttonText === 'Submit') {
-        return
+        return;
       }
       if (field.model) {
-        field.visible = dataModel.isAttributeFillable(field.model)
+        field.visible = dataModel.isAttributeFillable(field.model);
       }
-    })
+    });
   },
   updatePage(val, component) {
     if (this.$route.name === 'Dataset View') {
-      this[`current${component}Page`] = val
-    }
-    else {
-      this.currentPage = val
+      this[`current${component}Page`] = val;
+    } else {
+      this.currentPage = val;
     }
   },
   updateLimit(val, component) {
     if (this.$route.name === 'Dataset View') {
-      this[`current${component}Limit`] = val
-    }
-    else {
-      this.perPage = val
+      this[`current${component}Limit`] = val;
+    } else {
+      this.perPage = val;
     }
   },
   deleteItem(item, type) {
-    this.$bvModal.hide('deleteConfirmation')
-    const dataModel = new Models[item.type ? item.type : type](item)
+    this.$bvModal.hide('deleteConfirmation');
+    const dataModel = new Models[item.type ? item.type : type](item);
     dataModel._delete().then((value) => {
       if (dataModel.routeUrl === this.$router.history.current.path) {
         if (value === 'users') {
-          this.getAllUsers()
+          this.getAllUsers();
+        } else if (
+          value === 'allDatasets' ||
+          value === 'allMapLayers' ||
+          value === 'allCategories'
+        ) {
+          this.$apollo.queries[value].refetch();
+        } else {
+          this.$asyncComputed[value].update();
         }
-        else if (value === 'allDatasets' || value === 'allMapLayers' || value === 'allCategories') {
-          this.$apollo.queries[value].refetch()
-        }
-        else {
-          this.$asyncComputed[value].update()
-        }
+      } else {
+        this.$router.push(dataModel.routeUrl);
       }
-      else {
-        this.$router.push(dataModel.routeUrl)
-      }
-    })
+    });
   },
   getDate(val) {
     if (!val) {
-      return ''
+      return '';
     }
-    const newDate = new Date(val)
-    return newDate.toLocaleString()
+    const newDate = new Date(val);
+    return newDate.toLocaleString();
   },
   updateFilter(val, component) {
     if (this.$route.name === 'Dataset View') {
-      this[`filter${component}`] = val
-    }
-    else {
-      this.filter = val
+      this[`filter${component}`] = val;
+    } else {
+      this.filter = val;
     }
   },
   updatePagination(array, val) {
     if (this.$route.name === 'Dataset View') {
       if (array[0].__typename === 'DatasetField') {
-        this.fieldsCount = val
-      }
-      else {
-        this.combinatorsCount = val
+        this.fieldsCount = val;
+      } else {
+        this.combinatorsCount = val;
       }
     }
-    this.rows = val
+    this.rows = val;
   },
-}
+};
 
 const asyncComputed = {
   rows: {
     get() {
       if (this.component === 'MapLayers') {
-        return this.mapLayers.length
+        return this.mapLayers.length;
       }
       if (this.component === 'Users' && this.total > 0) {
-        return this.total
+        return this.total;
       }
-      return this[this.component.toLowerCase()].length
+      return this[this.component.toLowerCase()].length;
     },
     shouldUpdate() {
       if (this.component === 'MapLayers') {
-        return (this.component && this.mapLayers)
+        return this.component && this.mapLayers;
       }
-      return (this.component && (this.component === 'Users' || this[this.component.toLowerCase()]))
+      return (
+        this.component &&
+        (this.component === 'Users' || this[this.component.toLowerCase()])
+      );
     },
   },
   // Keeping _***** values to get cache working later on possibly
   events: {
     get() {
       if (this._events && this._events.length > 0) {
-        return this._events
+        return this._events;
       }
-      return this.getSource('events')
-      .then((events) => {
-        this._events = events
+      return this.getSource('events').then((events) => {
+        this._events = events;
         if (this.schema) {
-          this.setFormField(this._events, 'events')
+          this.setFormField(this._events, 'events');
         }
-        return this._events
-      })
+        return this._events;
+      });
     },
     shouldUpdate() {
-      return (this.collectionType === 'Events' || this.collectionType === 'Users' || this.component === 'Events')
+      return (
+        this.collectionType === 'Events' ||
+        this.collectionType === 'Users' ||
+        this.component === 'Events'
+      );
     },
   },
   combinators: {
     get() {
-      return this.getSource('combinators?_limit=200')
-      .then((combinators) => {
-        this._combinators = combinators
+      return this.getSource('combinators?_limit=200').then((combinators) => {
+        this._combinators = combinators;
         if (this.schema) {
-          this.setFormField(this._combinators, 'combinators')
+          this.setFormField(this._combinators, 'combinators');
         }
-        return this._combinators
-      })
+        return this._combinators;
+      });
     },
     shouldUpdate() {
-      return this.component === 'Combinators'
+      return this.component === 'Combinators';
     },
   },
   concepts: {
@@ -511,38 +532,42 @@ const asyncComputed = {
       // if (this._concepts && this._concepts.length > 0) {
       //   return this._concepts
       // }
-      return this.getSource('concepts')
-      .then((concepts) => {
-        this._concepts = concepts
+      return this.getSource('concepts').then((concepts) => {
+        this._concepts = concepts;
         if (this.schema) {
-          this.setFormField(this._concepts, 'concepts')
+          this.setFormField(this._concepts, 'concepts');
         }
-        return this._concepts
-      })
+        return this._concepts;
+      });
     },
     shouldUpdate() {
-      return (this.collectionType === 'Combinators' || this.collectionType === 'Concepts' || this.component === 'Concepts')
+      return (
+        this.collectionType === 'Combinators' ||
+        this.collectionType === 'Concepts' ||
+        this.component === 'Concepts'
+      );
     },
   },
   roles: {
     get() {
       if (this._roles && this._roles.length > 0) {
-        return this._roles
+        return this._roles;
       }
-      return this.getSource('users-permissions/roles', 'roles')
-      .then((roles) => {
-        this._roles = roles
-        if (this.schema) {
-          this.setFormField(this._roles, 'roles')
+      return this.getSource('users-permissions/roles', 'roles').then(
+        (roles) => {
+          this._roles = roles;
+          if (this.schema) {
+            this.setFormField(this._roles, 'roles');
+          }
+          return this._roles;
         }
-        return this._roles
-      })
+      );
     },
     shouldUpdate() {
-      return (this.collectionType === 'Users')
+      return this.collectionType === 'Users';
     },
   },
-}
+};
 
 const data = function () {
   return {
@@ -562,8 +587,8 @@ const data = function () {
     currentFieldsLimit: 10,
     currentCombinatorsLimit: 10,
     filter: '',
-  }
-}
+  };
+};
 
 export default {
   apollo,
@@ -573,4 +598,4 @@ export default {
   components: {
     TableViewLayout,
   },
-}
+};
