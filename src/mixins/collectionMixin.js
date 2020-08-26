@@ -78,6 +78,9 @@ const apollo = {
           state
           state_msg
           state_at
+          fields_count
+          features_count
+          combinators_count
         }
       }
     `,
@@ -91,7 +94,7 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         let stopQuery = data.datasets.filter((dataset) => {
-          if (!(dataset.state === 'done' || dataset.state === 'pending' || dataset.state === 'failed')) {
+          if (!(dataset.state === 'done' || dataset.state === 'pending' || dataset.state === 'failed' || dataset.state === '' || dataset.state === null)) {
             return dataset
           }
         })
@@ -103,6 +106,53 @@ const apollo = {
         }
         this.datasets = data.datasets
       }
+    },
+  },
+  datasetFieldsCount: {
+    query: gql`query datasetFieldsCount($id: ID!) {
+      datasetFieldsCount(where:{dataset: $id})
+    }`,
+    // Reactive parameters
+    variables(val) {
+      // Use vue reactive properties here
+      return {
+        id: val ? val : '5f3c210f90b2942f30b8d2a1',
+      }
+    },
+    skip: false,
+    ssr: false,
+    // Variables: deep object watch
+    deep: false,
+    // We use a custom update callback because
+    // the field names don't match
+    // By default, the 'currentDataset' attribute
+    // would be used on the 'data' result object
+    // Here we know the result is in the 'id' attribute
+    // considering the way the apollo server works
+    update(data) {
+      // The returned value will update
+      // the vue property 'currentDataset'
+      return data.datasetFieldsCount
+    },
+    // Optional result hook
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        return data.datasetFieldsCount
+      }
+    },
+    // Error handling
+    error(error) {
+      console.error('We\'ve got an error!', error)
+    },
+    // Loading state
+    // loadingKey is the name of the data property
+    // that will be incremented when the query is loading
+    // and decremented when it no longer is.
+    loadingKey: 'loadingQueriesCount',
+    // watchLoading will be called whenever the loading state changes
+    watchLoading(isLoading, countModifier) {
+      // isLoading is a boolean
+      // countModifier is either 1 or -1
     },
   },
   dataset: {
@@ -506,6 +556,7 @@ const data = function () {
     mapLayers: [],
     categories: [],
     currentDataset: {},
+    datasetFieldsCounts: [],
     currentFieldsPage: 1,
     currentCombinatorsPage: 1,
     currentFieldsLimit: 10,

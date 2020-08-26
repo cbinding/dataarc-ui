@@ -12,8 +12,20 @@
               {{ row.item.description }}
             </div>
           </template>
-          <template v-slot:cell(fields_count)="row" class="fieldsCount">
-            {{ row.item.id }}
+          <template v-slot:cell(fields_count)="row" class="fieldsCount" >
+            <b-badge pill variant="primary">
+              {{ row.item.fields_count }}
+            </b-badge>
+          </template>
+          <template v-slot:cell(features_count)="row" class="featuresCount" >
+            <b-badge pill variant="primary">
+              {{ row.item.features_count }}
+            </b-badge>
+          </template>
+          <template v-slot:cell(combinators_count)="row" class="combinatorsCount" >
+            <b-badge pill variant="primary">
+              {{ row.item.combinators_count }}
+            </b-badge>
           </template>
           <template v-slot:cell(state)="row" class="state">
             <div>
@@ -43,6 +55,7 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
 import collectionMixin from '../../mixins/collectionMixin'
 export default {
   data() {
@@ -66,6 +79,9 @@ export default {
       updating: 'info',
       failed: 'danger',
       done: 'success',
+      fieldsCount: [],
+      featuresCount: [],
+      combinatorsCount: [],
     }
   },
   created() {
@@ -91,10 +107,8 @@ export default {
   mixins: [collectionMixin],
   watch: {
     $route(to, from) {
-      // if (from.name !== 'Datasets') {
-        this.$apollo.queries.allDatasets.refetch()
-      // }
-    }
+      this.$apollo.queries.allDatasets.refetch()
+    },
   },
 }
 </script>
