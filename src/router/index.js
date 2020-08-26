@@ -56,6 +56,11 @@ const routes = [
     name: 'authenticated',
     component: dashboardLayout,
     children: [
+      {
+        path: '',
+        name: 'blank',
+        component: defaultLayout,
+      }
     ],
     meta: {
       auth: true,
