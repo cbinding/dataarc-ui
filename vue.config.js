@@ -1,22 +1,23 @@
-const ExtractTextPlugin = require('mini-css-extract-plugin')
-const path = require('path')
+const ExtractTextPlugin = require('mini-css-extract-plugin');
+const path = require('path');
 
 module.exports = {
   devServer: {
     port: '8080',
+    disableHostCheck: true,
   },
   runtimeCompiler: true,
   chainWebpack: (config) => {
-    config.optimization.delete('splitChunks')
+    config.optimization.delete('splitChunks');
 
-    config.output.filename('[name].js')
+    config.output.filename('[name].js');
 
     config.plugin('extract-css').use(ExtractTextPlugin, [
       {
         filename: '[name].css',
         allChunks: true,
       },
-    ])
+    ]);
   },
   configureWebpack: {
     output: {
@@ -39,4 +40,4 @@ module.exports = {
       },
     },
   },
-}
+};
