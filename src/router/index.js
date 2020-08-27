@@ -164,41 +164,21 @@ const routes = [
         ],
       },
       {
-        path: 'permissions',
-        name: 'Permissions',
+        path: 'roles',
+        name: 'Roles',
         component: () => import('@/views/Collections/Container.vue'),
-        redirect: 'permissions/index',
+        redirect: 'roles/index',
         children: [
           {
             path: 'index',
-            name: 'View Users',
-            component: () => import('@/views/Collections/Users-index.vue'),
+            component: () => import('@/views/Collections/Roles.vue'),
+            name: 'View Roles',
+            props: { test: 'value' },
           },
-          {
-            path: 'create',
-            name: 'Create User',
-            component: () =>
-              import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-          {
-            path: 'update/:id',
-            name: 'Update User',
-            component: () =>
-              import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ],
-      },
-      {
-        path: 'roles',
-        name: 'Roles',
-        component: () => import('@/views/Collections/Roles.vue'),
-        children: [
           {
             path: 'update/:id',
             name: 'Update Role',
-            component: () => import('@/views/Collections/CreateUpdateDelete'),
+            component: () => import('@/views/Collections/Roles-update.vue'),
             props: true,
           },
         ],
