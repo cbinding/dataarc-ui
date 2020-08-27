@@ -13,7 +13,7 @@ class User extends Base {
 
   static fillable = ['username', 'email', 'confirmed', 'blocked', 'role']
 
-  static public = ['userName', 'email', 'confirmed', 'roleAssigned']
+  static public = ['username', 'email', 'confirmed', 'roleAssigned']
 
   static model = {
     'username': null,
@@ -77,10 +77,12 @@ class User extends Base {
   }
 
   get roleAssigned() {
+    console.log('User: roleAssigned()')
     return this.hasOwnProperty('role') ? this.role.name : 'Unknown'
   }
 
   static form = async () => {
+    console.log('User: form()')
     let promises = [
       Role.withApollo(this._apollo).all(),
       this.withApollo(this._apollo).all()

@@ -36,13 +36,15 @@ class Base {
   // INSTANCE CONSTRUCTOR
 
   constructor(data) {
+    console.log('Base: constructor(data)')
     if (!this.raw_data) {
       this.raw_data = data
     }
     else {
-      Object.assign(this.raw_data, data)
+      this.raw_data = Object.assign(this.raw_data, data)
     }
     // Object.assign(this.raw_data, data)
+
     const remainingData = this._compileRelationships(data)
 
     Object.assign(this, remainingData)
@@ -52,6 +54,7 @@ class Base {
   // PUBLIC INSTANCE PROPERTIES
 
   get documentUrl() {
+    console.log('Base: get documentUrl()')
     // Computed url property
     return this.documentUrlConstructor(this.id);
   }
@@ -59,6 +62,7 @@ class Base {
   // PUBLIC INSTANCE METHODS
 
   model () {
+    console.log('Base: model()')
     if (!this.id) return this.model
 
     const model = {
@@ -78,17 +82,20 @@ class Base {
   }
 
   fresh = async () => {
+    console.log('Base: fresh()')
     return this.fetch(this.id)
   }
 
   // CRUD METHODS
   update = async () => {
+    console.log('Base: update()')
     if (this.isActionAllowed('edit')) {
       return axios.put(this.documentUrl, this.formData)
     }
   };
 
   delete = async () => {
+    console.log('Base: delete()')
     if (this.isActionAllowed('delete')) {
       return axios.delete(this.documentUrl)
     }
@@ -97,10 +104,13 @@ class Base {
   // PUBLIC CLASS METHODS
 
   static make = function (data) {
+    console.log('Base: make()')
+    console.log(data)
     return new this(data)
   }
 
   static create = async (postData) => {
+    console.log('Base: create()')
     if (this.isActionAllowed('create')) {
       return axios.post(Base.baseUrl, postData).then(({ data }) => {
         return this.make(data)
@@ -109,6 +119,7 @@ class Base {
   };
 
   static fetch = async function (id) {
+    console.log('Base: fetch()')
     if (this._apollo) return this.gqlFetch(id)
 
     return axios.get(this.documentUrlConstructor(id))
@@ -118,6 +129,7 @@ class Base {
   }
 
   static all = async function () {
+    console.log('Base: all()')
     if (this._apollo) return this.gqlAll()
 
     return axios.get(Base.baseUrl)
@@ -129,6 +141,7 @@ class Base {
   }
 
   static withApollo = function (apolloInstance) {
+    console.log('Base: withApollo()')
     this._apollo = apolloInstance
     return this
   }
@@ -136,6 +149,7 @@ class Base {
   // Requires this._apollo to be set
   // Usually set by the helper method Base.withApollo($apolloInstance)
   static gqlFetch = async function (id) {
+    console.log('Base: gqlFetch()')
     const fetchString = this.gqlFetchQuery
     fetchString.variables.id = id
     return this._apollo.query(fetchString).then(({ data }) => {
@@ -144,30 +158,40 @@ class Base {
   }
 
   static gqlAll = function () {
+    console.log('Base: gqlAll()')
     return this._apollo
     .query(this.gqlAllQuery)
     .then(({ data }) => {
+      console.log(data)
+      // console.log(this.indexKey)
       return data[this.indexKey].map((item) => {
+        // console.log(item)
         return this.make(item)
       })
     })
   }
 
   static isActionAllowed = function (action) {
+    console.log('Base: isActionAllowed()')
     return this.actions.indexOf(action) > -1;
   };
 
   static isAttributeFillable = function (attr) {
+    console.log('Base: isAttributeFillable()')
     return (this.fillable.indexOf(attr) > -1)
   }
 
   // PRIVAITE METHODS
   _compileRelationships (data) {
+    console.log('Base: _compileRelationships()')
     const remainingData = this._compileHasManyRelations(data)
+    console.log('remainingData')
+    console.log(remainingData)
     return this._compileHasOneRelations(remainingData)
   }
 
   _compileHasOneRelations (data) {
+    console.log('Base: _compileHasOneRelations()')
     for (let relatedIndex = 0; relatedIndex < this.hasOne.length; relatedIndex++) {
 
       // Get connection definition
@@ -186,6 +210,9 @@ class Base {
   }
 
   _compileHasManyRelations (data) {
+    console.log('Base: _compileHasManyRelations()')
+    console.log(data)
+    console.log(this)
     for (let relatedIndex = 0; relatedIndex < this.hasMany.length; relatedIndex++) {
 
       // Get connection definition
