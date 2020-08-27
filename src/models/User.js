@@ -16,13 +16,13 @@ class User extends Base {
   static public = ['userName', 'email', 'confirmed', 'roleAssigned']
 
   static model = {
-    username,
-    email,
-    password,
-    provider,
-    confirmed,
-    blocked,
-    role
+    'username': null,
+    'email': null,
+    'password': null,
+    'provider': null,
+    'confirmed': null,
+    'blocked': null,
+    'role': null,
   }
 
   static hasOne = [
