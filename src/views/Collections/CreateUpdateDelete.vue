@@ -74,6 +74,9 @@ export default {
             label: 'Dataset',
             model: 'dataset',
             visible: true,
+            selectOptions: {
+              name: 'title',
+            }
           },
           {
             type: 'input',
@@ -196,7 +199,7 @@ export default {
             visible: true,
             selectOptions: {
               value: 'id',
-              name: 'name',
+              name: 'title',
             },
           },
           {
@@ -224,8 +227,8 @@ export default {
             values: this.concepts ? this.concepts : ['1', '2'],
             visible: true,
             selectOptions: {
-              key: 'name',
-              label: 'name',
+              key: 'title',
+              label: 'title',
               multiple: true,
               searchable: true,
               clearOnSelect: true,
@@ -250,8 +253,8 @@ export default {
             values: this.datasets ? this.datasets : ['1', '2'],
             visible: true,
             selectOptions: {
-              key: 'name',
-              label: 'name',
+              key: 'title',
+              label: 'title',
               multiple: true,
               searchable: true,
               clearOnSelect: true,
