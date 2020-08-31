@@ -1,12 +1,12 @@
 class Base {
-  
+
   // CLASS PROPERTIES
 
   static indexKey = false
 
-  static apiUrl = `${process.env.VUE_APP_API_URL}`;
+  static baseUrl = `${process.env.VUE_APP_API_URL}`;
 
-  static resourcePath = '';
+  resourcePath = '';
 
   static className = 'Base';
 
@@ -21,24 +21,29 @@ class Base {
   static model = false
 
   // Format is {relation: String, model: T<Base>}
-  static hasOne = []
+  hasOne = []
 
-  static hasMany = []
+  hasMany = []
 
-  static get resourceUrl() {
-    return `${this.baseUrl}/${this.resourcePath}`
+  get resourceUrl() {
+    return `${Base.baseUrl}/${this.resourcePath}`
   }
 
-  static documentUrlConstructor = function (resourceId) {
+  documentUrlConstructor = function (resourceId) {
     return `${this.resourceUrl}/${resourceId}`
   }
 
   // INSTANCE CONSTRUCTOR
 
   constructor(data) {
-    Object.assign(this.raw_data, data)
-
-    const remainingData = this._compileRelationships()
+    if (!this.raw_data) {
+      this.raw_data = data
+    }
+    else {
+      Object.assign(this.raw_data, data)
+    }
+    // Object.assign(this.raw_data, data)
+    const remainingData = this._compileRelationships(data)
 
     Object.assign(this, remainingData)
 
@@ -55,13 +60,13 @@ class Base {
 
   model () {
     if (!this.id) return this.model
-    
+
     const model = {
       id: this.id
     }
 
     const fields = this.model ? this.model.keys() : this.fillable
-    
+
     for (let index = 0; index < fields.length; index++) {
       const fieldKey = fields[index];
       if (this.hasOwnProperty(fieldKey)) {
@@ -97,7 +102,7 @@ class Base {
 
   static create = async (postData) => {
     if (this.isActionAllowed('create')) {
-      return axios.post(this.baseUrl, postData).then(({ data }) => {
+      return axios.post(Base.baseUrl, postData).then(({ data }) => {
         return this.make(data)
       })
     }
@@ -115,7 +120,7 @@ class Base {
   static all = async function () {
     if (this._apollo) return this.gqlAll()
 
-    return axios.get(this.baseUrl)
+    return axios.get(Base.baseUrl)
     .then(({ data }) => {
       return data.map((item) => {
         return this.make(item)
@@ -142,7 +147,6 @@ class Base {
     return this._apollo
     .query(this.gqlAllQuery)
     .then(({ data }) => {
-      console.log(data)
       return data[this.indexKey].map((item) => {
         return this.make(item)
       })
@@ -165,10 +169,10 @@ class Base {
 
   _compileHasOneRelations (data) {
     for (let relatedIndex = 0; relatedIndex < this.hasOne.length; relatedIndex++) {
-      
+
       // Get connection definition
       const {relation, model} = this.hasOne[relatedIndex];
-      
+
       if (data.hasOwnProperty(relation)) {
         // Convert into our model
         this[relation] = new model(data[relation][attachedIndex])
@@ -176,21 +180,21 @@ class Base {
         // Remove the key
         delete data[relation]
       }
-    
+
     }
     return data
   }
 
   _compileHasManyRelations (data) {
     for (let relatedIndex = 0; relatedIndex < this.hasMany.length; relatedIndex++) {
-      
+
       // Get connection definition
       const {relation, model} = this.hasMany[relatedIndex];
-      
+
       if (data.hasOwnProperty(relation)) {
         // Make the empty many relation
         this[relation] = []
-        
+
         for (let attachedIndex = 0; attachedIndex < data[relation].length; attachedIndex++) {
           // Push our formatted instance
           this[relation].push(
@@ -201,7 +205,7 @@ class Base {
         // Remove the key
         delete data[relation]
       }
-    
+
     }
     return data
   }
