@@ -83,7 +83,7 @@ const mutations = {
     state.status = { loggedIn: true }
     state.user = response.user
     state.jwt = response.jwt
-    state.role = user ? user.role : null
+    state.role = state.user ? state.user.role : null
   },
   loginFailure(state, err) {
     if (err.message === 'Request failed with status code 400') {
