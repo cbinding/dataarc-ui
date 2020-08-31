@@ -145,6 +145,7 @@ export default {
             id: 'description',
             featured: true,
             visible: true,
+            autocomplete: 'off',
           },
           {
             type: 'input',
@@ -152,6 +153,7 @@ export default {
             label: 'Citation',
             model: 'citation',
             visible: true,
+            autocomplete: 'off',
           },
           {
             type: 'select',
