@@ -57,7 +57,7 @@ const routes = [
     component: dashboardLayout,
     children: [
       {
-        path: '',
+        path: 'home',
         name: 'blank',
         component: defaultLayout,
       },
