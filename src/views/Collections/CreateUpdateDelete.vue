@@ -64,6 +64,7 @@ export default {
         combinators: [],
         queries: [],
         dataset_templates: [],
+        operator: 'and',
       },
       schema: {
         fields: [
@@ -151,14 +152,14 @@ export default {
           },
           {
             type: 'select',
-            values: [{type: 'and', value: 'And'}, {type: 'or', value: 'Or'}],
+            values: [{type: 'And', value: 'and'}, {type: 'Or', value: 'or'}],
             label: 'Operator',
             model: 'operator',
             default: 'and',
             visible: true,
             selectOptions: {
-              value: 'type',
-              name: 'value',
+              value: 'value',
+              name: 'type',
             }
           },
           {
@@ -451,6 +452,9 @@ export default {
           vm.model = vm.item
           vm.model.image = null
           vm.model.source = null
+          if(vm.model.operator !== 'and' && vm.model.operator !== 'or') {
+            vm.model.operator = 'and'
+          }
           if (vm.model.category) {
             const temp = vm.model.category.id
             vm.model.category = temp

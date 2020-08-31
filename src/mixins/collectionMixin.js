@@ -532,7 +532,7 @@ const asyncComputed = {
       // if (this._concepts && this._concepts.length > 0) {
       //   return this._concepts
       // }
-      return this.getSource('concepts').then((concepts) => {
+      return this.getSource('concepts?_limit=300').then((concepts) => {
         this._concepts = concepts;
         if (this.schema) {
           this.setFormField(this._concepts, 'concepts');
