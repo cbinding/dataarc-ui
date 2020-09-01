@@ -301,7 +301,7 @@ export default {
     currentDataset(val) {
       if (val) {
         this.model = val
-        if(this.model.category.id) {
+        if(this.model.category && this.model.category.id) {
           let temp = this.model.category.id
           this.model.category = temp
         }

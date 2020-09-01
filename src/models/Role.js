@@ -13,9 +13,9 @@ class Role extends Base {
 
   static public = ['name', 'totalUsers', 'actions'];
 
-  static hasOne = []
+  hasOne = []
 
-  static hasMany = [
+  hasMany = [
     {
       relation: 'users',
       model: User

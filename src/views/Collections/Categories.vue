@@ -2,6 +2,7 @@
   <b-container fluid>
     <router-view />
     <table-view-layout
+      v-if="$route.name === 'Categories'"
       :rows="rows"
       :component="component"
       :limits="limits"

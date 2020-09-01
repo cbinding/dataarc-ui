@@ -57,7 +57,7 @@ const routes = [
     component: dashboardLayout,
     children: [
       {
-        path: '',
+        path: 'home',
         name: 'blank',
         component: defaultLayout,
       },
@@ -238,6 +238,10 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    // return desired position
+    return { x: 0, y: 0 }
+  },
 });
 
 router.beforeEach((to, from, next) => {

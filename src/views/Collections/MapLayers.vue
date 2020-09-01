@@ -1,7 +1,7 @@
 <template>
   <b-container fluid>
     <router-view/>
-    <table-view-layout :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @inputChanged="updateFilter" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'MapLayers')" @limitUpdated="updateLimit">
+    <table-view-layout v-if="$route.name === 'MapLayers'" :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @inputChanged="updateFilter" @change="updatePage" @deleteConfirmed="deleteItem(itemToDelete, 'MapLayers')" @limitUpdated="updateLimit">
       <template v-slot:button>
         <b-button variant="primary" :to="{name: 'Create MapLayer' }"><b-icon-plus></b-icon-plus>Add new Map Layer</b-button>
       </template>

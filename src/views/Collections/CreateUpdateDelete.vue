@@ -64,6 +64,7 @@ export default {
         combinators: [],
         queries: [],
         dataset_templates: [],
+        operator: 'and',
       },
       schema: {
         fields: [
@@ -73,6 +74,9 @@ export default {
             label: 'Dataset',
             model: 'dataset',
             visible: true,
+            selectOptions: {
+              name: 'title',
+            }
           },
           {
             type: 'input',
@@ -141,6 +145,7 @@ export default {
             id: 'description',
             featured: true,
             visible: true,
+            autocomplete: 'off',
           },
           {
             type: 'input',
@@ -148,17 +153,18 @@ export default {
             label: 'Citation',
             model: 'citation',
             visible: true,
+            autocomplete: 'off',
           },
           {
             type: 'select',
-            values: [{type: 'and', value: 'And'}, {type: 'or', value: 'Or'}],
+            values: [{type: 'And', value: 'and'}, {type: 'Or', value: 'or'}],
             label: 'Operator',
             model: 'operator',
             default: 'and',
             visible: true,
             selectOptions: {
-              value: 'type',
-              name: 'value',
+              value: 'value',
+              name: 'type',
             }
           },
           {
@@ -195,7 +201,7 @@ export default {
             visible: true,
             selectOptions: {
               value: 'id',
-              name: 'name',
+              name: 'title',
             },
           },
           {
@@ -223,8 +229,8 @@ export default {
             values: this.concepts ? this.concepts : ['1', '2'],
             visible: true,
             selectOptions: {
-              key: 'name',
-              label: 'name',
+              key: 'title',
+              label: 'title',
               multiple: true,
               searchable: true,
               clearOnSelect: true,
@@ -249,8 +255,8 @@ export default {
             values: this.datasets ? this.datasets : ['1', '2'],
             visible: true,
             selectOptions: {
-              key: 'name',
-              label: 'name',
+              key: 'title',
+              label: 'title',
               multiple: true,
               searchable: true,
               clearOnSelect: true,
@@ -451,6 +457,9 @@ export default {
           vm.model = vm.item
           vm.model.image = null
           vm.model.source = null
+          if(vm.model.operator !== 'and' && vm.model.operator !== 'or') {
+            vm.model.operator = 'and'
+          }
           if (vm.model.category) {
             const temp = vm.model.category.id
             vm.model.category = temp
