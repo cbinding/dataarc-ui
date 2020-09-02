@@ -470,13 +470,18 @@ const methods = {
       }
       else {
         results = test[0]
-        for (let i = 1; i < test.length; i++) {
-          if (test[i] && test[i].length > 0) {
-            results = _.intersection(results, test[i])
+        if(results.length > 0) {
+          for (let i = 1; i < test.length; i++) {
+            if (test[i] && test[i].length > 0) {
+              results = _.intersection(results, test[i])
+            }
+            else {
+              results = []
+            }
           }
-          else{
-            results = []
-          }
+        }
+        else {
+          results = []
         }
       }
     }
