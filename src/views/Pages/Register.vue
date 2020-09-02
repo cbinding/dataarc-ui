@@ -83,6 +83,7 @@ export default {
       errors: [],
       submitted: false,
       users: [],
+      alert: {},
     }
   },
   computed: {
