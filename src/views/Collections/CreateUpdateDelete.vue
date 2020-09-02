@@ -142,7 +142,7 @@ export default {
             buttonText: 'Test Queries',
             inputType: 'submit',
             visible: function(model) {
-              return model.type === 'Combinators' && model.dataset
+              return model.type === 'Combinators' && model.dataset && Object.keys(model.queries).length > 0
             },
             onSubmit: this.testQueries,
           },
