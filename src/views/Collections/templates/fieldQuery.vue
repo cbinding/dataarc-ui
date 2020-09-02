@@ -87,18 +87,22 @@ export default {
       this.totalQueries += 1
     },
     decrement(int) {
+      let tempForm = {}
       const length = Object.keys(this.form).length
-      let tempForm = this.form
-      for(let i = int; i < length; i++) {
-        if(this.form[(i) + 1]) {
-          tempForm[i] = this.form[(i) + 1]
+      Object.assign(tempForm, this.form)
+      for (let i = int; i <= length; i++) {
+        if (this.form[i + 1]) {
+          tempForm[i] = this.form[i + 1]
           tempForm[i].count = i
-          this.$delete(this.form, ((i) + 1))
+          this.$delete(this.form, (i + 1))
           this.values[i] = tempForm[i].value
-          this.$delete(this.values, ((i) + 1))
+          this.$delete(this.values, (i + 1))
+        }
+        else {
+          this.$delete(tempForm, i)
         }
       }
-      this.form = tempForm
+      Object.assign(this.form, tempForm)
       this.totalQueries -= 1
     },
     setField(int, field, val) {
