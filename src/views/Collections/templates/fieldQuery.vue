@@ -100,8 +100,10 @@ export default {
         }
         else {
           this.$delete(tempForm, i)
+          this.$delete(this.values, i)
         }
       }
+      this.form = {}
       Object.assign(this.form, tempForm)
       this.totalQueries -= 1
     },

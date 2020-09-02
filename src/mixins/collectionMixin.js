@@ -463,19 +463,23 @@ const methods = {
       }
       if (this.model.operator === 'or') {
         for (let i = 0; i < test.length; i++) {
-          results = _.union(results, test[i])
+          if(test[i] && test[i].length > 0) {
+            results = _.union(results, test[i])
+          }
         }
       }
       else {
         results = test[0]
-        for (let i = 0; i < test.length; i++) {
-          if (test[i + 1]) {
-            results = _.intersection(results, test[i + 1])
+        for (let i = 1; i < test.length; i++) {
+          if (test[i] && test[i].length > 0) {
+            results = _.intersection(results, test[i])
           }
         }
       }
     }
-    results = results.length > 0 ? results : test
+    if (length === 1) {
+      results = test
+    }
     this.filteredFeatures = results
   },
 };
