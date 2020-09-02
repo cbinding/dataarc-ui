@@ -477,6 +477,7 @@ const methods = {
             }
             else {
               results = []
+              break
             }
           }
         }
