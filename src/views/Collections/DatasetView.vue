@@ -152,6 +152,7 @@ export default {
       fieldTypes: ['string', 'number', 'boolean', 'array', 'url', 'start_date', 'end_date', 'text_date'],
       fieldsList: [
         'name',
+        'source',
         'title',
         'type',
         'state',

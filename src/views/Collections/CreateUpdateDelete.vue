@@ -1,30 +1,58 @@
 /* eslint-disable indent */
 <template>
   <div>
-    <b-container>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          {{ model.action }} {{ model.title }}
-          <br>
+    <b-row>
+      <b-overlay :show="currentDataset.id && !features" no-wrap></b-overlay>
+      <b-col sm="9">
+        <b-container>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              {{ model.action }} {{ model.title }}
+              <br>
+            </div>
+            <div class="panel-body">
+              <p v-if="errors.length">
+                <b>Please correct the following error(s):</b>
+                <ul>
+                  <li v-for="error in errors">
+                    {{ error }}
+                  </li>
+                </ul>
+              </p>
+              <vue-form-generator
+                :schema="schema"
+                :model="model"
+                :options="formOptions"
+                :current-dataset="currentDataset"
+              />
+            </div>
+          </div>
+        </b-container>
+      </b-col>
+      <b-col sm="3" v-if="model && model.type === 'Combinators'">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Search Results: {{ filteredFeatures ? filteredFeatures.length : 0 }} out of {{ features ? features.length : 0 }} records
+            <br>
+            <div v-if="filteredFeatures && filteredFeatures.length > 0">
+              Displaying {{ show > filteredFeatures.length ? filteredFeatures.length : show  }} out of {{ filteredFeatures.length }} Results
+              <b-link v-if="show < filteredFeatures.length" :disabled="show >= filteredFeatures.length" @click="show += 100">Show More</b-link>
+            </div>
+          </div>
+          <div class="panel-body" style="max-height: 650px; overflow-y: auto;">
+            <div v-if="filteredFeatures" v-for="(feature, index) in filteredFeatures.slice(0, show)" :key="feature">
+              <ul>
+                {{ feature }}
+                <b-link v-if="index === (show - 1)" @click="show += 100">
+                  <br>
+                  Show More...
+                </b-link>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="panel-body">
-          <p v-if="errors.length">
-            <b>Please correct the following error(s):</b>
-            <ul>
-              <li v-for="error in errors">
-                {{ error }}
-              </li>
-            </ul>
-          </p>
-          <vue-form-generator
-            :schema="schema"
-            :model="model"
-            :options="formOptions"
-            :current-dataset="currentDataset"
-          />
-        </div>
-      </div>
-    </b-container>
+      </b-col>
+    </b-row>
   </div>
 </template>
 
@@ -36,6 +64,7 @@ export default {
   mixins: [collectionMixin],
   data() {
     return {
+      show: 100,
       item: {},
       model: {
         type: '',
@@ -73,17 +102,58 @@ export default {
             values: this.datasets ? this.datasets : [''],
             label: 'Dataset',
             model: 'dataset',
-            visible: true,
+            visible: function(model) {
+              return model.type === 'Combinators'
+            },
             selectOptions: {
               name: 'title',
             }
+          },
+          {
+            type: 'query',
+            label: 'Queries',
+            model: 'queries',
+            values: ['field1', 'field2'],
+            visible: function(model) {
+              return model.type === 'Combinators' && model.dataset
+            },
+            required: true,
+            selectOptions: {
+              value: 'id',
+              path: 'path',
+            },
+          },
+          {
+            type: 'select',
+            values: [{type: 'And', value: 'and'}, {type: 'Or', value: 'or'}],
+            label: 'Operator',
+            model: 'operator',
+            default: 'and',
+            visible: function(model) {
+              return model.type === 'Combinators' && model.dataset
+            },
+            selectOptions: {
+              value: 'value',
+              name: 'type',
+            }
+          },
+          {
+            type: 'submit',
+            buttonText: 'Test Queries',
+            inputType: 'submit',
+            visible: function(model) {
+              return model.type === 'Combinators' && model.dataset
+            },
+            onSubmit: this.testQueries,
           },
           {
             type: 'input',
             inputType: 'text',
             label: 'Username*',
             model: 'username',
-            visible: true,
+            visible: function(model) {
+              return model.type === 'Users'
+            },
             required: true,
           },
           {
@@ -91,7 +161,9 @@ export default {
             inputType: 'email',
             label: 'Email*',
             model: 'email',
-            visible: true,
+            visible: function(model) {
+              return model.type === 'Users'
+            },
             required: true,
           },
           {
@@ -99,7 +171,9 @@ export default {
             inputType: 'password',
             label: 'Password*',
             model: 'password',
-            visible: true,
+            visible: function(model) {
+              return model.type === 'Users'
+            },
             required: true,
           },
           {
@@ -107,19 +181,27 @@ export default {
             inputType: 'text',
             label: 'Provider',
             model: 'provider',
-            visible: true,
+            visible: function(model) {
+              return model.type === 'Users'
+            },
           },
           {
             type: 'checkbox',
             label: 'Confirmed',
             model: 'confirmed',
             default: false,
+            visible: function(model) {
+              return model.type === 'Users'
+            },
           },
           {
             type: 'checkbox',
             label: 'Blocked',
             model: 'blocked',
             default: false,
+            visible: function(model) {
+              return model.type === 'Users'
+            },
           },
           {
             type: 'select',
@@ -127,6 +209,9 @@ export default {
             label: 'Role',
             model: 'role',
             default: false,
+            visible: function(model) {
+              return model.type === 'Users'
+            },
           },
           {
             type: 'input',
@@ -135,7 +220,9 @@ export default {
             model: 'title',
             featured: true,
             required: true,
-            visible: true,
+            visible: function(model) {
+              return ((model.type !== 'Combinators' && model.type !== 'Users') || (model.type === 'Combinators' && model.dataset))
+            },
           },
           {
             type: 'input',
@@ -144,7 +231,9 @@ export default {
             model: 'description',
             id: 'description',
             featured: true,
-            visible: true,
+            visible: function(model) {
+              return (model.type === 'Combinators' && model.dataset) || (model.type !== 'Users' && model.type !== 'Combinators' )
+            },
             autocomplete: 'off',
           },
           {
@@ -152,33 +241,27 @@ export default {
             inputType: 'text',
             label: 'Citation',
             model: 'citation',
-            visible: true,
+            visible: function(model) {
+              return (model.type === 'Combinators' && model.dataset) || model.type === 'Datasets'
+            },
             autocomplete: 'off',
-          },
-          {
-            type: 'select',
-            values: [{type: 'And', value: 'and'}, {type: 'Or', value: 'or'}],
-            label: 'Operator',
-            model: 'operator',
-            default: 'and',
-            visible: true,
-            selectOptions: {
-              value: 'value',
-              name: 'type',
-            }
           },
           {
             type: 'input',
             inputType: 'url',
             label: 'Link',
             model: 'link',
-            visible: true,
+            visible: function(model) {
+              return model.type === 'Datasets'
+            },
           },
           {
             type: 'upload',
             label: 'Image',
             model: 'image',
-            visible: true,
+            visible: function(model) {
+              return model.type === 'Datasets'
+            },
             onChanged(model, schema, event) {
               this.model.image = event.target.files[0]
             },
@@ -187,7 +270,9 @@ export default {
             type: 'upload',
             label: 'Source',
             model: 'source',
-            visible: true,
+            visible: function(model) {
+              return model.type === 'Datasets'
+            },
             required: false,
             onChanged(model, schema, event) {
               this.model.source = event.target.files[0]
@@ -198,7 +283,9 @@ export default {
             values: this.categories ? this.categories : ['1', '2'],
             label: 'Category',
             model: 'category',
-            visible: true,
+            visible: function(model) {
+              return model.type === 'Datasets'
+            },
             selectOptions: {
               value: 'id',
               name: 'title',
@@ -209,16 +296,8 @@ export default {
             inputType: 'text',
             label: 'Color',
             model: 'color',
-            visible: true,
-          },
-          {
-            type: 'query',
-            label: 'Queries',
-            model: 'queries',
-            values: ['field1', 'field2'],
-            selectOptions: {
-              value: 'id',
-              path: 'path',
+            visible: function(model) {
+              return model.type === 'Categories'
             },
           },
           {
@@ -227,7 +306,9 @@ export default {
             label: 'Concepts',
             model: 'concepts',
             values: this.concepts ? this.concepts : ['1', '2'],
-            visible: true,
+            visible: function(model) {
+              return model.type === 'Combinators' && model.dataset
+            },
             selectOptions: {
               key: 'title',
               label: 'title',
@@ -235,113 +316,7 @@ export default {
               searchable: true,
               clearOnSelect: true,
               hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
               trackBy: 'id',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Datasets',
-            model: 'datasets',
-            values: this.datasets ? this.datasets : ['1', '2'],
-            visible: true,
-            selectOptions: {
-              key: 'title',
-              label: 'title',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
-              trackBy: 'id',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Events',
-            model: 'events',
-            values: this.events ? this.events : ['1', '2'],
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
-              trackBy: 'id',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Combinators',
-            model: 'combinators',
-            values: this.combinators ? this.combinators : ['1', '2'],
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
-              trackBy: 'id',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
-            type: 'vueMultiSelect',
-            multiSelect: true,
-            label: 'Fields',
-            model: 'fields',
-            values: this.fields ? this.fields : ['1', '2'],
-            visible: true,
-            selectOptions: {
-              key: 'name',
-              label: 'name',
-              multiple: true,
-              searchable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              taggable: true,
-              trackBy: 'id',
-              tagPlaceholder: 'tagPlaceholder',
               onNewTag(newTag, id, options, value) {
                 options.push(newTag)
                 value.push(newTag)
@@ -355,14 +330,18 @@ export default {
             type: 'submit',
             buttonText: 'Submit',
             inputType: 'submit',
-            visible: true,
+            visible: function(model) {
+              return model.type !== 'Combinators' || model.dataset
+            },
             onSubmit: this.update,
           },
           {
             type: 'submit',
             buttonText: 'Delete',
             inputType: 'submit',
-            visible: true,
+            visible: function(model) {
+              return model.action === 'Update'
+            },
             onSubmit: this.deleteItem,
           },
         ],
@@ -479,8 +458,6 @@ export default {
 
       this.model.type = this.collectionType
       this.model.action = this.action
-
-      this.limitFields()
     },
     update(val) {
       val.type = this.model.type
