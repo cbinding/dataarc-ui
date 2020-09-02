@@ -316,8 +316,6 @@ export default {
               searchable: true,
               clearOnSelect: true,
               hideSelected: true,
-              taggable: true,
-              tagPlaceholder: 'tagPlaceholder',
               trackBy: 'id',
               onNewTag(newTag, id, options, value) {
                 options.push(newTag)
