@@ -474,6 +474,9 @@ const methods = {
           if (test[i] && test[i].length > 0) {
             results = _.intersection(results, test[i])
           }
+          else{
+            results = []
+          }
         }
       }
     }
