@@ -523,7 +523,7 @@ export default {
 
 .popover {
   max-width: 350px;
-  max-height: 500px;
+  max-height: 300px;
   overflow-y: auto;
 }
 </style>
