@@ -2,7 +2,7 @@
 <template>
   <div>
     <b-row>
-      <b-overlay :show="currentDataset.id && !features" no-wrap></b-overlay>
+      <b-overlay :show="showOverlay()" no-wrap></b-overlay>
       <b-col sm="9">
         <b-container>
           <div class="panel panel-default">
@@ -40,9 +40,18 @@
             </div>
           </div>
           <div class="panel-body" style="max-height: 650px; overflow-y: auto;">
-            <div v-if="filteredFeatures" v-for="(feature, index) in filteredFeatures.slice(0, show)" :key="feature">
+            <div v-if="filteredFeatures" v-for="(feature, index) in filteredFeatures.slice(0, show)" :key="feature.id">
               <ul>
-                {{ feature }}
+                {{ feature.id }}
+                <b-button :id="`popover-target-${index}`">
+                  Info
+                </b-button>
+                <b-popover :target="`popover-target-${index}`" :no-fade="true" triggers="hover" placement="bottom">
+                  <template v-slot:title>{{feature.id}}</template>
+                  <p v-for="(property, key) in feature.properties">
+                    <strong>{{key}}:</strong> {{property}}
+                  </p>
+                </b-popover>
                 <b-link v-if="index === (show - 1)" @click="show += 100">
                   <br>
                   Show More...
@@ -102,6 +111,9 @@ export default {
             values: this.datasets ? this.datasets : [''],
             label: 'Dataset',
             model: 'dataset',
+            disabled: function(model) {
+              return model.action === 'Update'
+            },
             visible: function(model) {
               return model.type === 'Combinators'
             },
@@ -118,7 +130,7 @@ export default {
             model: 'queries',
             values: ['field1', 'field2'],
             visible: function(model) {
-              return model.type === 'Combinators' && model.dataset
+              return (model.type === 'Combinators' && model.action === 'Update') || (model.type === 'Combinators' && model.dataset)
             },
             required: true,
             selectOptions: {
@@ -133,7 +145,7 @@ export default {
             model: 'operator',
             default: 'and',
             visible: function(model) {
-              return model.type === 'Combinators' && model.dataset
+              return (model.type === 'Combinators' && model.action === 'Update') || (model.type === 'Combinators' && model.dataset)
             },
             selectOptions: {
               value: 'value',
@@ -310,7 +322,7 @@ export default {
             model: 'concepts',
             values: this.concepts ? this.concepts : ['1', '2'],
             visible: function(model) {
-              return model.type === 'Combinators' && model.dataset
+              return (model.type === 'Combinators' && model.action === 'Update') || (model.type === 'Combinators' && model.dataset)
             },
             selectOptions: {
               key: 'title',
@@ -379,9 +391,9 @@ export default {
       })
     },
     datasets(val) {
-      if (val) {
+      if (val && val.length > 0) {
         this.schema.fields.filter((field) => {
-          if(field.model && field.model === 'dataset') {
+          if (field.model && field.model === 'dataset') {
             field.values = val
           }
         })
@@ -394,11 +406,15 @@ export default {
         }
       })
     },
-    model(val) {
-      if (val.dataset) {
-        this.currentId = val.dataset
-        this.$apollo.queries.dataset.skip = false
-      }
+    model: {
+      handler(newVal, oldVal) {
+        if (newVal.dataset && newVal.dataset !== this.currentId) {
+          this.features = null
+          this.currentId = newVal.dataset
+          this.$apollo.queries.dataset.skip = false
+        }
+      },
+      deep: true,
     },
     currentDataset(val) {
       if (val) {
@@ -462,6 +478,12 @@ export default {
       this.model.type = this.collectionType
       this.model.action = this.action
     },
+    showOverlay() {
+      if (!this.features && this.currentDataset.id) {
+        return true
+      }
+      return false
+    },
     update(val) {
       val.type = this.model.type
       val.action = this.model.action
@@ -497,5 +519,11 @@ export default {
 
 .panel-body {
   padding: 15px;
+}
+
+.popover {
+  max-width: 350px;
+  max-height: 300px;
+  overflow-y: auto;
 }
 </style>
