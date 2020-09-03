@@ -90,7 +90,7 @@ const apollo = {
       }
     `,
     pollInterval: 5000,
-    skip: this ? this.currentDataset || !this.currentId : true,
+    skip: true,
     update(data) {
       // The returned value will update
       // the vue property 'datasets'
@@ -470,7 +470,7 @@ const methods = {
       let query = queries[0] ? queries[0] : queries[1]
       this._features.forEach((feature) => {
         if (feature.properties.hasOwnProperty(query.property) && this[`_${query.operator}`](feature.properties[query.property], query.value, query.type)) {
-          test.push(feature.id)
+          test.push({id: feature.id, properties: feature.properties})
         }
       })
       results = test
@@ -483,7 +483,7 @@ const methods = {
         test[i] = []
         this._features.forEach((feature) => {
           if (feature.properties.hasOwnProperty(query.property) && this[`_${query.operator}`](feature.properties[query.property], query.value, query.type)) {
-            test[i].push(feature.id)
+            test[i].push({id: feature.id, properties: feature.properties})
           }
         })
       }
@@ -491,7 +491,7 @@ const methods = {
       if (this.model.operator === 'or') {
         for (let i = 0; i < test.length; i++) {
           if(test[i] && test[i].length > 0) {
-            results = _.union(results, test[i])
+            results = _.unionWith(results, test[i], _.isEqual)
           }
         }
       }
@@ -501,7 +501,7 @@ const methods = {
         if(results.length > 0) {
           for (let i = 1; i < test.length; i++) {
             if (test[i] && test[i].length > 0) {
-              results = _.intersection(results, test[i])
+              results = _.intersectionWith(results, test[i], _.isEqual)
             }
           // If one of queries returned 0 results, break loop and reset results to []
             else {

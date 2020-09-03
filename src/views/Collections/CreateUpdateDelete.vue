@@ -40,9 +40,18 @@
             </div>
           </div>
           <div class="panel-body" style="max-height: 650px; overflow-y: auto;">
-            <div v-if="filteredFeatures" v-for="(feature, index) in filteredFeatures.slice(0, show)" :key="feature">
+            <div v-if="filteredFeatures" v-for="(feature, index) in filteredFeatures.slice(0, show)" :key="feature.id">
               <ul>
-                {{ feature }}
+                {{ feature.id }}
+                <b-button :id="`popover-target-${index}`">
+                  Info
+                </b-button>
+                <b-popover :target="`popover-target-${index}`" :no-fade="true" triggers="hover" placement="bottom">
+                  <template v-slot:title>{{feature.properties.id}}</template>
+                  <p v-for="(property, key) in feature.properties">
+                    <strong>{{key}}:</strong> {{property}}
+                  </p>
+                </b-popover>
                 <b-link v-if="index === (show - 1)" @click="show += 100">
                   <br>
                   Show More...
@@ -382,9 +391,9 @@ export default {
       })
     },
     datasets(val) {
-      if (val) {
+      if (val && val.length > 0) {
         this.schema.fields.filter((field) => {
-          if(field.model && field.model === 'dataset') {
+          if (field.model && field.model === 'dataset') {
             field.values = val
           }
         })
@@ -504,5 +513,11 @@ export default {
 
 .panel-body {
   padding: 15px;
+}
+
+.popover {
+  max-width: 350px;
+  max-height: 500px;
+  overflow-y: auto;
 }
 </style>
