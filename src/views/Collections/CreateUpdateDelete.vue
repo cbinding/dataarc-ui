@@ -118,7 +118,7 @@ export default {
             model: 'queries',
             values: ['field1', 'field2'],
             visible: function(model) {
-              return model.type === 'Combinators' && model.dataset
+              return (model.type === 'Combinators' && model.action === 'Update') || (model.type === 'Combinators' && model.dataset)
             },
             required: true,
             selectOptions: {
@@ -133,7 +133,7 @@ export default {
             model: 'operator',
             default: 'and',
             visible: function(model) {
-              return model.type === 'Combinators' && model.dataset
+              return (model.type === 'Combinators' && model.action === 'Update') || (model.type === 'Combinators' && model.dataset)
             },
             selectOptions: {
               value: 'value',
@@ -310,7 +310,7 @@ export default {
             model: 'concepts',
             values: this.concepts ? this.concepts : ['1', '2'],
             visible: function(model) {
-              return model.type === 'Combinators' && model.dataset
+              return (model.type === 'Combinators' && model.action === 'Update') || (model.type === 'Combinators' && model.dataset)
             },
             selectOptions: {
               key: 'title',
@@ -394,11 +394,15 @@ export default {
         }
       })
     },
-    model(val) {
-      if (val.dataset) {
-        this.currentId = val.dataset
-        this.$apollo.queries.dataset.skip = false
-      }
+    model: {
+      handler(newVal, oldVal) {
+        if (newVal.dataset && newVal.dataset !== this.currentId) {
+          this.features = null
+          this.currentId = newVal.dataset
+          this.$apollo.queries.dataset.skip = false
+        }
+      },
+      deep: true,
     },
     currentDataset(val) {
       if (val) {

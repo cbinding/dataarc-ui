@@ -3,24 +3,24 @@
     <b-form v-model="schema.value">
       <b-row>
         <b-col>
-          <b-input-group v-for="query in totalQueries" :key="query" size="lg" class="mb-3">
+          <b-input-group v-for="(query, key) in totalQueries" :key="query" size="lg" class="mb-3">
             <b-input-group-prepend>
-              <b-dropdown :text="form[query] ? form[query]['property'] : 'Select Field'" variant="outline-secondary" aria-placeholder="Select Field">
+              <b-dropdown :text="getText(key)" variant="outline-secondary" aria-placeholder="Select Field">
                 <div v-for="value in schema.values" :key="value.id">
-                  <b-dropdown-item @click="setField(query, 'property', value.path, value.type)">{{ value.path }}</b-dropdown-item>
+                  <b-dropdown-item @click="setField(key, 'property', value.path, value.type)">{{ value.path }}</b-dropdown-item>
                 </div>
               </b-dropdown>
-              <b-dropdown :text="(form[query] && form[query]['operator']) ? form[query]['operator'] : 'equals'" variant="outline-secondary">
-                <div v-if="value[query] && value[query].type">
-                  <div v-for="operator in getOperators(value[query].type)" :key="operator.value">
-                    <b-dropdown-item @click="setField(query, 'operator', operator.value)">{{ operator.type }}</b-dropdown-item>
+              <b-dropdown :text="(form[key] && form[key]['operator']) ? form[key]['operator'] : 'equals'" variant="outline-secondary">
+                <div v-if="value[key] && value[key].type">
+                  <div v-for="operator in getOperators(value[key].type)" :key="operator.value">
+                    <b-dropdown-item @click="setField(key, 'operator', operator.value)">{{ operator.type }}</b-dropdown-item>
                   </div>
                 </div>
                 <div v-else v-for="operator in operators" :key="operator.value">
-                  <b-dropdown-item @click="setField(query, 'operator', operator.value)">{{ operator.type }}</b-dropdown-item>
+                  <b-dropdown-item @click="setField(key, 'operator', operator.value)">{{ operator.type }}</b-dropdown-item>
                 </div>
               </b-dropdown>
-              <b-form-input variant="outline-secondary" v-model="values[query]" @input="setField(query, 'value', values[query])" placeholder="Text Input">
+              <b-form-input variant="outline-secondary" v-model="values[key]" @input="setField(key, 'value', values[key])" placeholder="Text Input">
 
               </b-form-input>
             </b-input-group-prepend>
@@ -28,7 +28,7 @@
               <b-row>
                 <b-col>
                   <b-button-group>
-                    <b-button variant="light" size="sm" v-if="query !== 1" @click="decrement(query)">
+                    <b-button variant="light" size="sm" v-if="totalQueries > 1" @click="decrement(key)">
                       -
                     </b-button>
                     <b-button variant="light" size="sm" v-if="query === totalQueries" @click="increment">
@@ -88,22 +88,39 @@ export default {
         this.model.queries = this.queries
       }
     },
-    model: function(val) {
-      if(val && val.queries) {
-        this.totalQueries = 0
-        for(let i = 0; i < val.queries.length; i++) {
-          this.form[i + 1] = val.queries[i]
-          this.values[i + 1] = this.form[i + 1].value
-          this.totalQueries += 1
+    model: {
+      handler(val) {
+        if (val && val.queries.length > 0) {
+          this.totalQueries = 0
+          for (let i = 0; i < val.queries.length; i++) {
+            this.form[i] = val.queries[i]
+            this.values[i] = this.form[i].value
+            this.totalQueries += 1
+          }
+          if (this.totalQueries === 0) {
+            this.totalQueries = 1
+          }
         }
-        if(this.totalQueries === 0) {
-          this.totalQueries = 1
-        }
-      }
+      },
     },
   },
   mixins: [abstractField],
   methods: {
+    // If switching datasets, reset field if path is not contained in new dataset
+    getText(val) {
+      if (this.form && this.form[val] && this.form[val].property) {
+        let test = this.schema.values.filter((field) => {
+          if (field.path === this.form[val].property) {
+            return true
+          }
+        })
+        if (test.length === 0) {
+          return 'Select Field'
+        }
+        return this.form[val].property
+      }
+      return 'Select Field'
+    },
     getOperators(val) {
       if (val) {
         return this[val]
@@ -140,7 +157,7 @@ export default {
       }
       if (!this.form[int].count) {
         this.$set(this.form[int], 'count', int)
-        if(!this.form[int]['operator']) {
+        if (!this.form[int]['operator']) {
           this.$set(this.form[int], 'operator', 'equals')
         }
       }

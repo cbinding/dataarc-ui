@@ -464,23 +464,30 @@ const methods = {
     let test = []
     let results = []
     let length = Object.keys(queries).length
+
+    // If only one query, test against features, and return results
     if (length === 1) {
+      let query = queries[0] ? queries[0] : queries[1]
       this._features.forEach((feature) => {
-        if (feature.properties.hasOwnProperty(queries[1].property) && this[`_${queries[1].operator}`](feature.properties[queries[1].property], queries[1].value, queries[1].type)) {
+        if (feature.properties.hasOwnProperty(query.property) && this[`_${query.operator}`](feature.properties[query.property], query.value, query.type)) {
           test.push(feature.id)
         }
       })
+      results = test
     }
+
+  // If > 1 query, loop through queries and test against features
     else {
-      for (let i = 1; i <= length; i++) {
+      for (let i = 0; i < length; i++) {
         let query = queries[i]
-        test[i - 1] = []
+        test[i] = []
         this._features.forEach((feature) => {
           if (feature.properties.hasOwnProperty(query.property) && this[`_${query.operator}`](feature.properties[query.property], query.value, query.type)) {
-            test[i - 1].push(feature.id)
+            test[i].push(feature.id)
           }
         })
       }
+  // Use or operator for results
       if (this.model.operator === 'or') {
         for (let i = 0; i < test.length; i++) {
           if(test[i] && test[i].length > 0) {
@@ -488,6 +495,7 @@ const methods = {
           }
         }
       }
+  // Use and operator
       else {
         results = test[0]
         if(results.length > 0) {
@@ -495,19 +503,14 @@ const methods = {
             if (test[i] && test[i].length > 0) {
               results = _.intersection(results, test[i])
             }
+          // If one of queries returned 0 results, break loop and reset results to []
             else {
               results = []
               break
             }
           }
         }
-        else {
-          results = []
-        }
       }
-    }
-    if (length === 1) {
-      results = test
     }
     this.filteredFeatures = results
   },
@@ -593,9 +596,6 @@ const asyncComputed = {
   },
   features: {
     get() {
-      if (this._features && this._features.length > 0) {
-        return this._features
-      }
       return this.getSource(`features?dataset=${this.currentId}&_limit=-1`).then((features) => {
         this._features = features;
         return this._features;
