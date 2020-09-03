@@ -2,7 +2,7 @@
 <template>
   <div>
     <b-row>
-      <b-overlay :show="currentDataset.id && !features" no-wrap></b-overlay>
+      <b-overlay :show="showOverlay()" no-wrap></b-overlay>
       <b-col sm="9">
         <b-container>
           <div class="panel panel-default">
@@ -477,6 +477,12 @@ export default {
 
       this.model.type = this.collectionType
       this.model.action = this.action
+    },
+    showOverlay() {
+      if (!this.features && this.currentDataset.id) {
+        return true
+      }
+      return false
     },
     update(val) {
       val.type = this.model.type
