@@ -11,7 +11,12 @@
                 </div>
               </b-dropdown>
               <b-dropdown :text="(form[query] && form[query]['operator']) ? form[query]['operator'] : 'equals'" variant="outline-secondary">
-                <div v-for="operator in operators" :key="operator.value">
+                <div v-if="value[query] && value[query].type">
+                  <div v-for="operator in getOperators(value[query].type)" :key="operator.value">
+                    <b-dropdown-item @click="setField(query, 'operator', operator.value)">{{ operator.type }}</b-dropdown-item>
+                  </div>
+                </div>
+                <div v-else v-for="operator in operators" :key="operator.value">
                   <b-dropdown-item @click="setField(query, 'operator', operator.value)">{{ operator.type }}</b-dropdown-item>
                 </div>
               </b-dropdown>
@@ -54,7 +59,23 @@ export default {
         {type: 'Not Contains', value: 'not_contains'},
         {type: 'Greater Than', value: 'greater_than'},
         {type: 'Less Than', value: 'less_than'},
-        ],
+      ],
+      number: [
+        {type: 'Equals', value: 'equals'},
+        {type: 'Not Equals', value: 'not_equals' },
+        {type: 'Greater Than', value: 'greater_than'},
+        {type: 'Less Than', value: 'less_than'},
+      ],
+      string: [
+        {type: 'Equals', value: 'equals'},
+        {type: 'Not Equals', value: 'not_equals' },
+        {type: 'Contains', value: 'contains'},
+        {type: 'Not Contains', value: 'not_contains'},
+      ],
+      boolean: [
+        {type: 'Equals', value: 'equals'},
+        {type: 'Not Equals', value: 'not_equals' },
+      ],
       totalQueries: 1,
       queries: {},
       values: {},
@@ -83,6 +104,12 @@ export default {
   },
   mixins: [abstractField],
   methods: {
+    getOperators(val) {
+      if (val) {
+        return this[val]
+      }
+      return this.operators
+    },
     increment() {
       this.totalQueries += 1
     },
