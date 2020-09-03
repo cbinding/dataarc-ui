@@ -102,6 +102,9 @@ export default {
             values: this.datasets ? this.datasets : [''],
             label: 'Dataset',
             model: 'dataset',
+            disabled: function(model) {
+              return model.action === 'Update'
+            },
             visible: function(model) {
               return model.type === 'Combinators'
             },
