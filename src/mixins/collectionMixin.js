@@ -164,7 +164,7 @@ const apollo = {
         id: this.currentId,
       };
     },
-    skip: this ? this.currentDataset || !this.currentId : true,
+    skip: true,
     ssr: false,
     // Variables: deep object watch
     deep: false,
@@ -420,10 +420,24 @@ const methods = {
     }
     this.rows = val;
   },
-  _equals(string, val) {
+  _equals(string, val, type) {
+    if (type === 'number') {
+      return string === Number(val)
+    }
+    if (type === 'boolean') {
+      const isTrueSet = (val === 'true')
+      return string === isTrueSet
+    }
     return string === val
   },
-  _not_equals(string, val) {
+  _not_equals(string, val, type) {
+    if (type === 'number') {
+      return string !== Number(val)
+    }
+    if (type === 'boolean') {
+      const isTrueSet = (val === 'true')
+      return string !== isTrueSet
+    }
     return string !== val
   },
   _contains(string, val) {
@@ -432,10 +446,16 @@ const methods = {
   _not_contains(string, val) {
     return !string.includes(val)
   },
-  _greater_than(int, val) {
+  _greater_than(int, val, type) {
+    if (type === 'number') {
+      return int > Number(val)
+    }
     return int > val
   },
-  _less_than(int, val) {
+  _less_than(int, val, type) {
+    if (type === 'number') {
+      return int < Number(val)
+    }
     return int < val
   },
   testQueries(val) {
@@ -446,7 +466,7 @@ const methods = {
     let length = Object.keys(queries).length
     if (length === 1) {
       this._features.forEach((feature) => {
-        if (feature.properties.hasOwnProperty(queries[1].property) && this[`_${queries[1].operator}`](feature.properties[queries[1].property], queries[1].value)) {
+        if (feature.properties.hasOwnProperty(queries[1].property) && this[`_${queries[1].operator}`](feature.properties[queries[1].property], queries[1].value, queries[1].type)) {
           test.push(feature.id)
         }
       })
@@ -456,26 +476,39 @@ const methods = {
         let query = queries[i]
         test[i - 1] = []
         this._features.forEach((feature) => {
-          if (feature.properties.hasOwnProperty(query.property) && this[`_${query.operator}`](feature.properties[query.property], query.value)) {
+          if (feature.properties.hasOwnProperty(query.property) && this[`_${query.operator}`](feature.properties[query.property], query.value, query.type)) {
             test[i - 1].push(feature.id)
           }
         })
       }
       if (this.model.operator === 'or') {
         for (let i = 0; i < test.length; i++) {
-          results = _.union(results, test[i])
+          if(test[i] && test[i].length > 0) {
+            results = _.union(results, test[i])
+          }
         }
       }
       else {
         results = test[0]
-        for (let i = 0; i < test.length; i++) {
-          if (test[i + 1]) {
-            results = _.intersection(results, test[i + 1])
+        if(results.length > 0) {
+          for (let i = 1; i < test.length; i++) {
+            if (test[i] && test[i].length > 0) {
+              results = _.intersection(results, test[i])
+            }
+            else {
+              results = []
+              break
+            }
           }
+        }
+        else {
+          results = []
         }
       }
     }
-    results = results.length > 0 ? results : test
+    if (length === 1) {
+      results = test
+    }
     this.filteredFeatures = results
   },
 };
