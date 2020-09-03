@@ -47,7 +47,7 @@
                   Info
                 </b-button>
                 <b-popover :target="`popover-target-${index}`" :no-fade="true" triggers="hover" placement="bottom">
-                  <template v-slot:title>{{feature.properties.id}}</template>
+                  <template v-slot:title>{{feature.id}}</template>
                   <p v-for="(property, key) in feature.properties">
                     <strong>{{key}}:</strong> {{property}}
                   </p>
