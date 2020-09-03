@@ -107,7 +107,10 @@ export default {
             },
             selectOptions: {
               name: 'title',
-            }
+            },
+            onChanged(model, schema, event) {
+              this.currentId = model.dataset
+            },
           },
           {
             type: 'query',
