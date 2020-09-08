@@ -31,12 +31,16 @@
       </b-col>
       <b-col sm="3" v-if="model && model.type === 'Combinators'">
         <div class="panel panel-default">
-          <div class="panel-heading">
+          <div class="panel-heading" v-if="currentDataset.features_count">
+            ({{ start }} - {{ (start + 50) < currentDataset.features_count ? (start + 50) : currentDataset.features_count }}) of {{ currentDataset.features_count }}
+            <br>
             Search Results: {{ filteredFeatures ? filteredFeatures.length : 0 }} out of {{ features ? features.length : 0 }} records
+            <b-link v-if="start < currentDataset.features_count - 50" @click="getNextFeatures()"> Test Next 50 Features</b-link>
+            <b-link v-else  @click="reset()"> Reset</b-link>
             <br>
             <div v-if="filteredFeatures && filteredFeatures.length > 0">
               Displaying {{ show > filteredFeatures.length ? filteredFeatures.length : show  }} out of {{ filteredFeatures.length }} Results
-              <b-link v-if="show < filteredFeatures.length" :disabled="show >= filteredFeatures.length" @click="show += 10">Show More</b-link>
+
             </div>
           </div>
           <div class="panel-body" style="max-height: 650px; overflow-y: auto;">
@@ -483,6 +487,14 @@ export default {
         return true
       }
       return false
+    },
+    getNextFeatures() {
+      this.start += 50
+      this.testQueries(this.model.queries)
+    },
+    reset() {
+      this.start = 0
+      this.testQueries(this.model.queries)
     },
     update(val) {
       val.type = this.model.type
