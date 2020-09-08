@@ -3,7 +3,7 @@
   <div>
     <b-row>
       <b-overlay :show="showOverlay()" no-wrap></b-overlay>
-      <b-col sm="9">
+      <b-col :sm="model && model.type === 'Combinators' ? '7' : '12'">
         <b-container>
           <div class="panel panel-default">
             <div class="panel-heading">
@@ -29,39 +29,37 @@
           </div>
         </b-container>
       </b-col>
-      <b-col sm="3" v-if="model && model.type === 'Combinators'">
+      <b-col sm="5" v-if="model && model.type === 'Combinators'">
         <div class="panel panel-default">
           <div class="panel-heading" v-if="currentDataset.features_count">
             ({{ start }} - {{ (start + 50) < currentDataset.features_count ? (start + 50) : currentDataset.features_count }}) of {{ currentDataset.features_count }}
             <br>
             Search Results: {{ filteredFeatures ? filteredFeatures.length : 0 }} out of {{ features ? features.length : 0 }} records
             <b-link v-if="start < currentDataset.features_count - 50" @click="getNextFeatures()"> Test Next 50 Features</b-link>
-            <b-link v-else  @click="reset()"> Reset</b-link>
+            <b-link v-else @click="reset()"> Reset</b-link>
             <br>
             <div v-if="filteredFeatures && filteredFeatures.length > 0">
-              Displaying {{ show > filteredFeatures.length ? filteredFeatures.length : show  }} out of {{ filteredFeatures.length }} Results
-
+              Displaying
+              <b-dropdown id="dropdown-1" :text="show > filteredFeatures.length ? filteredFeatures.length.toString() : show.toString()" class="m-md-2">
+                <div v-for="limit in limits" :key="limit">
+                  <b-dropdown-item @click="show = limit">{{ limit }}</b-dropdown-item>
+                </div>
+              </b-dropdown>
+              out of {{ filteredFeatures.length }} Results
             </div>
           </div>
-          <div class="panel-body" style="max-height: 650px; overflow-y: auto;">
-            <div v-if="filteredFeatures" v-for="(feature, index) in filteredFeatures.slice(0, show)" :key="feature.id">
-              <ul>
-                {{ feature.id }}
-                <b-button :id="`popover-target-${index}`">
-                  Info
-                </b-button>
-                <b-popover :target="`popover-target-${index}`" :no-fade="true" triggers="hover" placement="bottom">
-                  <template v-slot:title>{{feature.id}}</template>
-                  <p v-for="(property, key) in feature.properties">
-                    <strong>{{key}}:</strong> {{property}}
-                  </p>
-                </b-popover>
-                <b-link v-if="index === (show - 1)" @click="show += 10">
-                  <br>
-                  Show More...
-                </b-link>
-              </ul>
-            </div>
+          <div class="panel-body" style="max-height: 625px; overflow-y: auto;">
+            <b-table :items="filteredFeatures" :fields="resultsFields" :per-page="show">
+              <template v-slot:cell(properties)="row" class="Properties">
+                <div class="w-200 text-wrap" style="max-width: 800px;" v-if="row.item.properties">
+                  {
+                  <span v-for="(property, key, index) in row.item.properties" :key="key">
+                    {{ key }}: <strong>{{ property }}</strong> <span v-if="(index + 1) !== Object.keys(row.item.properties).length"> | </span>
+                  </span>
+                  }
+                </div>
+              </template>
+            </b-table>
           </div>
         </div>
       </b-col>
@@ -78,6 +76,9 @@ export default {
   data() {
     return {
       show: 10,
+      resultsFields: [
+        'properties',
+      ],
       item: {},
       model: {
         type: '',
@@ -394,6 +395,11 @@ export default {
         }
       })
     },
+    features(val) {
+      if (val && this.model.queries) {
+        this.testQueries(this.model.queries)
+      }
+    },
     datasets(val) {
       if (val && val.length > 0) {
         this.schema.fields.filter((field) => {
@@ -490,7 +496,6 @@ export default {
     },
     getNextFeatures() {
       this.start += 50
-      this.testQueries(this.model.queries)
     },
     reset() {
       this.start = 0
@@ -533,9 +538,4 @@ export default {
   padding: 15px;
 }
 
-.popover {
-  max-width: 350px;
-  max-height: 300px;
-  overflow-y: auto;
-}
 </style>
