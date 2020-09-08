@@ -19,7 +19,7 @@ class Combinators {
       if (this.queries) {
         let _queries = this.queries;
         this.queries = [];
-        for (let i = 1; i <= Object.keys(_queries).length; i++) {
+        for (let i = 0; i < Object.keys(_queries).length; i++) {
           promises.push(
             this._createOrUpdateQuery(_queries[i]).then((response) => {
               this.queries.push(response.data.id);
@@ -58,7 +58,7 @@ class Combinators {
         let _queries = Object.assign(this.queries);
         let length = Object.keys(_queries).length;
         this.queries = [];
-        for (let i = 0; i <= length; i++) {
+        for (let i = 0; i < length; i++) {
           promises.push(
             this._createOrUpdateQuery(_queries[i]).then((response) => {
               if (response) {
