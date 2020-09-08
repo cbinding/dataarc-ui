@@ -36,7 +36,7 @@
             <br>
             <div v-if="filteredFeatures && filteredFeatures.length > 0">
               Displaying {{ show > filteredFeatures.length ? filteredFeatures.length : show  }} out of {{ filteredFeatures.length }} Results
-              <b-link v-if="show < filteredFeatures.length" :disabled="show >= filteredFeatures.length" @click="show += 100">Show More</b-link>
+              <b-link v-if="show < filteredFeatures.length" :disabled="show >= filteredFeatures.length" @click="show += 10">Show More</b-link>
             </div>
           </div>
           <div class="panel-body" style="max-height: 650px; overflow-y: auto;">
@@ -52,7 +52,7 @@
                     <strong>{{key}}:</strong> {{property}}
                   </p>
                 </b-popover>
-                <b-link v-if="index === (show - 1)" @click="show += 100">
+                <b-link v-if="index === (show - 1)" @click="show += 10">
                   <br>
                   Show More...
                 </b-link>
@@ -73,7 +73,7 @@ export default {
   mixins: [collectionMixin],
   data() {
     return {
-      show: 100,
+      show: 10,
       item: {},
       model: {
         type: '',
