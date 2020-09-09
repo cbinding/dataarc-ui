@@ -31,25 +31,27 @@
       </b-col>
       <b-col sm="5" v-if="model && model.type === 'Combinators'">
         <div class="panel panel-default">
-          <div class="panel-heading" v-if="currentDataset.features_count">
-            ({{ start }} - {{ (start + 50) < currentDataset.features_count ? (start + 50) : currentDataset.features_count }}) of {{ currentDataset.features_count }}
-            <br>
-            Search Results: {{ filteredFeatures ? filteredFeatures.length : 0 }} out of {{ features ? features.length : 0 }} records
-            <b-link v-if="start < currentDataset.features_count - 50" @click="getNextFeatures()"> Test Next 50 Features</b-link>
-            <b-link v-else @click="reset()"> Reset</b-link>
-            <br>
-            <div v-if="filteredFeatures && filteredFeatures.length > 0">
-              Displaying
-              <b-dropdown id="dropdown-1" :text="show > filteredFeatures.length ? filteredFeatures.length.toString() : show.toString()" class="m-md-2">
-                <div v-for="limit in limits" :key="limit">
-                  <b-dropdown-item @click="show = limit">{{ limit }}</b-dropdown-item>
-                </div>
-              </b-dropdown>
-              out of {{ filteredFeatures.length }} Results
-            </div>
+          <div class="panel-heading">
+            <span v-if="currentDataset.features_count">
+              ({{ start }} - {{ (start + 50) < currentDataset.features_count ? (start + 50) : currentDataset.features_count }}) of {{ currentDataset.features_count }}
+              <br>
+              Search Results: {{ filteredFeatures ? filteredFeatures.length : 0 }} out of {{ features ? features.length : 0 }} records
+              <b-link v-if="start < currentDataset.features_count - 50" @click="getNextFeatures()"> Test Next 50 Features</b-link>
+              <b-link v-else @click="reset()"> Reset</b-link>
+              <br>
+              <div v-if="filteredFeatures && filteredFeatures.length > 0">
+                Displaying
+                <b-dropdown id="dropdown-1" :text="show > filteredFeatures.length ? filteredFeatures.length.toString() : show.toString()" class="m-md-2">
+                  <div v-for="limit in limits" :key="limit">
+                    <b-dropdown-item @click="show = limit">{{ limit }}</b-dropdown-item>
+                  </div>
+                </b-dropdown>
+                out of {{ filteredFeatures.length }} Results
+              </div>
+            </span>
           </div>
           <div class="panel-body" style="max-height: 75vh; overflow-y: auto;">
-            <b-table :items="filteredFeatures" :fields="resultsFields" :per-page="show">
+            <b-table v-if="currentDataset.features_count" :items="filteredFeatures" :fields="resultsFields" :per-page="show">
               <template v-slot:cell(properties)="row" class="Properties">
                 <div class="w-200 text-wrap" style="max-width: 800px;" v-if="row.item.properties">
                   {

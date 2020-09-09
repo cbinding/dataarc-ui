@@ -5,7 +5,7 @@
         <b-col>
           <b-input-group v-for="(query, key) in totalQueries" :key="query" size="lg" class="mb-3">
             <b-input-group-prepend>
-              <b-dropdown :text="getText(key)" variant="outline-secondary" aria-placeholder="Select Field">
+              <b-dropdown no-flip :text="getText(key)" variant="outline-secondary" aria-placeholder="Select Field">
                 <div v-for="value in schema.values" :key="value.id">
                   <b-dropdown-item @click="setField(key, 'property', value.path, value.type)">{{ value.path }}</b-dropdown-item>
                 </div>
@@ -178,5 +178,8 @@ export default {
 </script>
 
 <style>
-
+.dropdown-menu {
+  max-height: 380px;
+  overflow-y: auto;
+}
 </style>
