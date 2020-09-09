@@ -122,8 +122,8 @@ const apollo = {
   },
   dataset: {
     query: gql`
-      query dataset($id: ID!) {
-        dataset(id: $id) {
+      query datasets($id: ID!) {
+        datasets(where: {id: $id}) {
           id
           name
           title
@@ -135,6 +135,9 @@ const apollo = {
             name
             title
           }
+          features_count
+          fields_count
+          combinators_count
           title_layout
           link_layout
           details_layout
@@ -181,8 +184,8 @@ const apollo = {
     },
     // Optional result hook
     result({ data, loading, networkStatus }) {
-      if (data && data.dataset) {
-        this.currentDataset = data.dataset;
+      if (data && data.datasets) {
+        this.currentDataset = data.datasets[0];
         this.fieldsCount = this.currentDataset.fields.length;
         this.combinatorsCount = this.currentDataset.combinators.length;
       }
@@ -459,8 +462,9 @@ const methods = {
     return int < val
   },
   testQueries(val) {
+
     this.filteredFeatures = []
-    let queries = val.queries
+    let queries = val.queries ? val.queries : val
     let test = []
     let results = []
     let length = Object.keys(queries).length
@@ -596,7 +600,7 @@ const asyncComputed = {
   },
   features: {
     get() {
-      return this.getSource(`features?dataset=${this.currentId}&_limit=-1`).then((features) => {
+      return this.getSource(`features?dataset=${this.currentId}&_start=${this.start}&_limit=50`).then((features) => {
         this._features = features;
         return this._features;
       });
@@ -637,6 +641,7 @@ const data = function () {
     limits: [10, 20, 50, 100],
     currentId: '',
     datasets: [],
+    features: [],
     mapLayers: [],
     categories: [],
     currentDataset: {},
@@ -644,6 +649,7 @@ const data = function () {
     currentCombinatorsPage: 1,
     currentFieldsLimit: 10,
     currentCombinatorsLimit: 10,
+    start: 0,
     filter: '',
     filteredFeatures: [],
   };
