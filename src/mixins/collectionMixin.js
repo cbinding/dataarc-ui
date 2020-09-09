@@ -80,6 +80,9 @@ const apollo = {
           title
           description
           citation
+          source{
+            name
+          }
           state
           state_msg
           state_at
