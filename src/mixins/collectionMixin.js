@@ -521,6 +521,12 @@ const methods = {
     }
     this.filteredFeatures = results
   },
+  shorten(val) {
+    if (val.length > 100) {
+      return val.substring(0, 100) + "..."
+    }
+    return val
+},
 };
 
 const asyncComputed = {
