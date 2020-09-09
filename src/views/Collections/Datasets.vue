@@ -7,25 +7,45 @@
       </template>
       <template v-slot:table>
         <b-table v-if="datasets" :filter="filter" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="datasets" :fields="displayFields" @filtered="updatePagination">
-          <template v-slot:cell(description)="row" class="Description">
-            <div class="w-200 text-truncate" style="max-width: 400px;" v-if="row.item.description">
-              {{ row.item.description }}
+          <template v-slot:cell(title)="row" class="Title">
+            <div class="text-wrap" style="width: 200px; max-width: 200px;" v-if="row.item.title">
+              {{ row.item.title }}
             </div>
           </template>
+          <template v-slot:cell(description)="row" class="Description">
+            <div class="text-wrap" style="width: 300px; max-width: 350px;" v-if="row.item.description">
+              {{ shorten(row.item.description) }}
+            </div>
+          </template>
+          <template v-slot:head(fields_count)="row" class="fieldsCount" >
+            <span># Fields</span>
+          </template>
           <template v-slot:cell(fields_count)="row" class="fieldsCount" >
-            <b-badge pill variant="primary">
-              {{ row.item.fields_count }}
-            </b-badge>
+            <div class="text-center">
+              <b-badge pill variant="primary" style="font-size: 12px;">
+                {{ row.item.fields_count }}
+              </b-badge>
+            </div>
+          </template>
+          <template v-slot:head(features_count)="row" class="featuresCount" >
+            <span># Features</span>
           </template>
           <template v-slot:cell(features_count)="row" class="featuresCount" >
-            <b-badge pill variant="primary">
-              {{ row.item.features_count }}
-            </b-badge>
+            <div class="text-center">
+              <b-badge pill variant="primary">
+                {{ row.item.features_count }}
+              </b-badge>
+            </div>
+          </template>
+          <template v-slot:head(combinators_count)="row" class="combinatorsCount" >
+            <span># Combinators</span>
           </template>
           <template v-slot:cell(combinators_count)="row" class="combinatorsCount" >
-            <b-badge pill variant="primary">
-              {{ row.item.combinators_count }}
-            </b-badge>
+            <div class="text-center">
+              <b-badge pill variant="primary">
+                {{ row.item.combinators_count }}
+              </b-badge>
+            </div>
           </template>
           <template v-slot:cell(state)="row" class="state">
             <div>
@@ -34,17 +54,25 @@
               </b-badge>
             </div>
           </template>
+          <template v-slot:cell(state_msg)="row" class="state_msg">
+            <div class="w-200 text-wrap" style="width: 225px;">
+              {{ row.item.state_msg ? row.item.state_msg : '' }}
+            </div>
+          </template>
           <template v-slot:cell(state_at)="row" class="state_at">
             <div>
               {{ getDate(row.item.state_at) }}
             </div>
           </template>
+          <template v-slot:cell(source)="row" class="source">
+            <div>
+              {{ row.item.source ? row.item.source.name : '' }}
+            </div>
+          </template>
           <template v-slot:cell(actions)="row" class="actions">
-            <b-button-group>
-              <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Process'" @click="process(row.item)"></b-button>
-              <router-link :to="{name: 'Dataset View', params: {id: row.item.id} }">
-                <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Edit'"></b-button>
-              </router-link>
+            <b-button-group size="sm">
+              <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing' || !row.item.source" v-text="'Process'" @click="process(row.item)"></b-button>
+              <b-button size="sm" :to="{name: 'Dataset View', params: {id: row.item.id} }" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Edit'"></b-button>
               <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
             </b-button-group>
           </template>
@@ -62,7 +90,6 @@ export default {
     return {
       component: 'Datasets',
       displayFields: [
-        'name',
         'title',
         'description',
         'citation',
@@ -72,6 +99,7 @@ export default {
         'state',
         'state_msg',
         'state_at',
+        'source',
         'actions',
       ],
       pending: 'warning',
@@ -113,8 +141,33 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 a.disabled {
   pointer-events: none;
 }
+
+/* .table td {
+  padding: 0.4rem;
+  font-size: 12px;
+}
+
+.table th {
+  font-size: 12px;
+}
+
+.btn-sm, .btn-group-sm > .btn{
+  font-size: 12px;
+  padding: 0.25rem;
+}
+
+.btn{
+  font-size: 12px;
+} */
+
+
+/* .btn-group-sm{
+  font-size: 12px;
+  padding: 0rem;
+} */
+
 </style>

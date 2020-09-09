@@ -80,6 +80,9 @@ const apollo = {
           title
           description
           citation
+          source{
+            name
+          }
           state
           state_msg
           state_at
@@ -518,6 +521,12 @@ const methods = {
     }
     this.filteredFeatures = results
   },
+  shorten(val) {
+    if (val.length > 100) {
+      return val.substring(0, 100) + "..."
+    }
+    return val
+},
 };
 
 const asyncComputed = {

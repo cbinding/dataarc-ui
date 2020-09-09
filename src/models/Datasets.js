@@ -12,7 +12,9 @@ class Datasets {
     if (data.source && data.source.name) {
       this.formData.append('files.source', data.source, data.source.name);
     }
-    this.category = data.category;
+    if (data.category) {
+      this.category = data.category;
+    }
     this.title_layout = data.title_layout;
     this.summary_layout = data.summary_layout;
     this.details_layout = data.details_layout;

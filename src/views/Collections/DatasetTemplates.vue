@@ -140,8 +140,10 @@ export default {
     currentDataset(val) {
       if (val) {
         this.form = val
-        let temp = this.form.category.id
-        this.form.category = temp
+        if (this.form.category && this.form.category.id) {
+          let temp = this.form.category.id
+          this.form.category = temp
+        }
         this.form.type = 'Datasets'
         this.form.action = 'Update'
         this.form.goBack = true

@@ -30,13 +30,13 @@
         </b-container>
       </b-col>
       <b-col sm="5" v-if="model && model.type === 'Combinators'">
-        <div class="panel panel-default">
-          <div class="panel-heading" v-if="currentDataset.features_count">
+        <div class="panel panel-default" v-if="currentDataset.id">
+          <div class="panel-heading">
             ({{ start }} - {{ (start + 50) < currentDataset.features_count ? (start + 50) : currentDataset.features_count }}) of {{ currentDataset.features_count }}
             <br>
             Search Results: {{ filteredFeatures ? filteredFeatures.length : 0 }} out of {{ features ? features.length : 0 }} records
             <b-link v-if="start < currentDataset.features_count - 50" @click="getNextFeatures()"> Test Next 50 Features</b-link>
-            <b-link v-else @click="reset()"> Reset</b-link>
+            <b-link v-else-if="currentDataset.features_count !== 0" @click="reset()"> Reset</b-link>
             <br>
             <div v-if="filteredFeatures && filteredFeatures.length > 0">
               Displaying
@@ -48,8 +48,8 @@
               out of {{ filteredFeatures.length }} Results
             </div>
           </div>
-          <div class="panel-body" style="max-height: 625px; overflow-y: auto;">
-            <b-table :items="filteredFeatures" :fields="resultsFields" :per-page="show">
+          <div class="panel-body" style="max-height: 75vh; overflow-y: auto;">
+            <b-table v-if="currentDataset.features_count" :items="filteredFeatures" :fields="resultsFields" :per-page="show">
               <template v-slot:cell(properties)="row" class="Properties">
                 <div class="w-200 text-wrap" style="max-width: 800px;" v-if="row.item.properties">
                   {
@@ -60,6 +60,12 @@
                 </div>
               </template>
             </b-table>
+            <span v-if="currentDataset.features_count && filteredFeatures.length === 0">
+              No Matches found
+            </span>
+            <span v-if="currentDataset && currentDataset.features_count === 0">
+              No Features found for this Dataset
+            </span>
           </div>
         </div>
       </b-col>
@@ -395,8 +401,8 @@ export default {
         }
       })
     },
-    features(val) {
-      if (val && this.model.queries) {
+    features(newVal, oldVal) {
+      if (newVal && this.model.queries && Object.keys(this.model.queries).length > 0) {
         this.testQueries(this.model.queries)
       }
     },
@@ -538,4 +544,14 @@ export default {
   padding: 15px;
 }
 
+</style>
+
+<style>
+.form-control {
+  padding-top: 0.35rem;
+}
+
+.multiselect, .multiselect__tags, .multiselect__input  {
+  font-size: 0.85rem;
+}
 </style>
