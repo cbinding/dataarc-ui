@@ -48,7 +48,7 @@
               out of {{ filteredFeatures.length }} Results
             </div>
           </div>
-          <div class="panel-body" style="max-height: 625px; overflow-y: auto;">
+          <div class="panel-body" style="max-height: 75vh; overflow-y: auto;">
             <b-table :items="filteredFeatures" :fields="resultsFields" :per-page="show">
               <template v-slot:cell(properties)="row" class="Properties">
                 <div class="w-200 text-wrap" style="max-width: 800px;" v-if="row.item.properties">
@@ -395,8 +395,8 @@ export default {
         }
       })
     },
-    features(val) {
-      if (val && this.model.queries) {
+    features(newVal, oldVal) {
+      if (newVal && this.model.queries && Object.keys(this.model.queries).length > 0) {
         this.testQueries(this.model.queries)
       }
     },
@@ -538,4 +538,14 @@ export default {
   padding: 15px;
 }
 
+</style>
+
+<style>
+.form-control {
+  padding-top: 0.35rem;
+}
+
+.multiselect, .multiselect__tags, .multiselect__input  {
+  font-size: 0.85rem;
+}
 </style>

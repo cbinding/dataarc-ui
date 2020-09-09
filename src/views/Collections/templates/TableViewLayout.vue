@@ -9,6 +9,7 @@
     <b-row>
       <div class="d-flex justify-content-start">
         <b-pagination
+          size="sm"
           v-model="currentPage"
           @change="notify"
           :total-rows="rows"
@@ -82,5 +83,13 @@ export default {
 </script>
 
 <style>
+.table td {
+  padding: 0.4rem;
+  padding-right: 0rem;
+}
+
+.btn-sm, .btn-group-sm > .btn{
+  padding: 0.3rem;
+}
 
 </style>

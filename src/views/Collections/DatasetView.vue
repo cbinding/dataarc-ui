@@ -354,4 +354,8 @@ export default {
 .panel-body {
 	padding: 15px;
 }
+
+.form-control {
+  padding-top: 0.35rem;
+}
 </style>

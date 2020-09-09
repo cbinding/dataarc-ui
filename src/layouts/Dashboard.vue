@@ -9,7 +9,7 @@
           <router-view />
         </div>
         <!-- content wrapper ends -->
-        <app-footer />
+        <!-- <app-footer /> -->
       </div>
       <!-- main panel ends -->
     </div>
@@ -20,14 +20,14 @@
 <script>
 import AppHeader from '@/components/partials/AppHeader'
 import AppSidebar from '@/components/partials/AppSidebar'
-import AppFooter from '@/components/partials/AppFooter'
+// import AppFooter from '@/components/partials/AppFooter'
 import { mapState, mapActions } from 'vuex'
 export default {
   name: 'Dashboard',
   components: {
     AppHeader,
     AppSidebar,
-    AppFooter,
+    // AppFooter,
   },
   computed: {
     ...mapState({
@@ -49,7 +49,7 @@ export default {
 
 </script>
 
-<style lang="scss">
+<style scoped>
 .app {
 }
 </style>

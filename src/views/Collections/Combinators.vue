@@ -8,13 +8,13 @@
       <template v-slot:table>
         <b-table v-if="combinators" :filter="filter" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="combinators" :fields="displayFields" @filtered="updatePagination">
           <template v-slot:cell(description)="row" class="Description">
-            <div class="w-200 text-truncate" style="max-width: 400px;" v-if="row.item.description">
-              {{ row.item.description }}
+            <div class="text-wrap" style="width: 300px; max-width: 350px;" v-if="row.item.description">
+              {{ shorten(row.item.description) }}
             </div>
           </template>
-          <template v-slot:cell(citation)="row" class="Citation">
-            <div class="w-200 text-truncate" style="max-width: 400px;" v-if="row.item.citation">
-              {{ row.item.citation }}
+          <template v-slot:cell(citation)="row" class="citation">
+            <div class="text-wrap" style="width: 250px; max-width: 300px;" v-if="row.item.citation">
+              {{ shorten(row.item.citation) }}
             </div>
           </template>
           <template v-slot:cell(created_by)="row" class="CreatedBy">
@@ -28,11 +28,9 @@
             </div>
           </template>
           <template v-slot:cell(actions)="row" class="actions">
-            <b-button-group>
-              <router-link :to="{name: 'Update Combinator', params: {id: row.item.id} }">
-                <b-button size="sm" variant="primary" :disabled="row.item.state === 'running'" v-text="'Edit'"></b-button>
-              </router-link>
-              <b-button size="sm" variant="primary" :disabled="row.item.state === 'running'" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
+            <b-button-group size="sm">
+              <b-button :to="{name: 'Update Combinator', params: {id: row.item.id} }" variant="primary" :disabled="row.item.state === 'running'" v-text="'Edit'"></b-button>
+              <b-button variant="primary" :disabled="row.item.state === 'running'" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
             </b-button-group>
           </template>
         </b-table>
@@ -47,7 +45,7 @@ export default {
   data() {
     return {
       component: 'Combinators',
-      displayFields: ['name', 'title', 'description', 'citation', 'created_by', 'updated_by', 'actions'],
+      displayFields: ['title', 'description', 'citation', 'created_by', 'updated_by', 'actions'],
     }
   },
   mixins: [collectionMixin],
