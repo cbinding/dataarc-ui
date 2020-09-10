@@ -92,7 +92,7 @@ export default {
         title: '',
         description: '',
         citation: '',
-        link: '',
+        url: '',
         image: null,
         source: null,
         user: {},
@@ -275,8 +275,8 @@ export default {
           {
             type: 'input',
             inputType: 'url',
-            label: 'Link',
-            model: 'link',
+            label: 'Url',
+            model: 'url',
             visible: function(model) {
               return model.type === 'Datasets'
             },

@@ -5,7 +5,7 @@ class Datasets {
     this.title = data.title;
     this.description = data.description;
     this.citation = data.citation;
-    this.link = data.link;
+    this.url = data.url;
     if (data.image) {
       this.formData.append('files.image', data.image, data.image.name);
     }
@@ -62,7 +62,7 @@ Datasets.fillable = [
   'title',
   'description',
   'citation',
-  'link',
+  'url',
   'image',
   'source',
   'category',

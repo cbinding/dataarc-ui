@@ -46,7 +46,7 @@ class Dataset extends Base {
           title
           description
           citation
-          link
+          url
           category{
             id
             name
