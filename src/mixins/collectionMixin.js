@@ -132,7 +132,7 @@ const apollo = {
           title
           description
           citation
-          link
+          url
           category {
             id
             name
@@ -217,7 +217,7 @@ const apollo = {
           title
           description
           citation
-          link
+          url
           category {
             id
             name
@@ -574,7 +574,7 @@ const asyncComputed = {
   },
   combinators: {
     get() {
-      return this.getSource('combinators?_limit=-1').then((combinators) => {
+      return this.getSource('combinators').then((combinators) => {
         this._combinators = combinators;
         if (this.schema) {
           this.setFormField(this._combinators, 'combinators');

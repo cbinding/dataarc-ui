@@ -185,7 +185,7 @@ export default {
         title: '',
         description: '',
         citation: '',
-        link: '',
+        url: '',
         image: null,
         source: null,
         category: '',
@@ -220,8 +220,8 @@ export default {
           {
             type: 'input',
             inputType: 'url',
-            label: 'Link',
-            model: 'link',
+            label: 'Url',
+            model: 'url',
             visible: true,
           },
           {
