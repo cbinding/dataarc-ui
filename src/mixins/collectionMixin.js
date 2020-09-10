@@ -210,8 +210,8 @@ const apollo = {
   },
   datasetWFeatures: {
     query: gql`
-      query dataset($id: ID!) {
-        dataset(id: $id) {
+      query datasets($id: ID!) {
+        datasets(where: {id: $id}) {
           id
           name
           title
@@ -255,7 +255,7 @@ const apollo = {
         id: this.currentId,
       };
     },
-    skip: this ? this.currentDataset || !this.currentId : true,
+    skip: true,
     ssr: false,
     // Variables: deep object watch
     deep: false,
@@ -272,8 +272,8 @@ const apollo = {
     },
     // Optional result hook
     result({ data, loading, networkStatus }) {
-      if (data && data.dataset) {
-        this.currentDataset = data.dataset;
+      if (data && data.datasets) {
+        this.currentDataset = data.datasets[0];
         this.fieldsCount = this.currentDataset.fields.length;
       }
     },
