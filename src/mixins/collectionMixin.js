@@ -574,7 +574,7 @@ const asyncComputed = {
   },
   combinators: {
     get() {
-      return this.getSource('combinators').then((combinators) => {
+      return this.getSource('combinators?_limit=-1').then((combinators) => {
         this._combinators = combinators;
         if (this.schema) {
           this.setFormField(this._combinators, 'combinators');
