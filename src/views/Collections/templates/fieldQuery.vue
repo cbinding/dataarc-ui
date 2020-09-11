@@ -133,6 +133,7 @@ export default {
         if (test.length === 0) {
           return 'Select Field'
         }
+        this.form[val].type = test[0].type
         return this.form[val].property
       }
       return 'Select Field'
