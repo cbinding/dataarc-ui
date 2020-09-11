@@ -32,24 +32,19 @@
       <b-col sm="5" v-if="model && model.type === 'Combinators'">
         <div class="panel panel-default" v-if="currentDataset.id">
           <div class="panel-heading">
-            ({{ start }} - {{ (start + 50) < currentDataset.features_count ? (start + 50) : currentDataset.features_count }}) of {{ currentDataset.features_count }}
+            Search Results: {{ filteredFeatures.count ? filteredFeatures.count.matched : 0 }} out of {{ filteredFeatures.count ? filteredFeatures.count.total : currentDataset.features_count }} records
             <br>
-            Search Results: {{ filteredFeatures ? filteredFeatures.length : 0 }} out of {{ features ? features.length : 0 }} records
-            <b-link v-if="start < currentDataset.features_count - 50" @click="getNextFeatures()"> Test Next 50 Features</b-link>
-            <b-link v-else-if="currentDataset.features_count !== 0" @click="reset()"> Reset</b-link>
-            <br>
-            <div v-if="filteredFeatures && filteredFeatures.length > 0">
-              Displaying
-              <b-dropdown id="dropdown-1" :text="show > filteredFeatures.length ? filteredFeatures.length.toString() : show.toString()" class="m-md-2">
+            <div>
+              <b-dropdown id="dropdown-1" :text="perPage.toString()" class="m-md-2">
                 <div v-for="limit in limits" :key="limit">
                   <b-dropdown-item @click="show = limit">{{ limit }}</b-dropdown-item>
                 </div>
               </b-dropdown>
-              out of {{ filteredFeatures.length }} Results
+              <small> per Page</small>
             </div>
           </div>
           <div class="panel-body" style="max-height: 75vh; overflow-y: auto;">
-            <b-table v-if="currentDataset.features_count" :items="filteredFeatures" :fields="resultsFields" :per-page="show">
+            <b-table v-if="currentDataset.features_count" :items="filteredFeatures.features" :fields="resultsFields" :per-page="show">
               <template v-slot:cell(properties)="row" class="Properties">
                 <div class="w-200 text-wrap" style="max-width: 800px;" v-if="row.item.properties">
                   {
@@ -60,7 +55,7 @@
                 </div>
               </template>
             </b-table>
-            <span v-if="currentDataset.features_count && filteredFeatures.length === 0">
+            <span v-if="currentDataset.features_count && (filteredFeatures.count && filteredFeatures.count.matched === 0)">
               No Matches found
             </span>
             <span v-if="currentDataset && currentDataset.features_count === 0">
@@ -87,6 +82,7 @@ export default {
       ],
       item: {},
       model: {
+        id: '',
         type: '',
         action: '',
         title: '',
@@ -401,11 +397,6 @@ export default {
         }
       })
     },
-    features(newVal, oldVal) {
-      if (newVal && this.model.queries && Object.keys(this.model.queries).length > 0) {
-        this.testQueries(this.model.queries)
-      }
-    },
     datasets(val) {
       if (val && val.length > 0) {
         this.schema.fields.filter((field) => {
@@ -441,6 +432,12 @@ export default {
         })
       }
     },
+    currentCombinator(val) {
+      if (val) {
+        this.model.id = val.id
+        this.model.queries = val.queries
+      }
+    },
   },
   mounted() {
     this.setData()
@@ -471,7 +468,7 @@ export default {
           vm.model = vm.item
           vm.model.image = null
           vm.model.source = null
-          if(vm.model.operator !== 'and' && vm.model.operator !== 'or') {
+          if (vm.model.operator !== 'and' && vm.model.operator !== 'or') {
             vm.model.operator = 'and'
           }
           if (vm.model.category) {

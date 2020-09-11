@@ -1,6 +1,8 @@
 class Combinators {
   constructor(data) {
-    this.id = data.id;
+    if (data.id) {
+      this.id = data.id;
+    }
     this.title = data.title;
     this.description = data.description;
     this.citation = data.citation;
@@ -33,6 +35,17 @@ class Combinators {
       });
     } catch (err) {
       return err;
+    }
+  };
+
+  _queryResults = async (val) => {
+    try {
+      const resp = await axios.get(
+        `${process.env.VUE_APP_API_URL}/combinators/${val}/results`
+      );
+      return resp.data;
+    } catch (err) {
+      console.log(err);
     }
   };
 

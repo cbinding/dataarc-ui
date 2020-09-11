@@ -355,7 +355,19 @@ export default {
 	padding: 15px;
 }
 
+</style>
+
+<style>
 .form-control {
   padding-top: 0.35rem;
+}
+
+.table td {
+  padding: 0.4rem;
+  padding-right: 0rem;
+}
+
+.btn-sm, .btn-group-sm > .btn{
+  padding: 0.3rem;
 }
 </style>

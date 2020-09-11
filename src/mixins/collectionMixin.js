@@ -465,61 +465,27 @@ const methods = {
     return int < val
   },
   testQueries(val) {
-
-    this.filteredFeatures = []
-    let queries = val.queries ? val.queries : val
-    let test = []
-    let results = []
-    let length = Object.keys(queries).length
-
-    // If only one query, test against features, and return results
-    if (length === 1) {
-      let query = queries[0] ? queries[0] : queries[1]
-      this._features.forEach((feature) => {
-        if (feature.properties.hasOwnProperty(query.property) && this[`_${query.operator}`](feature.properties[query.property], query.value, query.type)) {
-          test.push({id: feature.id, properties: feature.properties})
-        }
-      })
-      results = test
+    const dataModel = new Models['Combinators'](val);
+  // If combinator doesn't already exist, create it, then get query results
+    if (!this.currentCombinator && this.model.action !== 'Update') {
+      dataModel._create().then((value) => {
+        this.currentCombinator = value.data
+        dataModel._queryResults(value.data.id).then((val) => {
+          this.filteredFeatures = val
+        });
+      });
     }
-
-  // If > 1 query, loop through queries and test against features
+  // If combinator exists, update it, then get query results
     else {
-      for (let i = 0; i < length; i++) {
-        let query = queries[i]
-        test[i] = []
-        this._features.forEach((feature) => {
-          if (feature.properties.hasOwnProperty(query.property) && this[`_${query.operator}`](feature.properties[query.property], query.value, query.type)) {
-            test[i].push({id: feature.id, properties: feature.properties})
-          }
-        })
-      }
-  // Use or operator for results
-      if (this.model.operator === 'or') {
-        for (let i = 0; i < test.length; i++) {
-          if(test[i] && test[i].length > 0) {
-            results = _.unionWith(results, test[i], _.isEqual)
-          }
-        }
-      }
-  // Use and operator
-      else {
-        results = test[0]
-        if(results.length > 0) {
-          for (let i = 1; i < test.length; i++) {
-            if (test[i] && test[i].length > 0) {
-              results = _.intersectionWith(results, test[i], _.isEqual)
-            }
-          // If one of queries returned 0 results, break loop and reset results to []
-            else {
-              results = []
-              break
-            }
-          }
-        }
-      }
+      val.id = this.model.id
+      const newModel = new Models['Combinators'](val)
+      newModel._update().then((value) => {
+        this.currentCombinator = value.data
+        newModel._queryResults(this.currentCombinator.id).then((val) => {
+          this.filteredFeatures = val
+        });
+      });
     }
-    this.filteredFeatures = results
   },
   shorten(val) {
     if (val.length > 100) {
@@ -654,6 +620,7 @@ const data = function () {
     mapLayers: [],
     categories: [],
     currentDataset: {},
+    currentCombinator: null,
     currentFieldsPage: 1,
     currentCombinatorsPage: 1,
     currentFieldsLimit: 10,
