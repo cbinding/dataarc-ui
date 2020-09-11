@@ -292,6 +292,48 @@ const apollo = {
       // countModifier is either 1 or -1
     },
   },
+  queryResults: {
+    query: gql`
+      query combinatorResults($id: ID!){
+        combinatorResults(id: $id) {
+          combinator {
+            id
+            name
+          }
+          features {
+            id
+            properties
+          }
+          matched_count
+          total_count
+        }
+      }
+    `,
+    // Reactive parameters
+    variables() {
+      // Use vue reactive properties here
+      return {
+        id: this.currentCombinator.id,
+      };
+    },
+    skip: true,
+    ssr: false,
+    // Variables: deep object watch
+    deep: false,
+    update(data) {
+      return data.id;
+    },
+    // Optional result hook
+    result({ data, loading, networkStatus }) {
+      if (data && data.combinatorResults) {
+        this.filteredFeatures = data.combinatorResults;
+      }
+    },
+    // Error handling
+    error(error) {
+      console.error("We've got an error!", error);
+    },
+  },
 };
 
 const methods = {
@@ -471,9 +513,7 @@ const methods = {
       dataModel._create().then((value) => {
         this.currentCombinator = value.data
         this.$router.push(`/contributor/combinators/update/${value.data.id}`)
-        dataModel._queryResults(value.data.id).then((val) => {
-          this.filteredFeatures = val
-        });
+        this.$apollo.queries.queryResults.skip = false
       });
     }
   // If combinator exists, update it, then get query results
@@ -482,9 +522,8 @@ const methods = {
       const newModel = new Models['Combinators'](val)
       newModel._update().then((value) => {
         this.currentCombinator = value.data
-        newModel._queryResults(this.currentCombinator.id).then((val) => {
-          this.filteredFeatures = val
-        });
+        this.$apollo.queries.queryResults.skip = false
+        this.$apollo.queries.queryResults.refetch()
       });
     }
   },
