@@ -504,11 +504,17 @@ const asyncComputed = {
       if (this.component === 'Users' && this.total > 0) {
         return this.total;
       }
+      if (this.component === 'CRUD') {
+        return this.filteredFeatures.count ? this.filteredFeatures.count.matched : 0
+      }
       return this[this.component.toLowerCase()].length;
     },
     shouldUpdate() {
       if (this.component === 'MapLayers') {
         return this.component && this.mapLayers;
+      }
+      if (this.component === 'CRUD') {
+        return this.collectionType === 'Combinators'
       }
       return (
         this.component &&

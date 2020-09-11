@@ -32,19 +32,40 @@
       <b-col sm="5" v-if="model && model.type === 'Combinators'">
         <div class="panel panel-default" v-if="currentDataset.id">
           <div class="panel-heading">
-            Search Results: {{ filteredFeatures.count ? filteredFeatures.count.matched : 0 }} out of {{ filteredFeatures.count ? filteredFeatures.count.total : currentDataset.features_count }} records
+            Query Results: {{ filteredFeatures.count ? filteredFeatures.count.matched : 0 }} out of {{ filteredFeatures.count ? filteredFeatures.count.total : currentDataset.features_count }} records
             <br>
-            <div>
-              <b-dropdown id="dropdown-1" :text="perPage.toString()" class="m-md-2">
-                <div v-for="limit in limits" :key="limit">
-                  <b-dropdown-item @click="show = limit">{{ limit }}</b-dropdown-item>
-                </div>
-              </b-dropdown>
-              <small> per Page</small>
-            </div>
+            <span v-if="filters && filteredFeatures.count">
+              Filtered features: {{rows}} out of {{filteredFeatures.count.matched}} results
+            </span>
           </div>
           <div class="panel-body" style="max-height: 75vh; overflow-y: auto;">
-            <b-table v-if="currentDataset.features_count" :items="filteredFeatures.features" :fields="resultsFields" :per-page="show">
+            <div class="d-flex justify-content-between" v-if="filteredFeatures.count">
+              <b-pagination
+                size="sm"
+                v-model="currentPage"
+                @change="updatePage"
+                :total-rows="rows"
+                :per-page="(perPage === 0 ? 10 : perPage)"
+                :limit="4"
+                first-number
+                last-number
+              />
+              <div class="justify-content-between">
+                <b-input-group>
+                  <b-input v-model="filters" placeholder="Filter"></b-input>
+                  <b-button v-if="filters" @click="filters = ''">Clear<b-icon-x></b-icon-x></b-button>
+                </b-input-group>
+              </div>
+              <div class="justify-content-end">
+                <b-dropdown id="dropdown-1" :text="perPage.toString()" >
+                  <div v-for="limit in limits" :key="limit">
+                    <b-dropdown-item @click="perPage = limit">{{ limit }}</b-dropdown-item>
+                  </div>
+                </b-dropdown>
+                <small> per Page</small>
+              </div>
+            </div>
+            <b-table v-if="currentDataset.features_count" :filter="filters" :current-page="currentPage" responsive :items="filteredFeatures.features" :fields="resultsFields" :per-page="perPage" @filtered="updatePagination">
               <template v-slot:cell(properties)="row" class="Properties">
                 <div class="w-200 text-wrap" style="max-width: 800px;" v-if="row.item.properties">
                   {
@@ -76,7 +97,7 @@ export default {
   mixins: [collectionMixin],
   data() {
     return {
-      show: 10,
+      filters: '',
       resultsFields: [
         'properties',
       ],
@@ -379,6 +400,7 @@ export default {
       errors: [],
       action: '',
       collectionType: '',
+      component: 'CRUD',
     }
   },
   computed: {
