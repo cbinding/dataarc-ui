@@ -208,90 +208,6 @@ const apollo = {
       // countModifier is either 1 or -1
     },
   },
-  datasetWFeatures: {
-    query: gql`
-      query datasets($id: ID!) {
-        datasets(where: {id: $id}) {
-          id
-          name
-          title
-          description
-          citation
-          url
-          category {
-            id
-            name
-            title
-          }
-          title_layout
-          link_layout
-          details_layout
-          summary_layout
-          fields {
-            id
-            name
-            title
-            type
-            path
-          }
-          features {
-            title
-            properties
-          }
-          combinators {
-            id
-            name
-            title
-            description
-            citation
-          }
-        }
-      }
-    `,
-    // Reactive parameters
-    variables() {
-      // Use vue reactive properties here
-      return {
-        id: this.currentId,
-      };
-    },
-    skip: true,
-    ssr: false,
-    // Variables: deep object watch
-    deep: false,
-    // We use a custom update callback because
-    // the field names don't match
-    // By default, the 'currentDataset' attribute
-    // would be used on the 'data' result object
-    // Here we know the result is in the 'id' attribute
-    // considering the way the apollo server works
-    update(data) {
-      // The returned value will update
-      // the vue property 'currentDataset'
-      return data.id;
-    },
-    // Optional result hook
-    result({ data, loading, networkStatus }) {
-      if (data && data.datasets) {
-        this.currentDataset = data.datasets[0];
-        this.fieldsCount = this.currentDataset.fields.length;
-      }
-    },
-    // Error handling
-    error(error) {
-      console.error("We've got an error!", error);
-    },
-    // Loading state
-    // loadingKey is the name of the data property
-    // that will be incremented when the query is loading
-    // and decremented when it no longer is.
-    loadingKey: 'loadingQueriesCount',
-    // watchLoading will be called whenever the loading state changes
-    watchLoading(isLoading, countModifier) {
-      // isLoading is a boolean
-      // countModifier is either 1 or -1
-    },
-  },
   queryResults: {
     query: gql`
       query combinatorResults($id: ID!){
@@ -327,6 +243,40 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data && data.combinatorResults) {
         this.filteredFeatures = data.combinatorResults;
+      }
+    },
+    // Error handling
+    error(error) {
+      console.error("We've got an error!", error);
+    },
+  },
+  getRandomFeature: {
+    query: gql`
+      query randomFeature($id: ID!){
+        randomFeature(where: {dataset: $id}) {
+          id
+          properties
+        }
+      }
+    `,
+    // Reactive parameters
+    variables() {
+      // Use vue reactive properties here
+      return {
+        id: this.currentId,
+      };
+    },
+    skip: true,
+    ssr: false,
+    // Variables: deep object watch
+    deep: false,
+    update(data) {
+      return data.id;
+    },
+    // Optional result hook
+    result({ data, loading, networkStatus }) {
+      if (data && data.randomFeature) {
+        this.randomFeature = data.randomFeature;
       }
     },
     // Error handling
