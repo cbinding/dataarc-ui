@@ -505,7 +505,7 @@ const asyncComputed = {
         return this.total;
       }
       if (this.component === 'CRUD') {
-        return this.filteredFeatures.count ? this.filteredFeatures.count.matched : 0
+        return this.filteredFeatures.matched_count ? this.filteredFeatures.matched_count : 0
       }
       return this[this.component.toLowerCase()].length;
     },

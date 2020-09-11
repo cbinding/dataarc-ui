@@ -32,14 +32,14 @@
       <b-col sm="5" v-if="model && model.type === 'Combinators'">
         <div class="panel panel-default" v-if="currentDataset.id">
           <div class="panel-heading">
-            Query Results: {{ filteredFeatures.count ? filteredFeatures.count.matched : 0 }} out of {{ filteredFeatures.count ? filteredFeatures.count.total : currentDataset.features_count }} records
+            Query Results: {{ filteredFeatures.matched_count ? filteredFeatures.matched_count : 0 }} out of {{ filteredFeatures.total_count ? filteredFeatures.total_count : currentDataset.features_count }} records
             <br>
-            <span v-if="filters && filteredFeatures.count">
-              Filtered features: {{rows}} out of {{filteredFeatures.count.matched}} results
+            <span v-if="filters && filteredFeatures.matched_count">
+              Filtered features: {{rows}} out of {{filteredFeatures.matched_count}} results
             </span>
           </div>
           <div class="panel-body" style="max-height: 75vh; overflow-y: auto;">
-            <div class="d-flex justify-content-between" v-if="filteredFeatures.count">
+            <div class="d-flex justify-content-between" v-if="filteredFeatures.matched_count">
               <b-pagination
                 size="sm"
                 v-model="currentPage"
@@ -76,7 +76,7 @@
                 </div>
               </template>
             </b-table>
-            <span v-if="currentDataset.features_count && (filteredFeatures.count && filteredFeatures.count.matched === 0)">
+            <span v-if="currentDataset.features_count && (filteredFeatures.matched_count && filteredFeatures.matched_count === 0)">
               No Matches found
             </span>
             <span v-if="currentDataset && currentDataset.features_count === 0">

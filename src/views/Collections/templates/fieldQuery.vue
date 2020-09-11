@@ -11,8 +11,8 @@
                 </div>
               </b-dropdown>
               <b-dropdown :text="(form[key] && form[key]['operator']) ? form[key]['operator'] : 'equals'" variant="outline-secondary">
-                <div v-if="value[key] && value[key].type">
-                  <div v-for="operator in getOperators(value[key].type)" :key="operator.value">
+                <div v-if="value[key]">
+                  <div v-for="operator in getOperators(value[key])" :key="operator.value">
                     <b-dropdown-item @click="setField(key, 'operator', operator.value)">{{ operator.type }}</b-dropdown-item>
                   </div>
                 </div>
@@ -140,7 +140,18 @@ export default {
     },
     getOperators(val) {
       if (val) {
-        return this[val]
+        if (val.type) {
+          return this[val.type]
+        }
+        let test = this.schema.values.filter((value) => {
+          if (val.property === value.path) {
+            val.type = value.type
+            return true
+          }
+        })
+        if (test.length > 0) {
+          return this[test[0].type]
+        }
       }
       return this.operators
     },
