@@ -470,6 +470,7 @@ const methods = {
     if (!this.currentCombinator && this.model.action !== 'Update') {
       dataModel._create().then((value) => {
         this.currentCombinator = value.data
+        this.$router.push(`/contributor/combinators/update/${value.data.id}`)
         dataModel._queryResults(value.data.id).then((val) => {
           this.filteredFeatures = val
         });
