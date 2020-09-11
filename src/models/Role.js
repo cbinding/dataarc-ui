@@ -11,7 +11,7 @@ class Role extends Base {
 
   static fillable = ['name', 'descriptoin']
 
-  static public = ['name', 'totalUsers', 'actions'];
+  static public = ['actions', 'name', 'totalUsers'];
 
   hasOne = []
 

@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       component: 'MapLayers',
-      displayFields: ['name', 'title', 'description', 'actions'],
+      displayFields: ['actions', 'name', 'title', 'description'],
     }
   },
   mixins: [collectionMixin],

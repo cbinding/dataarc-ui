@@ -127,11 +127,15 @@ export default {
       this.setFormData(this.form)
     },
     toggleDetails() {
-      this.randomFeature = _.sample(this.form.features)
+      this.randomFeature = {}
+      this.$apollo.queries.getRandomFeature.skip = false
+      this.$apollo.queries.getRandomFeature.refetch()
       this.renderDetails = !this.renderDetails
     },
     toggleSummary() {
-      this.randomFeature = _.sample(this.form.features)
+      this.randomFeature = {}
+      this.$apollo.queries.getRandomFeature.skip = false
+      this.$apollo.queries.getRandomFeature.refetch()
       this.renderSummary = !this.renderSummary
     },
   },
@@ -152,7 +156,7 @@ export default {
   },
   mounted() {
     this.currentId = this.$route.params.id
-    this.$apollo.queries.datasetWFeatures.skip = false
+    this.$apollo.queries.dataset.skip = false
   }
 }
 </script>

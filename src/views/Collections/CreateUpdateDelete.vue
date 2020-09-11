@@ -32,24 +32,40 @@
       <b-col sm="5" v-if="model && model.type === 'Combinators'">
         <div class="panel panel-default" v-if="currentDataset.id">
           <div class="panel-heading">
-            ({{ start }} - {{ (start + 50) < currentDataset.features_count ? (start + 50) : currentDataset.features_count }}) of {{ currentDataset.features_count }}
+            Query Results: {{ filteredFeatures.matched_count ? filteredFeatures.matched_count : 0 }} out of {{ filteredFeatures.total_count ? filteredFeatures.total_count : currentDataset.features_count }} records
             <br>
-            Search Results: {{ filteredFeatures ? filteredFeatures.length : 0 }} out of {{ features ? features.length : 0 }} records
-            <b-link v-if="start < currentDataset.features_count - 50" @click="getNextFeatures()"> Test Next 50 Features</b-link>
-            <b-link v-else-if="currentDataset.features_count !== 0" @click="reset()"> Reset</b-link>
-            <br>
-            <div v-if="filteredFeatures && filteredFeatures.length > 0">
-              Displaying
-              <b-dropdown id="dropdown-1" :text="show > filteredFeatures.length ? filteredFeatures.length.toString() : show.toString()" class="m-md-2">
-                <div v-for="limit in limits" :key="limit">
-                  <b-dropdown-item @click="show = limit">{{ limit }}</b-dropdown-item>
-                </div>
-              </b-dropdown>
-              out of {{ filteredFeatures.length }} Results
-            </div>
+            <span v-if="filters && filteredFeatures.matched_count">
+              Filtered features: {{rows}} out of {{filteredFeatures.matched_count}} results
+            </span>
           </div>
           <div class="panel-body" style="max-height: 75vh; overflow-y: auto;">
-            <b-table v-if="currentDataset.features_count" :items="filteredFeatures" :fields="resultsFields" :per-page="show">
+            <div class="d-flex justify-content-between" v-if="filteredFeatures.matched_count">
+              <b-pagination
+                size="sm"
+                v-model="currentPage"
+                @change="updatePage"
+                :total-rows="rows"
+                :per-page="(perPage === 0 ? 10 : perPage)"
+                :limit="4"
+                first-number
+                last-number
+              />
+              <div class="justify-content-between">
+                <b-input-group>
+                  <b-input v-model="filters" placeholder="Filter"></b-input>
+                  <b-button v-if="filters" @click="filters = ''">Clear<b-icon-x></b-icon-x></b-button>
+                </b-input-group>
+              </div>
+              <div class="justify-content-end">
+                <b-dropdown id="dropdown-1" :text="perPage.toString()" >
+                  <div v-for="limit in limits" :key="limit">
+                    <b-dropdown-item @click="perPage = limit">{{ limit }}</b-dropdown-item>
+                  </div>
+                </b-dropdown>
+                <small> per Page</small>
+              </div>
+            </div>
+            <b-table v-if="currentDataset.features_count" :filter="filters" :current-page="currentPage" responsive :items="filteredFeatures.features" :fields="resultsFields" :per-page="perPage" @filtered="updatePagination">
               <template v-slot:cell(properties)="row" class="Properties">
                 <div class="w-200 text-wrap" style="max-width: 800px;" v-if="row.item.properties">
                   {
@@ -60,7 +76,7 @@
                 </div>
               </template>
             </b-table>
-            <span v-if="currentDataset.features_count && filteredFeatures.length === 0">
+            <span v-if="currentDataset.features_count && (filteredFeatures.matched_count && filteredFeatures.matched_count === 0)">
               No Matches found
             </span>
             <span v-if="currentDataset && currentDataset.features_count === 0">
@@ -81,12 +97,13 @@ export default {
   mixins: [collectionMixin],
   data() {
     return {
-      show: 10,
+      filters: '',
       resultsFields: [
         'properties',
       ],
       item: {},
       model: {
+        id: '',
         type: '',
         action: '',
         title: '',
@@ -383,6 +400,7 @@ export default {
       errors: [],
       action: '',
       collectionType: '',
+      component: 'CRUD',
     }
   },
   computed: {
@@ -400,11 +418,6 @@ export default {
           field.values = val
         }
       })
-    },
-    features(newVal, oldVal) {
-      if (newVal && this.model.queries && Object.keys(this.model.queries).length > 0) {
-        this.testQueries(this.model.queries)
-      }
     },
     datasets(val) {
       if (val && val.length > 0) {
@@ -441,6 +454,12 @@ export default {
         })
       }
     },
+    currentCombinator(val) {
+      if (val) {
+        this.model.id = val.id
+        this.model.queries = val.queries
+      }
+    },
   },
   mounted() {
     this.setData()
@@ -471,7 +490,7 @@ export default {
           vm.model = vm.item
           vm.model.image = null
           vm.model.source = null
-          if(vm.model.operator !== 'and' && vm.model.operator !== 'or') {
+          if (vm.model.operator !== 'and' && vm.model.operator !== 'or') {
             vm.model.operator = 'and'
           }
           if (vm.model.category) {

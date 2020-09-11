@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       component: 'Categories',
-      displayFields: ['name', 'title', 'description', 'color', 'datasets', 'actions'],
+      displayFields: ['actions', 'name', 'title', 'description', 'color', 'datasets'],
     }
   },
   watch: {

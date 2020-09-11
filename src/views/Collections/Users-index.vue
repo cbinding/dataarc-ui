@@ -60,7 +60,7 @@ export default {
   data() {
     return {
       component: 'Users',
-      displayFields: ['username', 'email', 'confirmed', 'role', 'actions'],
+      displayFields: ['actions', 'username', 'email', 'confirmed', 'role'],
       total: '',
     }
   },

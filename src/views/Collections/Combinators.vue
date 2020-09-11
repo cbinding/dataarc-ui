@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       component: 'Combinators',
-      displayFields: ['title', 'description', 'citation', 'created_by', 'updated_by', 'actions'],
+      displayFields: ['actions', 'title', 'description', 'citation', 'created_by', 'updated_by'],
     }
   },
   mixins: [collectionMixin],

@@ -6,6 +6,7 @@
       :limits="limits"
       :current-page="currentPage"
       :per-page="perPage"
+      :component="component"
     >
       <template
         v-if="model.isActionAllowed('create')"
@@ -52,6 +53,7 @@ export default {
   },
   data() {
     return {
+      component: 'Roles',
       model: Role,
       items: [],
       currentPage: 1,

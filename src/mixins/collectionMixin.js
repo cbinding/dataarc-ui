@@ -208,43 +208,54 @@ const apollo = {
       // countModifier is either 1 or -1
     },
   },
-  datasetWFeatures: {
+  queryResults: {
     query: gql`
-      query datasets($id: ID!) {
-        datasets(where: {id: $id}) {
-          id
-          name
-          title
-          description
-          citation
-          url
-          category {
+      query combinatorResults($id: ID!){
+        combinatorResults(id: $id) {
+          combinator {
             id
             name
-            title
-          }
-          title_layout
-          link_layout
-          details_layout
-          summary_layout
-          fields {
-            id
-            name
-            title
-            type
-            path
           }
           features {
-            title
+            id
             properties
           }
-          combinators {
-            id
-            name
-            title
-            description
-            citation
-          }
+          matched_count
+          total_count
+        }
+      }
+    `,
+    // Reactive parameters
+    variables() {
+      // Use vue reactive properties here
+      return {
+        id: this.currentCombinator.id,
+      };
+    },
+    skip: true,
+    ssr: false,
+    // Variables: deep object watch
+    deep: false,
+    update(data) {
+      return data.id;
+    },
+    // Optional result hook
+    result({ data, loading, networkStatus }) {
+      if (data && data.combinatorResults) {
+        this.filteredFeatures = data.combinatorResults;
+      }
+    },
+    // Error handling
+    error(error) {
+      console.error("We've got an error!", error);
+    },
+  },
+  getRandomFeature: {
+    query: gql`
+      query randomFeature($id: ID!){
+        randomFeature(where: {dataset: $id}) {
+          id
+          properties
         }
       }
     `,
@@ -259,37 +270,18 @@ const apollo = {
     ssr: false,
     // Variables: deep object watch
     deep: false,
-    // We use a custom update callback because
-    // the field names don't match
-    // By default, the 'currentDataset' attribute
-    // would be used on the 'data' result object
-    // Here we know the result is in the 'id' attribute
-    // considering the way the apollo server works
     update(data) {
-      // The returned value will update
-      // the vue property 'currentDataset'
       return data.id;
     },
     // Optional result hook
     result({ data, loading, networkStatus }) {
-      if (data && data.datasets) {
-        this.currentDataset = data.datasets[0];
-        this.fieldsCount = this.currentDataset.fields.length;
+      if (data && data.randomFeature) {
+        this.randomFeature = data.randomFeature;
       }
     },
     // Error handling
     error(error) {
       console.error("We've got an error!", error);
-    },
-    // Loading state
-    // loadingKey is the name of the data property
-    // that will be incremented when the query is loading
-    // and decremented when it no longer is.
-    loadingKey: 'loadingQueriesCount',
-    // watchLoading will be called whenever the loading state changes
-    watchLoading(isLoading, countModifier) {
-      // isLoading is a boolean
-      // countModifier is either 1 or -1
     },
   },
 };
@@ -465,61 +457,25 @@ const methods = {
     return int < val
   },
   testQueries(val) {
-
-    this.filteredFeatures = []
-    let queries = val.queries ? val.queries : val
-    let test = []
-    let results = []
-    let length = Object.keys(queries).length
-
-    // If only one query, test against features, and return results
-    if (length === 1) {
-      let query = queries[0] ? queries[0] : queries[1]
-      this._features.forEach((feature) => {
-        if (feature.properties.hasOwnProperty(query.property) && this[`_${query.operator}`](feature.properties[query.property], query.value, query.type)) {
-          test.push({id: feature.id, properties: feature.properties})
-        }
-      })
-      results = test
+    const dataModel = new Models['Combinators'](val);
+  // If combinator doesn't already exist, create it, then get query results
+    if (!this.currentCombinator && this.model.action !== 'Update') {
+      dataModel._create().then((value) => {
+        this.currentCombinator = value.data
+        this.$router.push(`/contributor/combinators/update/${value.data.id}`)
+        this.$apollo.queries.queryResults.skip = false
+      });
     }
-
-  // If > 1 query, loop through queries and test against features
+  // If combinator exists, update it, then get query results
     else {
-      for (let i = 0; i < length; i++) {
-        let query = queries[i]
-        test[i] = []
-        this._features.forEach((feature) => {
-          if (feature.properties.hasOwnProperty(query.property) && this[`_${query.operator}`](feature.properties[query.property], query.value, query.type)) {
-            test[i].push({id: feature.id, properties: feature.properties})
-          }
-        })
-      }
-  // Use or operator for results
-      if (this.model.operator === 'or') {
-        for (let i = 0; i < test.length; i++) {
-          if(test[i] && test[i].length > 0) {
-            results = _.unionWith(results, test[i], _.isEqual)
-          }
-        }
-      }
-  // Use and operator
-      else {
-        results = test[0]
-        if(results.length > 0) {
-          for (let i = 1; i < test.length; i++) {
-            if (test[i] && test[i].length > 0) {
-              results = _.intersectionWith(results, test[i], _.isEqual)
-            }
-          // If one of queries returned 0 results, break loop and reset results to []
-            else {
-              results = []
-              break
-            }
-          }
-        }
-      }
+      val.id = this.model.id
+      const newModel = new Models['Combinators'](val)
+      newModel._update().then((value) => {
+        this.currentCombinator = value.data
+        this.$apollo.queries.queryResults.skip = false
+        this.$apollo.queries.queryResults.refetch()
+      });
     }
-    this.filteredFeatures = results
   },
   shorten(val) {
     if (val.length > 100) {
@@ -538,11 +494,17 @@ const asyncComputed = {
       if (this.component === 'Users' && this.total > 0) {
         return this.total;
       }
+      if (this.component === 'CRUD') {
+        return this.filteredFeatures.matched_count ? this.filteredFeatures.matched_count : 0
+      }
       return this[this.component.toLowerCase()].length;
     },
     shouldUpdate() {
       if (this.component === 'MapLayers') {
         return this.component && this.mapLayers;
+      }
+      if (this.component === 'CRUD') {
+        return this.collectionType === 'Combinators'
       }
       return (
         this.component &&
@@ -654,6 +616,7 @@ const data = function () {
     mapLayers: [],
     categories: [],
     currentDataset: {},
+    currentCombinator: null,
     currentFieldsPage: 1,
     currentCombinatorsPage: 1,
     currentFieldsLimit: 10,

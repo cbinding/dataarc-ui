@@ -11,8 +11,8 @@
                 </div>
               </b-dropdown>
               <b-dropdown :text="(form[key] && form[key]['operator']) ? form[key]['operator'] : 'equals'" variant="outline-secondary">
-                <div v-if="value[key] && value[key].type">
-                  <div v-for="operator in getOperators(value[key].type)" :key="operator.value">
+                <div v-if="value[key]">
+                  <div v-for="operator in getOperators(value[key])" :key="operator.value">
                     <b-dropdown-item @click="setField(key, 'operator', operator.value)">{{ operator.type }}</b-dropdown-item>
                   </div>
                 </div>
@@ -51,7 +51,7 @@ import { abstractField } from 'vue-form-generator'
 export default {
   data() {
     return {
-      form: {},
+      form: [],
       operators: [
         {type: 'Equals', value: 'equals'},
         {type: 'Not Equals', value: 'not_equals' },
@@ -82,18 +82,34 @@ export default {
     }
   },
   watch: {
-    form: function(val) {
-      if(val) {
-        this.queries = val
-        this.model.queries = this.queries
-      }
+    form: {
+      handler(val) {
+        if (val) {
+          this.queries = val
+          if (this.model.queries.length > 0) {
+            for (let i = 0; i < this.queries.length; i++) {
+              if (this.model.queries[i]) {
+                _.merge(this.model.queries[i], this.queries[i])
+              }
+              else {
+                this.model.queries[i] = {}
+                Object.assign(this.model.queries[i], this.queries[i])
+              }
+            }
+          }
+          else {
+            this.model.queries = this.queries
+          }
+        }
+      },
+      deep: true,
     },
     model: {
       handler(val) {
         if (val && val.queries.length > 0) {
           this.totalQueries = 0
           for (let i = 0; i < val.queries.length; i++) {
-            this.form[i] = val.queries[i]
+            this.$set(this.form, i, val.queries[i])
             this.values[i] = this.form[i].value
             this.totalQueries += 1
           }
@@ -117,13 +133,25 @@ export default {
         if (test.length === 0) {
           return 'Select Field'
         }
+        this.form[val].type = test[0].type
         return this.form[val].property
       }
       return 'Select Field'
     },
     getOperators(val) {
       if (val) {
-        return this[val]
+        if (val.type) {
+          return this[val.type]
+        }
+        let test = this.schema.values.filter((value) => {
+          if (val.property === value.path) {
+            val.type = value.type
+            return true
+          }
+        })
+        if (test.length > 0) {
+          return this[test[0].type]
+        }
       }
       return this.operators
     },
@@ -131,25 +159,28 @@ export default {
       this.totalQueries += 1
     },
     decrement(int) {
-      let tempForm = {}
-      const length = Object.keys(this.form).length
-      Object.assign(tempForm, this.form)
-      for (let i = int; i <= length; i++) {
-        if (this.form[i + 1]) {
-          tempForm[i] = this.form[i + 1]
-          tempForm[i].count = i
-          this.$delete(this.form, (i + 1))
-          this.values[i] = tempForm[i].value
+      this.totalQueries -= 1
+      this.deleteQuery(this.model.queries[int].id, int)
+    },
+    deleteQuery(id, int) {
+      axios.delete(
+        `${process.env.VUE_APP_API_URL}/combinator-queries/${id}`
+      );
+      let queries = this.model.queries
+      for (let i = int; i <= queries.length; i++) {
+        if (queries[i + 1]) {
+          queries[i] = this.model.queries[i + 1]
+          this.$delete(this.model.queries, (i + 1))
+          this.values[i] = queries[i].value
           this.$delete(this.values, (i + 1))
         }
         else {
-          this.$delete(tempForm, i)
+          this.$delete(this.model.queries, i)
           this.$delete(this.values, i)
         }
       }
-      this.form = {}
-      Object.assign(this.form, tempForm)
-      this.totalQueries -= 1
+      this.model.queries = queries
+      this.form = this.model.queries
     },
     setField(int, field, val, type) {
       if (!this.form[int]) {

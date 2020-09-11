@@ -90,6 +90,7 @@ export default {
     return {
       component: 'Datasets',
       displayFields: [
+        'actions',
         'title',
         'description',
         'citation',
@@ -100,7 +101,6 @@ export default {
         'state_msg',
         'state_at',
         'source',
-        'actions',
       ],
       pending: 'warning',
       processing: 'info',
