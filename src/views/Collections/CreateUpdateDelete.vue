@@ -497,10 +497,6 @@ export default {
             const temp = vm.model.category.id
             vm.model.category = temp
           }
-          if (vm.model.dataset) {
-            const temp = vm.model.dataset.id
-            vm.model.dataset = temp
-          }
           if (vm.model.role) {
             const temp = vm.model.role.id
             vm.model.role = temp
