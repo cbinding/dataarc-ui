@@ -22,7 +22,7 @@ const routes = [
     path: '*',
     name: 'not-found',
     component: NotFound,
-    meta: { layout: defaultLayout },
+    meta: { layout: defaultLayout }
   },
   {
     path: '/',
@@ -32,23 +32,23 @@ const routes = [
       {
         path: 'login',
         name: 'login',
-        component: () => import('@/views/Login.vue'),
+        component: () => import('@/views/Login.vue')
       },
       {
         path: 'register',
         name: 'register',
-        component: () => import('@/views/Pages/Register.vue'),
+        component: () => import('@/views/Pages/Register.vue')
       },
       {
         path: 'unauthorized',
         name: 'Unauthorized',
-        component: () => import('@/views/Pages/Error401.vue'),
-      },
+        component: () => import('@/views/Pages/Error401.vue')
+      }
     ],
     meta: {
       auth: false,
-      role: 'public',
-    },
+      role: 'public'
+    }
   },
 
   {
@@ -59,13 +59,13 @@ const routes = [
       {
         path: 'home',
         name: 'blank',
-        component: defaultLayout,
-      },
+        component: defaultLayout
+      }
     ],
     meta: {
       auth: true,
-      role: 'authenticated',
-    },
+      role: 'authenticated'
+    }
   },
 
   {
@@ -84,31 +84,34 @@ const routes = [
             name: 'Create Dataset',
             component: () =>
               import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ],
+            props: true
+          }
+        ]
       },
       {
         path: 'combinators',
         name: 'Combinators',
         component: () => import('@/views/Collections/Combinators.vue'),
         props: true,
+        meta: {
+          title: 'Combinators'
+        },
         children: [
           {
             path: 'create',
             name: 'Create Combinator',
             component: () =>
               import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
+            props: true
           },
           {
             path: 'update/:id',
             name: 'Update Combinator',
             component: () =>
               import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ],
+            props: true
+          }
+        ]
       },
       {
         path: 'dataset/:id',
@@ -120,15 +123,15 @@ const routes = [
             path: 'template',
             name: 'Update Templates',
             component: () => import('@/views/Collections/DatasetTemplates.vue'),
-            props: true,
-          },
-        ],
-      },
+            props: true
+          }
+        ]
+      }
     ],
     meta: {
       auth: true,
-      role: 'contributor',
-    },
+      role: 'contributor'
+    }
   },
 
   {
@@ -145,23 +148,23 @@ const routes = [
           {
             path: 'index',
             name: 'View Users',
-            component: () => import('@/views/Collections/Users-index.vue'),
+            component: () => import('@/views/Collections/Users-index.vue')
           },
           {
             path: 'create',
             name: 'Create User',
             component: () =>
               import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
+            props: true
           },
           {
             path: 'update/:id',
             name: 'Update User',
             component: () =>
               import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ],
+            props: true
+          }
+        ]
       },
       {
         path: 'roles',
@@ -173,15 +176,15 @@ const routes = [
             path: 'index',
             component: () => import('@/views/Collections/Roles.vue'),
             name: 'View Roles',
-            props: { test: 'value' },
+            props: { test: 'value' }
           },
           {
             path: 'update/:id',
             name: 'Update Role',
             component: () => import('@/views/Collections/Roles-update.vue'),
-            props: true,
-          },
-        ],
+            props: true
+          }
+        ]
       },
       {
         path: 'map-layers',
@@ -194,16 +197,16 @@ const routes = [
             name: 'Create MapLayer',
             component: () =>
               import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
+            props: true
           },
           {
             path: 'update/:id',
             name: 'Update MapLayer',
             component: () =>
               import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ],
+            props: true
+          }
+        ]
       },
       {
         path: 'categories',
@@ -216,23 +219,23 @@ const routes = [
             name: 'Create Category',
             component: () =>
               import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
+            props: true
           },
           {
             path: 'update/:id',
             name: 'Update Category',
             component: () =>
               import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ],
-      },
+            props: true
+          }
+        ]
+      }
     ],
     meta: {
       auth: true,
-      role: 'administrator',
-    },
-  },
+      role: 'administrator'
+    }
+  }
 ];
 
 const router = new VueRouter({
@@ -240,15 +243,15 @@ const router = new VueRouter({
   routes,
   scrollBehavior(to, from, savedPosition) {
     // return desired position
-    return { x: 0, y: 0 }
-  },
+    return { x: 0, y: 0 };
+  }
 });
 
 router.beforeEach((to, from, next) => {
   if (to.name === 'home' && !user) return next('/login');
   if (to.name === 'home' && user) return next('/basic/home');
 
-  const authRequired = to.matched.some((record) => record.meta.auth);
+  const authRequired = to.matched.some(record => record.meta.auth);
   // const rawUser = Cookies.get('user')
   // const loggedIn = rawUser ? JSON.parse(Cookies.get('user')) : null
 
@@ -260,7 +263,7 @@ router.beforeEach((to, from, next) => {
     if (!user) return next('/login');
   }
 
-  const roleRestriction = to.matched.some((record) => {
+  const roleRestriction = to.matched.some(record => {
     return roles[record.meta.role] >= roles[user.role.type];
   });
 
@@ -268,6 +271,53 @@ router.beforeEach((to, from, next) => {
     return next('/unauthorized');
   }
   // Are you contributor or above?
+
+  // This goes through the matched routes from last to first, finding the closest route with a title.
+  // eg. if we have /some/deep/nested/route and /some, /deep, and /nested have titles, nested's will be chosen.
+  const nearestWithTitle = to.matched
+    .slice()
+    .reverse()
+    .find(r => r.name);
+
+  // Find the nearest route element with meta tags.
+  const nearestWithMeta = to.matched
+    .slice()
+    .reverse()
+    .find(r => r.meta && r.meta.metaTags);
+  const previousNearestWithMeta = from.matched
+    .slice()
+    .reverse()
+    .find(r => r.meta && r.meta.metaTags);
+
+  // If a route with a title was found, set the document (page) title to that value.
+  if (nearestWithTitle)
+    document.title = nearestWithTitle.name + ' | DataARC Admin';
+
+  // Remove any stale meta tags from the document using the key attribute we set below.
+  Array.from(
+    document.querySelectorAll('[data-vue-router-controlled]')
+  ).map(el => el.parentNode.removeChild(el));
+
+  // Skip rendering meta tags if there are none.
+  if (!nearestWithMeta) return next();
+
+  // Turn the meta tag definitions into actual elements in the head.
+  nearestWithMeta.meta.metaTags
+    .map(tagDef => {
+      const tag = document.createElement('meta');
+
+      Object.keys(tagDef).forEach(key => {
+        tag.setAttribute(key, tagDef[key]);
+      });
+
+      // We use this to track which meta tags we create, so we don't interfere with other ones.
+      tag.setAttribute('data-vue-router-controlled', '');
+
+      return tag;
+    })
+    // Add the meta tags to the document head.
+    .forEach(tag => document.head.appendChild(tag));
+
   next();
 });
 
