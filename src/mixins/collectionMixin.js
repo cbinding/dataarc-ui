@@ -167,7 +167,7 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
-        id: this.currentId,
+        id: this.currentDatasetId ? this.currentDatasetId : this.currentId,
       };
     },
     skip: true,
@@ -208,6 +208,95 @@ const apollo = {
       // countModifier is either 1 or -1
     },
   },
+  combinator: {
+    query: gql`
+      query combinators($id: ID!) {
+        combinators(where: {id: $id}) {
+          id
+          name
+          title
+          description
+          citation
+          url
+          operator
+          state
+          state_msg
+          state_at
+          queries {
+            id
+            property
+            property_type
+            operator
+            value
+          }
+          concepts {
+            id
+            name
+            title
+            group
+            _id
+          }
+          dataset {
+            id
+            title
+            fields {
+              id
+              path
+              type
+            }
+          }
+        }
+      }
+    `,
+    // Reactive parameters
+    variables() {
+      // Use vue reactive properties here
+      return {
+        id: this.currentId,
+      };
+    },
+    skip: true,
+    ssr: false,
+    // Variables: deep object watch
+    deep: false,
+    update(data) {
+      // The returned value will update
+      // the vue property 'currentDataset'
+      return data.id;
+    },
+    // Optional result hook
+    result({ data, loading, networkStatus }) {
+      if (data && data.combinators) {
+        this.currentCombinator = data.combinators[0];
+
+        // Set Concepts to complete concept objects
+        if (this.concepts) {
+          let concepts = []
+          this.currentCombinator.concepts.forEach((concept) => {
+            this.concepts.filter((val) => {
+              if (val.id === concept.id) {
+                concepts.push(val)
+              }
+            })
+          })
+          this.currentCombinator.concepts = concepts
+        }
+        this.model = this.currentCombinator
+        if (this.model.dataset && this.model.dataset.id) {
+          this.model.dataset = this.model.dataset.id
+        }
+        this.currentDatasetId = this.model.dataset
+        this.$apollo.queries.dataset.skip = false
+        this.model.type = this.collectionType
+        this.model.action = this.action
+        this.loading = false
+      }
+    },
+    // Error handling
+    error(error) {
+      console.error("We've got an error!", error);
+    },
+  },
   queryResults: {
     query: gql`
       query combinatorResults($id: ID!){
@@ -242,6 +331,7 @@ const apollo = {
     // Optional result hook
     result({ data, loading, networkStatus }) {
       if (data && data.combinatorResults) {
+        this.loading = false
         this.filteredFeatures = data.combinatorResults;
       }
     },
@@ -263,7 +353,7 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
-        id: this.currentId,
+        id: this.currentDatasetId ? this.currentDatasetId : this.currentId,
       };
     },
     skip: true,
@@ -334,6 +424,8 @@ const methods = {
       dataModel._update().then((value) => {
         if (val.type === 'DatasetFields') {
           return;
+        } if (val.type === 'Combinators') {
+          this.$router.push(dataModel.routeUrl);
         } else {
           this.$router.go(-1);
         }
@@ -457,6 +549,7 @@ const methods = {
     return int < val
   },
   testQueries(val) {
+    this.loading = true
     const dataModel = new Models['Combinators'](val);
   // If combinator doesn't already exist, create it, then get query results
     if (!this.currentCombinator && this.model.action !== 'Update') {
@@ -547,7 +640,7 @@ const asyncComputed = {
       });
     },
     shouldUpdate() {
-      return this.component === 'Combinators';
+      return this.$route.name === 'Combinators';
     },
   },
   concepts: {
@@ -568,19 +661,6 @@ const asyncComputed = {
         this.collectionType === 'Combinators' ||
         this.collectionType === 'Concepts' ||
         this.component === 'Concepts'
-      );
-    },
-  },
-  features: {
-    get() {
-      return this.getSource(`features?dataset=${this.currentId}&_start=${this.start}&_limit=50`).then((features) => {
-        this._features = features;
-        return this._features;
-      });
-    },
-    shouldUpdate() {
-      return (
-        this.collectionType === 'Combinators' && this.currentId
       );
     },
   },
@@ -613,6 +693,7 @@ const data = function () {
     perPage: 10,
     limits: [10, 20, 50, 100],
     currentId: '',
+    currentDatasetId: '',
     datasets: [],
     features: [],
     mapLayers: [],
@@ -626,6 +707,7 @@ const data = function () {
     start: 0,
     filter: '',
     filteredFeatures: [],
+    loading: true,
   };
 };
 
