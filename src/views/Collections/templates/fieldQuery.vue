@@ -121,6 +121,15 @@ export default {
     },
   },
   mixins: [abstractField],
+  mounted() {
+    if (this.form.length === 0 && this.model.queries.length > 0) {
+      this.form = this.model.queries
+      this.totalQueries = this.model.queries.length
+      for (let i = 0; i < this.form.length; i++) {
+        this.values[i] = this.form[i].value
+      }
+    }
+  },
   methods: {
     // If switching datasets, reset field if path is not contained in new dataset
     getText(val) {
