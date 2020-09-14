@@ -19,7 +19,7 @@
             <b-row>
               <b-col sm="5">
                 <b-form-textarea rows="25" v-model="form.details_layout" size="lg" no-auto-shrink></b-form-textarea>
-                <b-button class="float-right" type="button" @click="toggleDetails">Render</b-button>
+                <b-button class="float-right" type="button" @click="renderDetailsPug">Render</b-button>
               </b-col>
               <b-col sm="7">
                 <b-jumbotron border-variant="secondary" style="height:350px;overflow-y:auto;overflow-x:auto">
@@ -34,7 +34,7 @@
             <b-row>
               <b-col sm="5">
                 <b-form-textarea rows="25" v-model="form.summary_layout" size="lg" no-auto-shrink></b-form-textarea>
-                <b-button class="float-right" type="button" @click="toggleSummary">Render</b-button>
+                <b-button class="float-right" type="button" @click="renderSummaryPug">Render</b-button>
               </b-col>
               <b-col sm="7">
                 <b-jumbotron border-variant="secondary" style="height:350px;overflow-y:auto;overflow-x:auto">
@@ -126,17 +126,19 @@ export default {
       val.preventDefault()
       this.setFormData(this.form)
     },
-    toggleDetails() {
+    renderDetailsPug() {
       this.randomFeature = {}
       this.$apollo.queries.getRandomFeature.skip = false
       this.$apollo.queries.getRandomFeature.refetch()
-      this.renderDetails = !this.renderDetails
+      this.renderDetails = true
+      this.renderSummary = false
     },
-    toggleSummary() {
+    renderSummaryPug() {
       this.randomFeature = {}
       this.$apollo.queries.getRandomFeature.skip = false
       this.$apollo.queries.getRandomFeature.refetch()
-      this.renderSummary = !this.renderSummary
+      this.renderSummary = true
+      this.renderDetails = false
     },
   },
   mixins: [collectionMixin],
