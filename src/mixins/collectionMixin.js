@@ -463,6 +463,8 @@ const methods = {
       dataModel._create().then((value) => {
         this.currentCombinator = value.data
         this.$router.push(`/contributor/combinators/update/${value.data.id}`)
+        this.action = 'Update'
+        this.model.action = 'Update'
         this.$apollo.queries.queryResults.skip = false
       });
     }
