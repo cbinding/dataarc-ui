@@ -76,7 +76,7 @@
                 </div>
               </template>
             </b-table>
-            <span v-if="currentDataset.features_count && (filteredFeatures.matched_count && filteredFeatures.matched_count === 0)">
+            <span v-if="currentDataset.features_count && filteredFeatures.matched_count === 0">
               No Matches found
             </span>
             <span v-if="currentDataset && currentDataset.features_count === 0">
