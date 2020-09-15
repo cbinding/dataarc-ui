@@ -43,20 +43,4 @@ class Users {
   };
 }
 
-// statics
-
-Users.fillable = [
-  'username',
-  'email',
-  'password',
-  'provider',
-  'confirmed',
-  'blocked',
-  'role',
-];
-
-Users.isAttributeFillable = function (attr) {
-  return Users.fillable.indexOf(attr) > -1;
-};
-
 export default Users;

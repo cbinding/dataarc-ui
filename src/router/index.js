@@ -167,26 +167,6 @@ const routes = [
         ]
       },
       {
-        path: 'roles',
-        name: 'Roles',
-        component: () => import('@/views/Collections/Container.vue'),
-        redirect: 'roles/index',
-        children: [
-          {
-            path: 'index',
-            component: () => import('@/views/Collections/Roles.vue'),
-            name: 'View Roles',
-            props: { test: 'value' }
-          },
-          {
-            path: 'update/:id',
-            name: 'Update Role',
-            component: () => import('@/views/Collections/Roles-update.vue'),
-            props: true
-          }
-        ]
-      },
-      {
         path: 'map-layers',
         name: 'MapLayers',
         component: () => import('@/views/Collections/MapLayers.vue'),

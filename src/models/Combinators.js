@@ -92,20 +92,4 @@ class Combinators {
   };
 }
 
-// statics
-
-Combinators.fillable = [
-  'title',
-  'description',
-  'citation',
-  'operator',
-  'queries',
-  'concepts',
-  'dataset',
-];
-
-Combinators.isAttributeFillable = function (attr) {
-  return Combinators.fillable.indexOf(attr) > -1;
-};
-
 export default Combinators;

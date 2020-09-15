@@ -39,12 +39,4 @@ class Categories {
   };
 }
 
-// statics
-
-Categories.fillable = ['title', 'description', 'color'];
-
-Categories.isAttributeFillable = function (attr) {
-  return Categories.fillable.indexOf(attr) > -1;
-};
-
 export default Categories;

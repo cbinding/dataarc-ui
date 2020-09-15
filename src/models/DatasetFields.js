@@ -17,11 +17,4 @@ class DatasetFields {
   };
 }
 
-// statics
-DatasetFields.fillable = ['title', 'type'];
-
-DatasetFields.isAttributeFillable = function (attr) {
-  return DatasetFields.fillable.indexOf(attr) > -1;
-};
-
 export default DatasetFields;

@@ -432,25 +432,6 @@ const methods = {
       });
     }
   },
-  limitFields() {
-    const dataModel = Models[this.model.type];
-    this.schema.fields.forEach((field) => {
-      if (field.buttonText === 'Delete') {
-        // If adding a new **, hide Delete button
-        if (this.model.action === 'Create') {
-          field.visible = false;
-        }
-        return;
-      }
-      // Always display submit
-      if (field.buttonText === 'Submit') {
-        return;
-      }
-      if (field.model) {
-        field.visible = dataModel.isAttributeFillable(field.model);
-      }
-    });
-  },
   updatePage(val, component) {
     if (this.$route.name === 'Dataset View') {
       this[`current${component}Page`] = val;

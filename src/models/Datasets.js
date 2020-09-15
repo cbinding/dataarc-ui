@@ -56,25 +56,4 @@ class Datasets {
   };
 }
 
-// statics
-
-Datasets.fillable = [
-  'title',
-  'description',
-  'citation',
-  'url',
-  'image',
-  'source',
-  'category',
-  'title_layout',
-  'summary_layout',
-  'details_layout',
-  'link_layout',
-  'formData',
-];
-
-Datasets.isAttributeFillable = function (attr) {
-  return Datasets.fillable.indexOf(attr) > -1;
-};
-
 export default Datasets;

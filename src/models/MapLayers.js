@@ -38,12 +38,4 @@ class MapLayers {
   };
 }
 
-// statics
-
-MapLayers.fillable = ['title', 'description'];
-
-MapLayers.isAttributeFillable = function (attr) {
-  return MapLayers.fillable.indexOf(attr) > -1;
-};
-
 export default MapLayers;
