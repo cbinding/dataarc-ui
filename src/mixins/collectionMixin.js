@@ -422,7 +422,8 @@ const methods = {
       });
     } else {
       dataModel._update().then((value) => {
-        if (val.type === 'DatasetFields') {
+        if (val.type === 'DatasetFields' || val.type === 'Users') {
+          this.showAlert()
           return;
         } if (val.type === 'Combinators') {
           this.$router.push(dataModel.routeUrl);
@@ -452,6 +453,7 @@ const methods = {
     dataModel._delete().then((value) => {
       if (dataModel.routeUrl === this.$router.history.current.path) {
         if (value === 'users') {
+          this.showAlert();
           this.getAllUsers();
         } else if (
           value === 'allDatasets' ||
@@ -653,15 +655,12 @@ const asyncComputed = {
       return this.getSource('users-permissions/roles', 'roles').then(
         (roles) => {
           this._roles = roles;
-          if (this.schema) {
-            this.setFormField(this._roles, 'roles');
-          }
           return this._roles;
         }
       );
     },
     shouldUpdate() {
-      return this.collectionType === 'Users';
+      return this.component === 'Users';
     },
   },
 };
