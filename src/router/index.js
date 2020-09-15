@@ -195,6 +195,28 @@ const routes = [
             props: true
           }
         ]
+      },
+      {
+        path: 'temporalCoverages',
+        name: 'TemporalCoverages',
+        component: () => import('@/views/Collections/TemporalCoverages.vue'),
+        props: true,
+        children: [
+          {
+            path: 'create',
+            name: 'Create Temporal Coverage',
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true
+          },
+          {
+            path: 'update/:id',
+            name: 'Update Temporal Coverage',
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true
+          }
+        ]
       }
     ],
     meta: {

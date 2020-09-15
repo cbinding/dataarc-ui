@@ -47,6 +47,34 @@ const apollo = {
       }
     },
   },
+  allTemporalCoverages: {
+    query: gql`
+      query {
+        temporalCoverages {
+          id
+          name
+          title
+          description
+          citation
+          url
+          start_date
+          end_date
+        }
+      }
+    `,
+    skip: true,
+    ssr: false,
+    update(data) {
+      // The returned value will update
+      // the vue property 'datasets'
+      return data.allTemporalCoverages;
+    },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        this.temporalCoverages = data.temporalCoverages;
+      }
+    },
+  },
   allMapLayers: {
     query: gql`
       query {
@@ -556,8 +584,8 @@ const methods = {
     }
   },
   shorten(val) {
-    if (val.length > 100) {
-      return val.substring(0, 100) + "..."
+    if (val.length > 150) {
+      return val.substring(0, 150) + "..."
     }
     return val
 },
@@ -568,6 +596,9 @@ const asyncComputed = {
     get() {
       if (this.component === 'MapLayers') {
         return this.mapLayers.length;
+      }
+      if (this.component === 'TemporalCoverages') {
+        return this.temporalCoverages.length;
       }
       if (this.component === 'Users' && this.total > 0) {
         return this.total;
@@ -580,6 +611,9 @@ const asyncComputed = {
     shouldUpdate() {
       if (this.component === 'MapLayers') {
         return this.component && this.mapLayers;
+      }
+      if (this.component === 'TemporalCoverages') {
+        return this.component && this.temporalCoverages;
       }
       if (this.component === 'CRUD') {
         return this.collectionType === 'Combinators'
@@ -678,6 +712,7 @@ const data = function () {
     features: [],
     mapLayers: [],
     categories: [],
+    temporalCoverages: [],
     currentDataset: {},
     currentCombinator: null,
     currentFieldsPage: 1,
