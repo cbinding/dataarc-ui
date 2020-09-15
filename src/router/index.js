@@ -150,20 +150,6 @@ const routes = [
             name: 'View Users',
             component: () => import('@/views/Collections/Users-index.vue')
           },
-          {
-            path: 'create',
-            name: 'Create User',
-            component: () =>
-              import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true
-          },
-          {
-            path: 'update/:id',
-            name: 'Update User',
-            component: () =>
-              import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true
-          }
         ]
       },
       {

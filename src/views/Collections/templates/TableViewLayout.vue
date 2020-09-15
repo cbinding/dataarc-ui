@@ -84,7 +84,7 @@ export default {
 
 <style>
 .table td {
-  padding: 0.4rem;
+  padding: 0.5rem;
   padding-right: 0rem;
 }
 
