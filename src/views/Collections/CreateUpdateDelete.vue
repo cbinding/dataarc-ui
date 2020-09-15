@@ -2,7 +2,7 @@
 <template>
   <div>
     <b-row>
-      <b-overlay :show="showOverlay()" no-wrap></b-overlay>
+      <b-overlay :show="loading" no-wrap></b-overlay>
       <b-col :sm="model && model.type === 'Combinators' ? '7' : '12'">
         <b-container>
           <div class="panel panel-default">
@@ -76,7 +76,7 @@
                 </div>
               </template>
             </b-table>
-            <span v-if="currentDataset.features_count && (filteredFeatures.matched_count && filteredFeatures.matched_count === 0)">
+            <span v-if="currentDataset.features_count && filteredFeatures.matched_count === 0">
               No Matches found
             </span>
             <span v-if="currentDataset && currentDataset.features_count === 0">
@@ -103,7 +103,6 @@ export default {
       ],
       item: {},
       model: {
-        id: '',
         type: '',
         action: '',
         title: '',
@@ -149,7 +148,7 @@ export default {
               name: 'title',
             },
             onChanged(model, schema, event) {
-              this.currentId = model.dataset
+              this.currentDatasetId = model.dataset
             },
           },
           {
@@ -437,9 +436,8 @@ export default {
     },
     model: {
       handler(newVal, oldVal) {
-        if (newVal.dataset && newVal.dataset !== this.currentId) {
-          this.features = null
-          this.currentId = newVal.dataset
+        if (newVal.dataset) {
+          this.currentDatasetId = newVal.dataset
           this.$apollo.queries.dataset.skip = false
         }
       },
@@ -474,15 +472,23 @@ export default {
       const variables = this.$route.name.split(' ')
       const pathArray = this.$route.path.split('/')
       this.action = variables[0]
+
       this.collectionType = (variables[1] !== 'Category' ? `${variables[1]}s` : 'Categories')
-      if (this.$route.name === 'Update Combinator' || 'Create Combinator') {
+      if (this.$route.name === 'Create Combinator' || this.$route.name === 'Update Combinator') {
+        if (this.$route.params.id) {
+          this.currentId = this.$route.params.id
+          this.$apollo.queries.combinator.skip = false
+        }
         this.$apollo.queries.allDatasets.skip = false
       }
       if (this.$route.name === 'Create Dataset') {
         this.$apollo.queries.allCategories.skip = false
       }
+      if (this.$route.name !== 'Update Combinator') {
+        this.loading = false
+      }
 
-      if (this.action === 'Update' && this.collectionType !== 'Datasets') {
+      if (this.action === 'Update' && this.collectionType !== 'Datasets' && this.collectionType !== 'Combinators') {
         this.editUrl = `${pathArray[2]}/${this.$route.params.id}`
         const vm = this
         this.getSingle(this.editUrl).then((value) => {
@@ -490,9 +496,6 @@ export default {
           vm.model = vm.item
           vm.model.image = null
           vm.model.source = null
-          if (vm.model.operator !== 'and' && vm.model.operator !== 'or') {
-            vm.model.operator = 'and'
-          }
           if (vm.model.category) {
             const temp = vm.model.category.id
             vm.model.category = temp
@@ -508,19 +511,6 @@ export default {
 
       this.model.type = this.collectionType
       this.model.action = this.action
-    },
-    showOverlay() {
-      if (!this.features && this.currentDataset.id) {
-        return true
-      }
-      return false
-    },
-    getNextFeatures() {
-      this.start += 50
-    },
-    reset() {
-      this.start = 0
-      this.testQueries(this.model.queries)
     },
     update(val) {
       val.type = this.model.type

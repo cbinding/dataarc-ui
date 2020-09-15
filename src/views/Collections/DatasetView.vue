@@ -5,7 +5,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">
         <h3>Updating: {{ model.title}}</h3>
-        <router-link :to="{name: 'Update Templates', params: {id: currentDataset.id}}">Edit Templates</router-link>
+        <router-link v-if="currentDataset" :to="{name: 'Update Templates'}">Edit Templates</router-link>
       </div>
       <div class="panel-body">
         <vue-form-generator
