@@ -1,5 +1,16 @@
 <template>
   <b-container fluid>
+    <b-col sm="2">
+      <b-alert
+        variant="success"
+        dismissible
+        fade
+        :show="dismissCountDown"
+        @dismiss-count-down="countDownChanged"
+      >
+        Success
+      </b-alert>
+    </b-col>
     <table-view-layout
       :rows="rows"
       :component="component"
@@ -11,17 +22,8 @@
       @deleteConfirmed="deleteItem(itemToDelete, 'Users')"
       @limitUpdated="updateLimit"
     >
-      <template v-slot:button>
-        <b-button
-          variant="primary"
-          :to="{name: 'Create User' }"
-        >
-          <b-icon-plus />Add new User
-        </b-button>
-      </template>
       <template v-slot:table>
         <b-table
-          :responsive="true"
           table-variant="light"
           head-variant="light"
           :filter="filter"
@@ -29,21 +31,30 @@
           :fields="displayFields"
           @filtered="updatePagination"
         >
-          <template
-            v-slot:cell(role)="row"
-          >
-            <b-link
-              :to="{ name: 'Update Role', params: {id: row.item.role.id }}"
-            >
-              {{ row.item.role.name }}
-            </b-link>
+          <template v-slot:cell(confirmed)="row">
+            <b-form-checkbox v-model="row.item.confirmed" @change="row.item.confirmed != row.item.confirmed"/>
           </template>
+          <template v-slot:cell(blocked)="row">
+            <b-form-checkbox v-model="row.item.blocked" @change="row.item.blocked != row.item.blocked"/>
+          </template>
+          <template v-slot:cell(role)="row">
+            <div v-if="row.item.role.name">
+              <b-dropdown :text="row.item.role.name">
+                <div v-for="role in roles" :key="role.id">
+                  <b-dropdown-item v-model="row.item.role" @click="row.item.role = role">
+                    {{role.name}}
+                  </b-dropdown-item>
+                </div>
+              </b-dropdown>
+            </div>
+          </template>
+
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group>
-              <router-link :to="{name: 'Update User', params: {id: row.item.id} }">
-                <b-button size="sm" variant="primary" v-text="'Edit'"></b-button>
-              </router-link>
               <b-button size="sm" variant="primary" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
+            </b-button-group>
+            <b-button-group>
+              <b-button size="sm" variant="primary" v-text="'Save'" @click="updateUser(row.item)"></b-button>
             </b-button-group>
           </template>
         </b-table>
@@ -60,8 +71,10 @@ export default {
   data() {
     return {
       component: 'Users',
-      displayFields: ['actions', 'username', 'email', 'confirmed', 'role'],
+      displayFields: ['actions', 'username', 'email', 'confirmed', 'blocked', 'role'],
       total: '',
+      dismissSecs: 3,
+      dismissCountDown: 0,
     }
   },
   computed: {
@@ -92,6 +105,18 @@ export default {
     }),
     getInitialData() {
       this.getAllUsers()
+    },
+    updateUser(val) {
+      let temp = val
+      temp.type = 'Users'
+      temp.action = 'Update'
+      this.setFormData(temp)
+    },
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown
+    },
+    showAlert() {
+      this.dismissCountDown = this.dismissSecs
     },
   },
 }
