@@ -36,7 +36,6 @@ class Datasets {
 
   _update = async () => {
     try {
-      console.log(this.formData);
       const resp = await axios.put(this.editUrl, this.formData);
       return resp;
     } catch (err) {
