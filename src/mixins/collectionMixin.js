@@ -6,6 +6,7 @@ import {
   Datasets,
   Users,
   DatasetFields,
+  TemporalCoverages,
 } from '../models';
 import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue';
 
@@ -16,6 +17,7 @@ const Models = {
   Datasets,
   Users,
   DatasetFields,
+  TemporalCoverages,
 };
 
 const apollo = {
@@ -486,7 +488,8 @@ const methods = {
         } else if (
           value === 'allDatasets' ||
           value === 'allMapLayers' ||
-          value === 'allCategories'
+          value === 'allCategories' ||
+          value === 'allTemporalCoverages'
         ) {
           this.$apollo.queries[value].refetch();
         } else {

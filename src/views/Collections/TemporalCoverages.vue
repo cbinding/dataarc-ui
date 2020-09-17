@@ -16,7 +16,7 @@
       <template v-slot:button>
         <b-button
           variant="primary"
-          :to="{name: 'Create Temporal Coverage' }"
+          :to="{name: 'Create TemporalCoverage' }"
         >
           <b-icon-plus />Add new Temporal Coverage
         </b-button>
@@ -47,7 +47,7 @@
           </template>
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group>
-              <router-link :to="{name: 'Update Temporal Coverage', params: {id: row.item.id} }">
+              <router-link :to="{name: 'Update TemporalCoverage', params: {id: row.item.id} }">
                 <b-button size="sm" variant="primary" v-text="'Edit'"></b-button>
               </router-link>
               <b-button size="sm" variant="primary" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
