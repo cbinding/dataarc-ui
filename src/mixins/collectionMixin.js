@@ -77,6 +77,32 @@ const apollo = {
       }
     },
   },
+  allTopicMaps: {
+    query: gql`
+      query {
+        topicMaps {
+          id
+          name
+          title
+          description
+          citation
+          url
+        }
+      }
+    `,
+    skip: true,
+    ssr: false,
+    update(data) {
+      // The returned value will update
+      // the vue property 'datasets'
+      return data.allTopicMaps;
+    },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        this.topicMaps = data.topicMaps;
+      }
+    },
+  },
   allMapLayers: {
     query: gql`
       query {
@@ -716,6 +742,7 @@ const data = function () {
     mapLayers: [],
     categories: [],
     temporalCoverages: [],
+    topicMaps: [],
     currentDataset: {},
     currentCombinator: null,
     currentFieldsPage: 1,
