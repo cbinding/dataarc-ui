@@ -422,7 +422,8 @@ const methods = {
       });
     } else {
       dataModel._update().then((value) => {
-        if (val.type === 'DatasetFields') {
+        if (val.type === 'DatasetFields' || val.type === 'Users') {
+          this.showAlert()
           return;
         } if (val.type === 'Combinators') {
           this.$router.push(dataModel.routeUrl);
@@ -431,25 +432,6 @@ const methods = {
         }
       });
     }
-  },
-  limitFields() {
-    const dataModel = Models[this.model.type];
-    this.schema.fields.forEach((field) => {
-      if (field.buttonText === 'Delete') {
-        // If adding a new **, hide Delete button
-        if (this.model.action === 'Create') {
-          field.visible = false;
-        }
-        return;
-      }
-      // Always display submit
-      if (field.buttonText === 'Submit') {
-        return;
-      }
-      if (field.model) {
-        field.visible = dataModel.isAttributeFillable(field.model);
-      }
-    });
   },
   updatePage(val, component) {
     if (this.$route.name === 'Dataset View') {
@@ -471,6 +453,7 @@ const methods = {
     dataModel._delete().then((value) => {
       if (dataModel.routeUrl === this.$router.history.current.path) {
         if (value === 'users') {
+          this.showAlert();
           this.getAllUsers();
         } else if (
           value === 'allDatasets' ||
@@ -672,15 +655,12 @@ const asyncComputed = {
       return this.getSource('users-permissions/roles', 'roles').then(
         (roles) => {
           this._roles = roles;
-          if (this.schema) {
-            this.setFormField(this._roles, 'roles');
-          }
           return this._roles;
         }
       );
     },
     shouldUpdate() {
-      return this.collectionType === 'Users';
+      return this.component === 'Users';
     },
   },
 };

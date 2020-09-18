@@ -157,10 +157,6 @@ class Base {
     return this.actions.indexOf(action) > -1;
   };
 
-  static isAttributeFillable = function (attr) {
-    return (this.fillable.indexOf(attr) > -1)
-  }
-
   // PRIVAITE METHODS
   _compileRelationships (data) {
     const remainingData = this._compileHasManyRelations(data)

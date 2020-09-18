@@ -150,40 +150,6 @@ const routes = [
             name: 'View Users',
             component: () => import('@/views/Collections/Users-index.vue')
           },
-          {
-            path: 'create',
-            name: 'Create User',
-            component: () =>
-              import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true
-          },
-          {
-            path: 'update/:id',
-            name: 'Update User',
-            component: () =>
-              import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true
-          }
-        ]
-      },
-      {
-        path: 'roles',
-        name: 'Roles',
-        component: () => import('@/views/Collections/Container.vue'),
-        redirect: 'roles/index',
-        children: [
-          {
-            path: 'index',
-            component: () => import('@/views/Collections/Roles.vue'),
-            name: 'View Roles',
-            props: { test: 'value' }
-          },
-          {
-            path: 'update/:id',
-            name: 'Update Role',
-            component: () => import('@/views/Collections/Roles-update.vue'),
-            props: true
-          }
         ]
       },
       {

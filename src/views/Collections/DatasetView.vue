@@ -282,7 +282,6 @@ export default {
       temp.type = 'DatasetFields'
       temp.action = 'Update'
       this.setFormData(temp)
-      this.showAlert()
     },
     countDownChanged(dismissCountDown) {
       this.dismissCountDown = dismissCountDown

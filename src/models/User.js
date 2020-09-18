@@ -13,7 +13,7 @@ class User extends Base {
 
   static fillable = ['username', 'email', 'confirmed', 'blocked', 'role']
 
-  static public = ['userName', 'email', 'confirmed', 'roleAssigned']
+  static public = ['username', 'email', 'confirmed', 'roleAssigned']
 
   static model = {
     'username': null,
