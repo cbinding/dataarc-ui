@@ -49,10 +49,5 @@ export default {
     }
   },
   mixins: [collectionMixin],
-  watch: {
-    $route(to, from) {
-      this.$asyncComputed.combinators.update()
-    },
-  },
 }
 </script>

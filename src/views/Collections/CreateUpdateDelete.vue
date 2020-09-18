@@ -284,7 +284,10 @@ export default {
             label: 'Citation',
             model: 'citation',
             visible: function(model) {
-              return (model.type === 'Combinators' && model.dataset) || model.type === 'Datasets'
+              return (model.type === 'Combinators' && model.dataset) ||
+              model.type === 'Datasets' ||
+              model.type === 'TemporalCoverages' ||
+              model.type === 'TopicMaps'
             },
             autocomplete: 'off',
           },
@@ -294,7 +297,9 @@ export default {
             label: 'Url',
             model: 'url',
             visible: function(model) {
-              return model.type === 'Datasets'
+              return model.type === 'Datasets' ||
+              model.type === 'TemporalCoverages' ||
+              model.type === 'TopicMaps'
             },
           },
           {
@@ -313,7 +318,8 @@ export default {
             label: 'Source',
             model: 'source',
             visible: function(model) {
-              return model.type === 'Datasets'
+              return model.type === 'Datasets' ||
+              model.type === 'TopicMaps'
             },
             required: false,
             onChanged(model, schema, event) {
@@ -478,6 +484,7 @@ export default {
         if (this.$route.params.id) {
           this.currentId = this.$route.params.id
           this.$apollo.queries.combinator.skip = false
+          this.$apollo.queries.combinator.refetch()
         }
         this.$apollo.queries.allDatasets.skip = false
       }

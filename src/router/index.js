@@ -195,6 +195,50 @@ const routes = [
             props: true
           }
         ]
+      },
+      {
+        path: 'temporal-coverages',
+        name: 'TemporalCoverages',
+        component: () => import('@/views/Collections/TemporalCoverages.vue'),
+        props: true,
+        children: [
+          {
+            path: 'create',
+            name: 'Create TemporalCoverage',
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true
+          },
+          {
+            path: 'update/:id',
+            name: 'Update TemporalCoverage',
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true
+          }
+        ]
+      },
+      {
+        path: 'topic-maps',
+        name: 'TopicMaps',
+        component: () => import('@/views/Collections/TopicMaps.vue'),
+        props: true,
+        children: [
+          {
+            path: 'create',
+            name: 'Create TopicMap',
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true
+          },
+          {
+            path: 'update/:id',
+            name: 'Update TopicMap',
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true
+          }
+        ]
       }
     ],
     meta: {
