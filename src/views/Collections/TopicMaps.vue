@@ -35,21 +35,30 @@
           :fields="displayFields"
           @filtered="updatePagination"
         >
-          <template v-slot:cell(title)="row" class="Title">
+          <template v-slot:cell(title)="row">
             <div class="text-wrap" style="width: 200px; max-width: 200px;" v-if="row.item.title">
               {{ row.item.title }}
             </div>
           </template>
-          <template v-slot:cell(description)="row" class="Description">
+          <template v-slot:cell(description)="row">
             <div class="text-wrap" style="width: 400px; max-width: 450px;" v-if="row.item.description">
               {{ shorten(row.item.description) }}
             </div>
           </template>
+          <template v-slot:head(topics_count)="row">
+            <div class="text-center"># Topics</div>
+          </template>
+          <template v-slot:cell(topics_count)="row">
+            <div class="text-center">
+              <b-badge pill variant="primary">
+                {{ row.item.topics_count }}
+              </b-badge>
+            </div>
+          </template>
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group>
-              <router-link :to="{name: 'Update TopicMap', params: {id: row.item.id} }">
-                <b-button size="sm" variant="primary" v-text="'Edit'"></b-button>
-              </router-link>
+              <b-button size="sm" variant="primary" v-text="'Process'" @click="process(row.item, component)"></b-button>
+              <b-button size="sm" :to="{name: 'Update TopicMap', params: {id: row.item.id} }" variant="primary" v-text="'Edit'"></b-button>
               <b-button size="sm" variant="primary" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
             </b-button-group>
           </template>
@@ -66,18 +75,24 @@ export default {
   data() {
     return {
       component: 'TopicMaps',
-      displayFields: ['actions', 'title', 'description', 'citation', 'url', 'nodes', 'edges', 'topics'],
+      displayFields: ['actions', 'title', 'description', 'citation', 'url', 'topics_count'],
     }
   },
   watch: {
     $route(to, from) {
+      if (to.name !== 'TopicMaps') {
+        this.$apollo.queries.allTopicMaps.skip = true
+      }
       if (from.name !== 'TopicMaps') {
+        this.$apollo.queries.allTopicMaps.skip = false
         this.$apollo.queries.allTopicMaps.refetch()
       }
     },
   },
   created() {
-    this.$apollo.queries.allTopicMaps.skip = false
+    if (this.component === 'TopicMaps') {
+      this.$apollo.queries.allTopicMaps.skip = false
+    }
   },
 }
 </script>

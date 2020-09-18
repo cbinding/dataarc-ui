@@ -7,6 +7,7 @@ import {
   Users,
   DatasetFields,
   TemporalCoverages,
+  TopicMaps,
 } from '../models';
 import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue';
 
@@ -18,6 +19,7 @@ const Models = {
   Users,
   DatasetFields,
   TemporalCoverages,
+  TopicMaps,
 };
 
 const apollo = {
@@ -46,6 +48,7 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         this.categories = data.categories;
+        this.rows = this.categories.length
       }
     },
   },
@@ -74,6 +77,7 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         this.temporalCoverages = data.temporalCoverages;
+        this.rows = this.temporalCoverages.length
       }
     },
   },
@@ -87,6 +91,7 @@ const apollo = {
           description
           citation
           url
+          topics_count
         }
       }
     `,
@@ -100,6 +105,7 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         this.topicMaps = data.topicMaps;
+        this.rows = this.topicMaps.length
       }
     },
   },
@@ -124,6 +130,7 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         this.mapLayers = data.mapLayers;
+        this.rows = this.mapLayers.length
       }
     },
   },
@@ -176,6 +183,7 @@ const apollo = {
           this.$apollo.queries.allDatasets.startPolling(5000);
         }
         this.datasets = data.datasets;
+        this.rows = this.datasets.length
       }
     },
   },
@@ -230,12 +238,6 @@ const apollo = {
     ssr: false,
     // Variables: deep object watch
     deep: false,
-    // We use a custom update callback because
-    // the field names don't match
-    // By default, the 'currentDataset' attribute
-    // would be used on the 'data' result object
-    // Here we know the result is in the 'id' attribute
-    // considering the way the apollo server works
     update(data) {
       // The returned value will update
       // the vue property 'currentDataset'
@@ -252,16 +254,6 @@ const apollo = {
     // Error handling
     error(error) {
       console.error("We've got an error!", error);
-    },
-    // Loading state
-    // loadingKey is the name of the data property
-    // that will be incremented when the query is loading
-    // and decremented when it no longer is.
-    loadingKey: 'loadingQueriesCount',
-    // watchLoading will be called whenever the loading state changes
-    watchLoading(isLoading, countModifier) {
-      // isLoading is a boolean
-      // countModifier is either 1 or -1
     },
   },
   combinator: {
@@ -389,6 +381,7 @@ const apollo = {
       if (data && data.combinatorResults) {
         this.loading = false
         this.filteredFeatures = data.combinatorResults;
+        this.rows = this.filteredFeatures.matched_count
       }
     },
     // Error handling
@@ -433,12 +426,13 @@ const apollo = {
 };
 
 const methods = {
-  async process(val) {
+  async process(val, component) {
     this.currentId = val.id;
+    let url = component === 'Datasets' ? 'datasets' : 'topic-maps'
     val.state = 'processing';
-    const resp = await axios.get(`${this.$apiUrl}/datasets/${val.id}/process`);
+    const resp = await axios.get(`${this.$apiUrl}/${url}/${val.id}/process`);
     if (resp) {
-      this.$apollo.queries.allDatasets.refetch();
+      this.$apollo.queries[`all${component}`].refetch();
     }
   },
   async getSingle(path) {
@@ -515,7 +509,8 @@ const methods = {
           value === 'allDatasets' ||
           value === 'allMapLayers' ||
           value === 'allCategories' ||
-          value === 'allTemporalCoverages'
+          value === 'allTemporalCoverages' ||
+          value === 'allTopicMaps'
         ) {
           this.$apollo.queries[value].refetch();
         } else {
@@ -617,68 +612,19 @@ const methods = {
       return val.substring(0, 150) + "..."
     }
     return val
-},
+  },
+  lcFirst(string) {
+    return string.charAt(0).toLowerCase() + string.slice(1);
+  },
 };
 
 const asyncComputed = {
-  rows: {
-    get() {
-      if (this.component === 'MapLayers') {
-        return this.mapLayers.length;
-      }
-      if (this.component === 'TemporalCoverages') {
-        return this.temporalCoverages.length;
-      }
-      if (this.component === 'Users' && this.total > 0) {
-        return this.total;
-      }
-      if (this.component === 'CRUD') {
-        return this.filteredFeatures.matched_count ? this.filteredFeatures.matched_count : 0
-      }
-      return this[this.component.toLowerCase()].length;
-    },
-    shouldUpdate() {
-      if (this.component === 'MapLayers') {
-        return this.component && this.mapLayers;
-      }
-      if (this.component === 'TemporalCoverages') {
-        return this.component && this.temporalCoverages;
-      }
-      if (this.component === 'CRUD') {
-        return this.collectionType === 'Combinators'
-      }
-      return (
-        this.component &&
-        (this.component === 'Users' || this[this.component.toLowerCase()])
-      );
-    },
-  },
   // Keeping _***** values to get cache working later on possibly
-  events: {
-    get() {
-      if (this._events && this._events.length > 0) {
-        return this._events;
-      }
-      return this.getSource('events').then((events) => {
-        this._events = events;
-        if (this.schema) {
-          this.setFormField(this._events, 'events');
-        }
-        return this._events;
-      });
-    },
-    shouldUpdate() {
-      return (
-        this.collectionType === 'Events' ||
-        this.collectionType === 'Users' ||
-        this.component === 'Events'
-      );
-    },
-  },
   combinators: {
     get() {
       return this.getSource('combinators?_limit=-1').then((combinators) => {
         this._combinators = combinators;
+        this.rows = this._combinators.length
         if (this.schema) {
           this.setFormField(this._combinators, 'combinators');
         }
@@ -753,6 +699,7 @@ const data = function () {
     filter: '',
     filteredFeatures: [],
     loading: true,
+    rows: 0,
   };
 };
 

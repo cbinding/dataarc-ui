@@ -91,6 +91,7 @@ export default {
     users(val) {
       if (val.items) {
         this.total = val.items.length
+        this.rows = this.total
       }
     },
   },
