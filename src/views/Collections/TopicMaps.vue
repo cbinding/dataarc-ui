@@ -30,7 +30,6 @@
           :current-page="currentPage"
           :filter="filter"
           responsive
-          fixed
           table-variant="light"
           head-variant="light"
           :items="topicMaps"
@@ -77,7 +76,14 @@ export default {
   data() {
     return {
       component: 'TopicMaps',
-      displayFields: ['actions', 'title', 'description', 'citation', 'url', 'topics_count'],
+      displayFields: [
+        { key: 'actions', sortable: false },
+        { key: 'title', sortable: true },
+        { key: 'description', sortable: true },
+        { key: 'citation', sortable: true },
+        { key: 'url', sortable: true },
+        { key: 'topics_count', sortable: true },
+      ],
     }
   },
   watch: {

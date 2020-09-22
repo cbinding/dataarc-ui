@@ -77,26 +77,19 @@
     <table-view-layout :rows.sync="combinatorsCount" component="Combinators" :limits.sync="limits" :currentPage.sync="currentCombinatorsPage" :perPage.sync="currentCombinatorsLimit" @inputChanged="updateFilter" @change="updatePage" @limitUpdated="updateLimit">
       <template v-slot:table>
         <b-table v-if="currentDataset" :filter="filterCombinators" :per-page="currentCombinatorsLimit" :current-page="currentCombinatorsPage" responsive table-variant="light" head-variant="light" :items="currentDataset.combinators" :fields="combinatorsList" @filtered="updatePagination">
-          <template v-slot:head(title)="data">
-            Display Name (Title)
-          </template>
-          <template v-slot:head(type)="data">
-            Field Type
-          </template>
           <template v-slot:cell(title)="row" class="Title">
-            <div style="max-width: 400px;" v-if="row.item.title">
+            <div class="text-wrap" style="width: 200px; max-width: 200px;" v-if="row.item.title">
               {{ row.item.title }}
             </div>
           </template>
-          <template v-slot:cell(type)="row" class="Type">
-            <div style="max-width: 400px;" v-if="row.item.type">
-              <b-dropdown :text="row.item.type">
-                <div v-for="type in fieldTypes" :key="type">
-                  <b-dropdown-item v-model="row.item.type" @click="row.item.type = type">
-                    {{type}}
-                  </b-dropdown-item>
-                </div>
-              </b-dropdown>
+          <template v-slot:cell(description)="row" class="Description">
+            <div class="text-wrap" style="width: 300px; max-width: 350px;" v-if="row.item.description">
+              {{ shorten(row.item.description) }}
+            </div>
+          </template>
+          <template v-slot:cell(citation)="row" class="citation">
+            <div class="text-wrap" style="width: 300px; max-width: 350px;" v-if="row.item.citation">
+              {{ shorten(row.item.citation) }}
             </div>
           </template>
           <template v-slot:cell(state)="row" class="state">
@@ -151,24 +144,24 @@ export default {
       sortList: ['Path', 'Type'],
       fieldTypes: ['string', 'number', 'boolean', 'array', 'url', 'start_date', 'end_date', 'text_date'],
       fieldsList: [
-        'name',
-        'source',
-        'title',
-        'type',
-        'state',
-        'state_msg',
-        'state_at',
-        'save',
+        { key: 'save', sortable: false },
+        { key: 'name', sortable: true },
+        { key: 'source', sortable: true },
+        { key: 'title', sortable: true },
+        { key: 'type', sortable: true },
+        { key: 'state', sortable: true },
+        { key: 'state_msg', sortable: true },
+        { key: 'state_at', sortable: true },
       ],
       combinatorsList: [
-        'name',
-        'title',
-        'description',
-        'citation',
-        'state',
-        'state_msg',
-        'state_at',
-        'actions',
+        { key: 'actions', sortable: false },
+        { key: 'name', sortable: true },
+        { key: 'title', sortable: true },
+        { key: 'description', sortable: true },
+        { key: 'citation', sortable: true },
+        { key: 'state', sortable: true },
+        { key: 'state_msg', sortable: true },
+        { key: 'state_at', sortable: true },
       ],
       filterFields: '',
       filterCombinators: '',
@@ -362,7 +355,7 @@ export default {
 }
 
 .table td {
-  padding: 0.4rem;
+  padding: 0.5rem;
   padding-right: 0rem;
 }
 

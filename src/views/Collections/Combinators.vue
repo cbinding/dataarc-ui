@@ -51,7 +51,14 @@ export default {
   data() {
     return {
       component: 'Combinators',
-      displayFields: ['actions', 'title', 'description', 'citation', 'created_by', 'updated_by'],
+      displayFields: [
+        { key: 'actions', sortable: false },
+        { key: 'title', sortable: true },
+        { key: 'description', sortable: true },
+        { key: 'citation', sortable: true },
+        { key: 'created_by', sortable: true },
+        { key: 'updated_by', sortable: true },
+      ],
       combinatorsLoading: true,
       combinators: [],
     }

@@ -84,9 +84,7 @@ const apollo = {
           title
           description
           color
-          datasets {
-            title
-          }
+          datasets_count
         }
       }
     `,

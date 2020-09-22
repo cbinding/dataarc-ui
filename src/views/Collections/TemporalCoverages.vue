@@ -30,7 +30,6 @@
           :current-page="currentPage"
           :filter="filter"
           responsive
-          fixed
           table-variant="light"
           head-variant="light"
           :items="temporalCoverages"
@@ -45,6 +44,16 @@
           <template v-slot:cell(description)="row" class="Description">
             <div class="text-wrap" style="width: 400px; max-width: 450px;" v-if="row.item.description">
               {{ shorten(row.item.description) }}
+            </div>
+          </template>
+          <template v-slot:cell(start_date)="row">
+            <div>
+              {{ getDate(row.item.start_date) }}
+            </div>
+          </template>
+          <template v-slot:cell(end_date)="row">
+            <div>
+              {{ getDate(row.item.end_date) }}
             </div>
           </template>
           <template v-slot:cell(actions)="row" class="actions">
@@ -68,7 +77,15 @@ export default {
   data() {
     return {
       component: 'TemporalCoverages',
-      displayFields: ['actions', 'title', 'description', 'citation', 'url', 'start_date', 'end_date'],
+      displayFields: [
+        { key: 'actions', sortable: false },
+        { key: 'title', sortable: true },
+        { key: 'description', sortable: true },
+        { key: 'citation', sortable: true },
+        { key: 'url', sortable: true },
+        { key: 'start_date', sortable: true },
+        { key: 'end_date', sortable: true },
+      ],
     }
   },
   watch: {

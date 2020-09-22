@@ -36,20 +36,17 @@
           :fields="displayFields"
           @filtered="updatePagination"
         >
-          <template
-            v-slot:cell(datasets)="datasetRow"
-            class="Datasets"
-          >
-            <ul>
-              <div
-                v-for="dataset in datasetRow.item.datasets"
-                :key="dataset.id"
-              >
-                <li>
-                  {{ dataset.title }}
-                </li>
-              </div>
-            </ul>
+          <template v-slot:head(datasets_count)="row">
+            <div class="text-center">
+              # Datasets
+            </div>
+          </template>
+          <template v-slot:cell(datasets_count)="row">
+            <div class="text-center">
+              <b-badge pill variant="primary">
+                {{ row.item.datasets_count }}
+              </b-badge>
+            </div>
           </template>
            <template v-slot:cell(actions)="row" class="actions">
             <b-button-group>
@@ -74,7 +71,14 @@ export default {
   data() {
     return {
       component: 'Categories',
-      displayFields: ['actions', 'name', 'title', 'description', 'color', 'datasets'],
+      displayFields: [
+        { key: 'actions', sortable: false },
+        { key: 'name', sortable: true },
+        { key: 'title', sortable: true },
+        { key: 'description', sortable: true },
+        { key: 'color', sortable: true },
+        { key: 'datasets_count', sortable: true },
+      ],
     }
   },
   watch: {
