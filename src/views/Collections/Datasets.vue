@@ -71,6 +71,9 @@
               {{ row.item.state_msg ? row.item.state_msg : '' }}
             </div>
           </template>
+          <template v-slot:head(state_at)="row">
+            <span>Last Updated</span>
+          </template>
           <template v-slot:cell(state_at)="row" class="state_at">
             <div>
               {{ getDate(row.item.state_at) }}
