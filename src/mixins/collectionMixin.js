@@ -34,6 +34,10 @@ const apollo = {
           citation
           url
           operator
+          dataset {
+            id
+            title
+          }
           state
           state_msg
           state_at

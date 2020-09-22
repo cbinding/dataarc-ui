@@ -23,6 +23,11 @@
               {{ shorten(row.item.citation) }}
             </div>
           </template>
+          <template v-slot:cell(dataset)="row">
+            <div class="text-wrap" style="width: 250px; max-width: 300px;" v-if="row.item.dataset">
+              {{ row.item.dataset.title }}
+            </div>
+          </template>
           <template v-slot:cell(created_by)="row" class="CreatedBy">
             <div class="w-200 text-truncate" style="max-width: 400px;" v-if="row.item.created_by">
               {{ row.item.created_by.email }}
@@ -56,6 +61,7 @@ export default {
         { key: 'title', sortable: true },
         { key: 'description', sortable: true },
         { key: 'citation', sortable: true },
+        { key: 'dataset', sortable: true },
         { key: 'created_by', sortable: true },
         { key: 'updated_by', sortable: true },
       ],
