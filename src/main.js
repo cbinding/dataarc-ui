@@ -22,6 +22,7 @@ import AsyncComputed from 'vue-async-computed';
 import Debug from '@/components/partials/Debug.vue';
 import MyPlugin from './plugins/my-plugin';
 import fieldQuery from './views/Collections/templates/fieldQuery.vue';
+import fieldWrap from './views/Collections/templates/fieldWrap.vue';
 
 // Globals
 window.axios = require('axios');
@@ -34,6 +35,7 @@ Vue.component('multiselect', Multiselect);
 Vue.use(AsyncComputed);
 Vue.component('Debug', Debug);
 Vue.component('fieldQuery', fieldQuery);
+Vue.component('fieldWrap', fieldWrap);
 
 // Apply plugins
 Vue.use(VueFormGenerator);
