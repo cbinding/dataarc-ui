@@ -24,6 +24,8 @@
       <template v-slot:table>
         <b-table
           v-if="temporalCoverages"
+          ref="temporalCoverages"
+          id="temporalCoverages"
           :per-page="perPage"
           :current-page="currentPage"
           :filter="filter"
@@ -71,7 +73,11 @@ export default {
   },
   watch: {
     $route(to, from) {
-      if (from.name !== 'TemporalCoverages') {
+      if (to.name !== 'TemporalCoverages') {
+        this.$apollo.queries.allTemporalCoverages.skip = true
+      }
+      else if (from.name !== 'TemporalCoverages') {
+        this.$apollo.queries.allTemporalCoverages.skip = false
         this.$apollo.queries.allTemporalCoverages.refetch()
       }
     },

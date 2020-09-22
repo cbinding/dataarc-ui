@@ -385,12 +385,12 @@ export default {
           },
           {
             type: 'submit',
-            buttonText: 'Delete',
+            buttonText: 'Cancel',
             inputType: 'submit',
             visible: function(model) {
               return model.action === 'Update'
             },
-            onSubmit: this.deleteItem,
+            onSubmit: this.back,
           },
         ],
       },
@@ -524,6 +524,11 @@ export default {
       val.action = this.model.action
       this.setFormData(val)
     },
+    back(val) {
+      if (val) {
+        this.$router.go(-1)
+      }
+    }
   },
 }
 </script>
