@@ -6,7 +6,19 @@
         <b-button variant="primary" :to="{name: 'Create Dataset'}"><b-icon-plus></b-icon-plus>Add new Dataset</b-button>
       </template>
       <template v-slot:table>
-        <b-table v-if="datasets" :filter="filter" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="datasets" :fields="displayFields" @filtered="updatePagination">
+        <b-table
+          v-if="datasets"
+          ref="datasets"
+          id="datasets"
+          :filter="filter"
+          :per-page="perPage"
+          :current-page="currentPage"
+          responsive
+          table-variant="light"
+          head-variant="light"
+          :items="datasets"
+          :fields="displayFields"
+          @filtered="updatePagination">
           <template v-slot:cell(title)="row" class="Title">
             <div class="text-wrap" style="width: 200px; max-width: 200px;" v-if="row.item.title">
               {{ row.item.title }}
@@ -135,7 +147,13 @@ export default {
   mixins: [collectionMixin],
   watch: {
     $route(to, from) {
-      this.$apollo.queries.allDatasets.refetch()
+      if (to.name !== 'Datasets') {
+        this.$apollo.queries.allDatasets.skip = true
+      }
+      else if (from.name !== 'Datasets') {
+        this.$apollo.queries.allDatasets.skip = false
+        this.$apollo.queries.allDatasets.refetch()
+      }
     },
   },
 }

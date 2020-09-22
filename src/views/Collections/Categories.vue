@@ -24,6 +24,8 @@
       <template v-slot:table>
         <b-table
           v-if="categories"
+          ref="categories"
+          id="categories"
           :per-page="perPage"
           :current-page="currentPage"
           :filter="filter"
@@ -77,7 +79,11 @@ export default {
   },
   watch: {
     $route(to, from) {
-      if (from.name !== 'Categories') {
+      if (to.name !== 'Categories') {
+        this.$apollo.queries.allCategories.skip = true
+      }
+      else if (from.name !== 'Categories') {
+        this.$apollo.queries.allCategories.skip = false
         this.$apollo.queries.allCategories.refetch()
       }
     },

@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <router-view />
+    <router-view/>
     <table-view-layout
       v-if="$route.name === 'TopicMaps'"
       :rows="rows"
@@ -24,6 +24,8 @@
       <template v-slot:table>
         <b-table
           v-if="topicMaps"
+          ref="topicMaps"
+          id="topicMaps"
           :per-page="perPage"
           :current-page="currentPage"
           :filter="filter"
@@ -79,20 +81,23 @@ export default {
     }
   },
   watch: {
+    topicMaps(val) {
+      if (val) {
+        this.$emit('bv::refresh::table', 'topicMaps')
+      }
+    },
     $route(to, from) {
       if (to.name !== 'TopicMaps') {
         this.$apollo.queries.allTopicMaps.skip = true
       }
-      if (from.name !== 'TopicMaps') {
+      else if (from.name !== 'TopicMaps') {
         this.$apollo.queries.allTopicMaps.skip = false
         this.$apollo.queries.allTopicMaps.refetch()
       }
     },
   },
   created() {
-    if (this.component === 'TopicMaps') {
-      this.$apollo.queries.allTopicMaps.skip = false
-    }
+    this.$apollo.queries.allTopicMaps.skip = false
   },
 }
 </script>
