@@ -23,6 +23,58 @@ const Models = {
 };
 
 const apollo = {
+  allCombinators: {
+    query: gql`
+      query combinators($start: Int, $limit: Int) {
+        combinators(start: $start, limit: $limit) {
+          id
+          name
+          title
+          description
+          citation
+          url
+          operator
+          state
+          state_msg
+          state_at
+          created_by {
+            id
+            username
+          }
+          updated_by {
+            id
+            username
+          }
+        }
+        countCombinators
+      }
+    `,
+    skip: true,
+    ssr: false,
+    variables() {
+      // Use vue reactive properties here
+      return {
+        limit: this && this.combinators.length === 0 && this.currentPage === 1 ? 20 : 50,
+        start: this && this.combinators.length === 0 && this.currentPage === 1 ? 0 : this.combinators.length,
+      };
+    },
+    update(data) {
+      return data.allCombinators;
+    },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        if (this.combinators.length === 0) {
+          this.combinators = data.combinators
+        }
+        else {
+          this.combinators = _.unionWith(this.combinators, data.combinators, _.isEqual)
+        }
+        if (this.rows !== data.countCombinators) {
+          this.rows = data.countCombinators
+        }
+      }
+    },
+  },
   allCategories: {
     query: gql`
       query {
@@ -177,7 +229,7 @@ const apollo = {
             return dataset;
           }
         });
-        if (stopQuery.length === 0) {
+        if (stopQuery.length === 0 || this.component !== 'Datasets') {
           this.$apollo.queries.allDatasets.stopPolling();
         } else {
           this.$apollo.queries.allDatasets.startPolling(5000);
@@ -488,6 +540,9 @@ const methods = {
       this[`current${component}Page`] = val;
     } else {
       this.currentPage = val;
+      if (this.$route.name === 'Combinators') {
+        this.combinatorsLoading = (this.currentPage * this.perPage) - (this.perPage - 1) > this.combinators.length
+      }
     }
   },
   updateLimit(val, component) {
@@ -498,28 +553,30 @@ const methods = {
     }
   },
   deleteItem(item, type) {
-    this.$bvModal.hide('deleteConfirmation');
-    const dataModel = new Models[item.type ? item.type : type](item);
-    dataModel._delete().then((value) => {
-      if (dataModel.routeUrl === this.$router.history.current.path) {
-        if (value === 'users') {
-          this.showAlert();
-          this.getAllUsers();
-        } else if (
-          value === 'allDatasets' ||
-          value === 'allMapLayers' ||
-          value === 'allCategories' ||
-          value === 'allTemporalCoverages' ||
-          value === 'allTopicMaps'
-        ) {
-          this.$apollo.queries[value].refetch();
-        } else {
-          this.$asyncComputed[value].update();
+    let array = this.lcFirst(type)
+    if (this[array]) {
+      const test = _.remove(this[array], function (val) {
+        return val.id === item.id
+      })
+      if (test.length > 0) {
+        this.rows -= 1
+        if (this.$refs[array]) {
+          this.$refs[array].refresh()
         }
-      } else {
-        this.$router.push(dataModel.routeUrl);
       }
-    });
+      this.$bvModal.hide('deleteConfirmation');
+      const dataModel = new Models[item.type ? item.type : type](item);
+      dataModel._delete().then((value) => {
+        if (dataModel.routeUrl === this.$router.history.current.path) {
+          if (value === 'users') {
+            this.showAlert();
+            this.getAllUsers();
+          }
+        } else {
+          this.$router.push(dataModel.routeUrl);
+        }
+      });
+    }
   },
   getDate(val) {
     if (!val) {
@@ -543,7 +600,8 @@ const methods = {
         this.combinatorsCount = val;
       }
     }
-    this.rows = val;
+    this.currentPage = 1
+    this.rows = val
   },
   _equals(string, val, type) {
     if (type === 'number') {
@@ -620,26 +678,11 @@ const methods = {
 
 const asyncComputed = {
   // Keeping _***** values to get cache working later on possibly
-  combinators: {
-    get() {
-      return this.getSource('combinators?_limit=-1').then((combinators) => {
-        this._combinators = combinators;
-        this.rows = this._combinators.length
-        if (this.schema) {
-          this.setFormField(this._combinators, 'combinators');
-        }
-        return this._combinators;
-      });
-    },
-    shouldUpdate() {
-      return this.$route.name === 'Combinators';
-    },
-  },
   concepts: {
     get() {
-      // if (this._concepts && this._concepts.length > 0) {
-      //   return this._concepts
-      // }
+      if (this._concepts && this._concepts.length > 0) {
+        return this._concepts
+      }
       return this.getSource('concepts?_limit=-1').then((concepts) => {
         this._concepts = concepts;
         if (this.schema) {

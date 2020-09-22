@@ -6,7 +6,13 @@
         <b-button variant="primary" :to="{name: 'Create Combinator' }"><b-icon-plus></b-icon-plus>Add new Combinator</b-button>
       </template>
       <template v-slot:table>
-        <b-table v-if="combinators" :filter="filter" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="combinators" :fields="displayFields" @filtered="updatePagination">
+        <b-table id="combinators" ref="combinators" v-if="combinators" :busy="combinatorsLoading" :filter="filter" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="combinators" :fields="displayFields" @filtered="updatePagination">
+          <template v-slot:table-busy>
+            <div class="text-center my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
           <template v-slot:cell(description)="row" class="Description">
             <div class="text-wrap" style="width: 300px; max-width: 350px;" v-if="row.item.description">
               {{ shorten(row.item.description) }}
@@ -46,8 +52,29 @@ export default {
     return {
       component: 'Combinators',
       displayFields: ['actions', 'title', 'description', 'citation', 'created_by', 'updated_by'],
+      combinatorsLoading: true,
+      combinators: [],
     }
   },
   mixins: [collectionMixin],
+  watch: {
+    combinators(val) {
+      if (val) {
+        this.combinatorsLoading = ((this.currentPage * this.perPage) - (this.perPage - 1)) > val.length
+      }
+    },
+    $route(to, from) {
+      if (to.name !== 'Combinators') {
+        this.$apollo.queries.allCombinators.skip = true
+      }
+      if (from.name !== 'Combinators') {
+        this.$apollo.queries.allCombinators.skip = false
+        this.$apollo.queries.allCombinators.refetch()
+      }
+    },
+  },
+  mounted() {
+    this.$apollo.queries.allCombinators.skip = false
+  },
 }
 </script>

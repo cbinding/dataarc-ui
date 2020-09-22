@@ -85,7 +85,7 @@ class Combinators {
       const resp = await axios.delete(
         `${process.env.VUE_APP_API_URL}/combinators/${this.id}`
       );
-      return 'combinators';
+      return 'allCombinators';
     } catch (err) {
       console.log(err);
     }
