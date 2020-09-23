@@ -22,7 +22,9 @@
           :key="route.name"
           :to="route.path"
         >
-          <i class="mdi mdi-image-filter" />{{ route.name }}
+          <span v-if="route.name !== 'TopicMap View'">
+            <i class="mdi mdi-image-filter" />{{ route.name }}
+          </span>
         </b-nav-item>
       </b-navbar-nav>
       <!-- Right aligned nav items -->
