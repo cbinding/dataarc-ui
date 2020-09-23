@@ -6,8 +6,8 @@
       :rows="rows"
       :component="component"
       :limits="limits"
-      :current-page="currentPage"
-      :per-page="perPage"
+      :currentPage="currentPage"
+      :perPage="perPage"
       @inputChanged="updateFilter"
       @change="updatePage"
       @deleteConfirmed="deleteItem(itemToDelete, 'Categories')"
@@ -48,12 +48,10 @@
               </b-badge>
             </div>
           </template>
-           <template v-slot:cell(actions)="row" class="actions">
-            <b-button-group>
-              <router-link :to="{name: 'Update Category', params: {id: row.item.id} }">
-                <b-button size="sm" variant="primary" v-text="'Edit'"></b-button>
-              </router-link>
-              <b-button size="sm" variant="primary" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
+          <template v-slot:cell(actions)="row" class="actions">
+            <b-button-group size="sm">
+              <b-button variant="primary" v-text="'Edit'" :to="{name: 'Update Category', params: {id: row.item.id} }"></b-button>
+              <b-button variant="primary" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
             </b-button-group>
           </template>
         </b-table>

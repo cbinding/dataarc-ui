@@ -43,7 +43,12 @@ const routes = [
         path: 'unauthorized',
         name: 'Unauthorized',
         component: () => import('@/views/Pages/Error401.vue')
-      }
+      },
+      {
+        path: 'notice',
+        name: 'Notice',
+        component: () => import('@/views/Pages/Notice.vue')
+      },
     ],
     meta: {
       auth: false,
