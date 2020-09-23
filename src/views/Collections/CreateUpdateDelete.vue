@@ -464,6 +464,15 @@ export default {
         this.model.queries = val.queries
       }
     },
+    currentTopicMap(val) {
+      if (val) {
+        Object.keys(val).forEach(key => {
+          if (key !== '__typename') {
+            this.model[key] = val[key]
+          }
+        })
+      }
+    },
   },
   mounted() {
     this.setData()
@@ -488,14 +497,19 @@ export default {
         }
         this.$apollo.queries.allDatasets.skip = false
       }
-      if (this.$route.name === 'Create Dataset') {
+      else if (this.$route.name === 'Update TopicMap') {
+        this.currentId = this.$route.params.id
+        this.$apollo.queries.topicMap.skip = false
+        this.$apollo.queries.topicMap.refetch()
+      }
+      else if (this.$route.name === 'Create Dataset') {
         this.$apollo.queries.allCategories.skip = false
       }
       if (this.$route.name !== 'Update Combinator') {
         this.loading = false
       }
 
-      if (this.action === 'Update' && this.collectionType !== 'Datasets' && this.collectionType !== 'Combinators') {
+      if (this.action === 'Update' && this.collectionType !== 'Datasets' && this.collectionType !== 'Combinators' && this.collectionType !== 'TopicMaps') {
         this.editUrl = `${pathArray[2]}/${this.$route.params.id}`
         const vm = this
         this.getSingle(this.editUrl).then((value) => {
