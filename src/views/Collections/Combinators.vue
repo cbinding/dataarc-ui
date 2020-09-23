@@ -73,7 +73,7 @@ export default {
   watch: {
     combinators(val) {
       if (val) {
-        this.combinatorsLoading = ((this.currentPage * this.perPage) - (this.perPage - 1)) > val.length
+        this.combinatorsLoading = this.loadingState(val.length)
       }
     },
     $route(to, from) {

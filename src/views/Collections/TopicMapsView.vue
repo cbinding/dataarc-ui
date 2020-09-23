@@ -39,7 +39,7 @@ export default {
   watch: {
     topics(val) {
       if (val) {
-        this.topicsLoading = ((this.currentPage * this.perPage) - (this.perPage - 1)) > val.length
+        this.topicsLoading = this.loadingState(val.length)
       }
     },
   },

@@ -26,6 +26,7 @@
           v-if="categories"
           ref="categories"
           id="categories"
+          :busy="categoriesLoading"
           :per-page="perPage"
           :current-page="currentPage"
           :filter="filter"
@@ -36,6 +37,12 @@
           :fields="displayFields"
           @filtered="updatePagination"
         >
+          <template v-slot:table-busy>
+            <div class="text-center my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
           <template v-slot:head(datasets_count)="row">
             <div class="text-center">
               # Datasets
@@ -77,9 +84,15 @@ export default {
         { key: 'color', sortable: true },
         { key: 'datasets_count', sortable: true },
       ],
+      categoriesLoading: true,
     }
   },
   watch: {
+    categories(val) {
+      if (val) {
+        this.categoriesLoading = this.loadingState(val.length)
+      }
+    },
     $route(to, from) {
       if (to.name !== 'Categories') {
         this.$apollo.queries.allCategories.skip = true

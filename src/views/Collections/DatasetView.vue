@@ -31,7 +31,13 @@
 <!-- Fields View -->
     <table-view-layout :rows.sync="fieldsCount" component="Fields" :limits.sync="limits" :currentPage.sync="currentFieldsPage" @inputChanged="updateFilter" :perPage.sync="currentFieldsLimit" @change="updatePage" @limitUpdated="updateLimit">
       <template v-slot:table>
-        <b-table v-if="currentDataset" :filter="filterFields" :per-page="currentFieldsLimit" :current-page="currentFieldsPage" responsive table-variant="light" head-variant="light" :items="currentDataset.fields" :fields="fieldsList" @filtered="updatePagination">
+        <b-table v-if="currentDataset" :busy="fieldsLoading" :filter="filterFields" :per-page="currentFieldsLimit" :current-page="currentFieldsPage" responsive table-variant="light" head-variant="light" :items="currentDataset.fields" :fields="fieldsList" @filtered="updatePagination">
+          <template v-slot:table-busy>
+            <div class="text-center my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
           <template v-slot:head(title)="data">
             Display Name (Title)
           </template>
@@ -79,7 +85,13 @@
 <!-- Combinators View -->
     <table-view-layout :rows.sync="combinatorsCount" component="Combinators" :limits.sync="limits" :currentPage.sync="currentCombinatorsPage" :perPage.sync="currentCombinatorsLimit" @inputChanged="updateFilter" @change="updatePage" @limitUpdated="updateLimit">
       <template v-slot:table>
-        <b-table v-if="currentDataset" :filter="filterCombinators" :per-page="currentCombinatorsLimit" :current-page="currentCombinatorsPage" responsive table-variant="light" head-variant="light" :items="currentDataset.combinators" :fields="combinatorsList" @filtered="updatePagination">
+        <b-table v-if="currentDataset" :busy="combinatorsLoading" :filter="filterCombinators" :per-page="currentCombinatorsLimit" :current-page="currentCombinatorsPage" responsive table-variant="light" head-variant="light" :items="currentDataset.combinators" :fields="combinatorsList" @filtered="updatePagination">
+          <template v-slot:table-busy>
+            <div class="text-center my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
           <template v-slot:cell(title)="row" class="Title">
             <div class="text-wrap" style="width: 200px; max-width: 200px;" v-if="row.item.title">
               {{ row.item.title }}
@@ -251,7 +263,7 @@ export default {
             visible: true,
             selectOptions: {
               value: 'id',
-              name: 'name',
+              name: 'title',
             },
           },
           {
@@ -267,6 +279,8 @@ export default {
         validateAfterLoad: true,
         validateAfterChanged: true,
       },
+      fieldsLoading: true,
+      combinatorsLoading: true,
     }
   },
   methods: {
@@ -307,6 +321,8 @@ export default {
         }
         this.model.type = 'Datasets'
         this.model.action = 'Update'
+        this.fieldsLoading = this.loadingState(val.fields.length, 'Fields')
+        this.combinatorsLoading = this.loadingState(val.combinators.length, 'Combinators')
       }
     },
     categories(val) {

@@ -629,15 +629,22 @@ const methods = {
       });
     }
   },
+  loadingState(length, component) {
+    if (length === 0) {
+      return false
+    }
+    if (component) {
+      return ((this[`current${component}Page`] * this[`current${component}Limit`]) - (this[`current${component}Limit`] - 1)) > length
+    }
+    return ((this.currentPage * this.perPage) - (this.perPage - 1)) > length
+  },
   updatePage(val, component) {
     if (this.$route.name === 'Dataset View') {
       this[`current${component}Page`] = val;
     } else {
       this.currentPage = val;
-      if (component === 'Combinators' || component === 'TopicMaps') {
-        let array = this.lcFirst(component)
-        this[`${array}Loading`] = (this.currentPage * this.perPage) - (this.perPage - 1) > this[array].length
-      }
+      let array = this.lcFirst(component)
+      this[`${array}Loading`] = (this.currentPage * this.perPage) - (this.perPage - 1) > this[array].length
     }
   },
   updateLimit(val, component) {

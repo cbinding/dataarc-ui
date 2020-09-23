@@ -26,6 +26,7 @@
           v-if="topicMaps"
           ref="topicMaps"
           id="topicMaps"
+          :busy="topicMapsLoading"
           :per-page="perPage"
           :current-page="currentPage"
           :filter="filter"
@@ -36,6 +37,12 @@
           :fields="displayFields"
           @filtered="updatePagination"
         >
+          <template v-slot:table-busy>
+            <div class="text-center my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
           <template v-slot:cell(title)="row">
             <div class="text-wrap" style="width: 200px; max-width: 200px;" v-if="row.item.title">
               {{ row.item.title }}
@@ -84,12 +91,14 @@ export default {
         { key: 'url', sortable: true },
         { key: 'topics_count', sortable: true },
       ],
+      topicMapsLoading: true,
     }
   },
   watch: {
     topicMaps(val) {
       if (val) {
         this.$emit('bv::refresh::table', 'topicMaps')
+        this.topicMapsLoading = this.loadingState(val.length)
       }
     },
     $route(to, from) {
