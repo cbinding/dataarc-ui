@@ -67,7 +67,14 @@ export default {
   data() {
     return {
       component: 'Users',
-      displayFields: ['actions', 'username', 'email', 'confirmed', 'blocked', 'role'],
+      displayFields: [
+        { key: 'actions', sortable: false },
+        { key: 'username', sortable: true },
+        { key: 'email', sortable: true },
+        { key: 'confirmed', sortable: true },
+        { key: 'blocked', sortable: true },
+        { key: 'role', sortable: true },
+      ],
       total: '',
       dismissSecs: 3,
       dismissCountDown: 0,

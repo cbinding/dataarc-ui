@@ -49,7 +49,12 @@ export default {
   data() {
     return {
       component: 'MapLayers',
-      displayFields: ['actions', 'name', 'title', 'description'],
+      displayFields: [
+        { key: 'actions', sortable: false },
+        { key: 'name', sortable: true },
+        { key: 'title', sortable: true },
+        { key: 'description', sortable: true },
+      ],
     }
   },
   mixins: [collectionMixin],

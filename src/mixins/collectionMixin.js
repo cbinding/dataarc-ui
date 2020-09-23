@@ -34,6 +34,10 @@ const apollo = {
           citation
           url
           operator
+          dataset {
+            id
+            title
+          }
           state
           state_msg
           state_at
@@ -84,9 +88,7 @@ const apollo = {
           title
           description
           color
-          datasets {
-            title
-          }
+          datasets_count
         }
       }
     `,

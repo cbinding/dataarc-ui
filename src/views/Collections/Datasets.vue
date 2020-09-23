@@ -71,6 +71,9 @@
               {{ row.item.state_msg ? row.item.state_msg : '' }}
             </div>
           </template>
+          <template v-slot:head(state_at)="row">
+            <span>Last Updated</span>
+          </template>
           <template v-slot:cell(state_at)="row" class="state_at">
             <div>
               {{ getDate(row.item.state_at) }}
@@ -102,17 +105,17 @@ export default {
     return {
       component: 'Datasets',
       displayFields: [
-        'actions',
-        'title',
-        'description',
-        'citation',
-        'fields_count',
-        'features_count',
-        'combinators_count',
-        'state',
-        'state_msg',
-        'state_at',
-        'source',
+        { key: 'actions', sortable: false },
+        { key: 'title', sortable: true },
+        { key: 'description', sortable: true },
+        { key: 'citation', sortable: true },
+        { key: 'fields_count', sortable: true },
+        { key: 'features_count', sortable: true },
+        { key: 'combinators_count', sortable: true },
+        { key: 'state', sortable: true },
+        { key: 'state_msg', sortable: true },
+        { key: 'state_at', sortable: true },
+        { key: 'source', sortable: true },
       ],
       pending: 'warning',
       processing: 'info',

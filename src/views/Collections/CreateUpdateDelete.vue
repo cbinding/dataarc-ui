@@ -267,8 +267,7 @@ export default {
             },
           },
           {
-            type: 'input',
-            inputType: 'text',
+            type: 'wrap',
             label: 'Description',
             model: 'description',
             id: 'description',
@@ -276,20 +275,21 @@ export default {
             visible: function(model) {
               return (model.type === 'Combinators' && model.dataset) || (model.type !== 'Users' && model.type !== 'Combinators' )
             },
+            required: false,
             autocomplete: 'off',
           },
           {
-            type: 'input',
-            inputType: 'text',
+            type: 'wrap',
             label: 'Citation',
             model: 'citation',
+            visible: true,
             visible: function(model) {
               return (model.type === 'Combinators' && model.dataset) ||
               model.type === 'Datasets' ||
               model.type === 'TemporalCoverages' ||
               model.type === 'TopicMaps'
             },
-            autocomplete: 'off',
+            autocomplete: 'off'
           },
           {
             type: 'input',
