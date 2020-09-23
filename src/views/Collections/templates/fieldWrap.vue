@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-form>
-      <b-form-textarea v-model="model.description" rows="4" size="lg" no-auto-shrink></b-form-textarea>
+      <b-form-textarea v-model="model[schema.model]" rows="4" size="lg" no-auto-shrink></b-form-textarea>
     </b-form>
   </div>
 </template>
