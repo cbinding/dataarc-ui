@@ -46,11 +46,9 @@
           </template>
 
           <template v-slot:cell(actions)="row" class="actions">
-            <b-button-group>
-              <b-button size="sm" variant="primary" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation />
-            </b-button-group>
-            <b-button-group>
-              <b-button size="sm" variant="primary" v-text="'Save'" @click="updateUser(row.item)"></b-button>
+            <b-button-group size="sm">
+              <b-button variant="primary" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation />
+              <b-button variant="primary" v-text="'Save'" @click="updateUser(row.item)"></b-button>
             </b-button-group>
           </template>
         </b-table>

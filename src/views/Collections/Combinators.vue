@@ -1,7 +1,7 @@
 <template>
   <b-container fluid>
     <router-view/>
-    <table-view-layout v-if="$route.name === 'Combinators'" :rows.sync="rows" :component="component" :limits="limits" :currentPage.sync="currentPage" :perPage.sync="perPage" @change="updatePage" @inputChanged="updateFilter" @deleteConfirmed="deleteItem(itemToDelete, 'Combinators')" @limitUpdated="updateLimit">
+    <table-view-layout v-if="$route.name === 'Combinators'" :rows="rows" :component="component" :limits="limits" :currentPage="currentPage" :perPage="perPage" @change="updatePage" @inputChanged="updateFilter" @deleteConfirmed="deleteItem(itemToDelete, 'Combinators')" @limitUpdated="updateLimit">
       <template v-slot:button>
         <b-button variant="primary" :to="{name: 'Create Combinator' }"><b-icon-plus></b-icon-plus>Add new Combinator</b-button>
       </template>
