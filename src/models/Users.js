@@ -2,8 +2,12 @@ class Users {
   constructor(data) {
     this.id = data.id;
     this.username = data.username;
+    this.firstName = data.firstName;
+    this.lastName = data.lastName;
     this.email = data.email;
-    this.password = data.password;
+    if (data.password) {
+      this.password = data.password;
+    }
     this.provider = data.provider;
     this.confirmed = data.confirmed;
     this.blocked = data.blocked;

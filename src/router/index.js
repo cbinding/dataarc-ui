@@ -65,7 +65,12 @@ const routes = [
         path: 'home',
         name: 'blank',
         component: defaultLayout
-      }
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('@/views/Pages/Profile.vue')
+      },
     ],
     meta: {
       auth: true,

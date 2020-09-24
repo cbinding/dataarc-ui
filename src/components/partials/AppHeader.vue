@@ -42,7 +42,7 @@
             <span>{{ user ? user.email : null }}</span>
           </template>
           <b-dropdown-item
-            href="#"
+            :to="{name: 'Profile' }"
             class="preview-item flex-wrap"
           >
             Profile
