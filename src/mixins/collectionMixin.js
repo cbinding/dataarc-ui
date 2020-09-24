@@ -8,6 +8,7 @@ import {
   DatasetFields,
   TemporalCoverages,
   TopicMaps,
+  Concepts,
 } from '../models';
 import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue';
 
@@ -20,6 +21,7 @@ const Models = {
   DatasetFields,
   TemporalCoverages,
   TopicMaps,
+  Concepts,
 };
 
 const apollo = {
@@ -78,6 +80,104 @@ const apollo = {
         }
         if (this.combinators.length === this.rows) {
           this.$apollo.queries.allCombinators.skip = true
+        }
+      }
+    },
+  },
+  allConcepts: {
+    query: gql`
+      query concepts($start: Int, $limit: Int) {
+        concepts(start: $start, limit: $limit) {
+          id
+          title
+          description
+          citation
+          url
+          group
+          combinators_count
+          topics_count
+          created_by {
+            id
+            username
+          }
+          updated_by {
+            id
+            username
+          }
+        }
+        countConcepts
+      }
+    `,
+    skip: true,
+    ssr: false,
+    variables() {
+      // Use vue reactive properties here
+      return {
+        limit: this && this.concepts && this.concepts.length === 0 && this.currentPage === 1 ? 20 : 100,
+        start: this && this.concepts && this.concepts.length === 0 && this.currentPage === 1 ? 0 : this.concepts.length,
+      };
+    },
+    update(data) {
+      return data.allConcepts;
+    },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        if (this.concepts.length === 0) {
+          this.concepts = data.concepts
+        }
+        else {
+          this.concepts = _.unionWith(this.concepts, data.concepts, _.isEqual)
+        }
+        if (this.rows !== data.countConcepts) {
+          this.rows = data.countConcepts
+        }
+        if (this.concepts.length === this.rows) {
+          this.$apollo.queries.allConcepts.skip = true
+        }
+      }
+    },
+  },
+  allTopics: {
+    query: gql`
+      query topics($start: Int, $limit: Int) {
+        topics(start: $start, limit: $limit) {
+          id
+          name
+          title
+          topic_map {
+            id
+            name
+            title
+          }
+        }
+        countTopics
+      }
+    `,
+    skip: true,
+    ssr: false,
+    variables() {
+      // Use vue reactive properties here
+      return {
+        limit: 100,
+        start: this && this.topics && this.topics.length === 0 && this.currentPage === 1 ? 0 : this.topics.length,
+      };
+    },
+    update(data) {
+      return data.allTopics;
+    },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        if (this.topics.length === 0) {
+          this.topics = data.topics
+        }
+        else {
+          this.topics = _.unionWith(this.topics, data.topics, _.isEqual)
+        }
+        if (this.rows !== data.countTopics) {
+          this.rows = data.countTopics
+        }
+        if (this.topics.length === this.rows) {
+          this.$apollo.queries.allTopics.skip = true
         }
       }
     },
@@ -783,28 +883,6 @@ const methods = {
 };
 
 const asyncComputed = {
-  // Keeping _***** values to get cache working later on possibly
-  concepts: {
-    get() {
-      if (this._concepts && this._concepts.length > 0) {
-        return this._concepts
-      }
-      return this.getSource('concepts?_limit=-1').then((concepts) => {
-        this._concepts = concepts;
-        if (this.schema) {
-          this.setFormField(this._concepts, 'concepts');
-        }
-        return this._concepts;
-      });
-    },
-    shouldUpdate() {
-      return (
-        this.collectionType === 'Combinators' ||
-        this.collectionType === 'Concepts' ||
-        this.component === 'Concepts'
-      );
-    },
-  },
   roles: {
     get() {
       if (this._roles && this._roles.length > 0) {
@@ -836,8 +914,10 @@ const data = function () {
     features: [],
     mapLayers: [],
     categories: [],
+    concepts: [],
     temporalCoverages: [],
     topicMaps: [],
+    topics: [],
     currentDataset: {},
     currentTopicMap: {},
     currentCombinator: null,

@@ -9,7 +9,13 @@ class Combinators {
     this.operator = data.operator;
     this.dataset = data.dataset;
     this.queries = data.queries;
-    this.concepts = data.concepts;
+    if (data.concepts) {
+      let temp = []
+      data.concepts.forEach((concept) => {
+        temp.push(concept.id)
+      })
+      this.concepts = temp;
+    }
     this.createUrl = `${process.env.VUE_APP_API_URL}/combinators`;
     this.editUrl = `${process.env.VUE_APP_API_URL}/combinators/${this.id}`;
     this.routeUrl = '/contributor/combinators';
