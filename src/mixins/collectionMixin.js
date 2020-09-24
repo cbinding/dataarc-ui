@@ -718,7 +718,7 @@ const methods = {
       });
     } else {
       dataModel._update().then((value) => {
-        if (val.type === 'DatasetFields' || val.type === 'Users') {
+        if (val.type === 'DatasetFields' || (val.type === 'Users' && this.$route.name === 'View Users')) {
           this.showAlert()
           return;
         } if (val.type === 'Combinators') {

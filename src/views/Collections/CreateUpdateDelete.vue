@@ -192,36 +192,6 @@ export default {
           {
             type: 'input',
             inputType: 'text',
-            label: 'Username*',
-            model: 'username',
-            visible: function(model) {
-              return model.type === 'Users'
-            },
-            required: true,
-          },
-          {
-            type: 'input',
-            inputType: 'email',
-            label: 'Email*',
-            model: 'email',
-            visible: function(model) {
-              return model.type === 'Users'
-            },
-            required: true,
-          },
-          {
-            type: 'input',
-            inputType: 'password',
-            label: 'Password*',
-            model: 'password',
-            visible: function(model) {
-              return model.type === 'Users'
-            },
-            required: true,
-          },
-          {
-            type: 'input',
-            inputType: 'text',
             label: 'Provider',
             model: 'provider',
             visible: function(model) {
