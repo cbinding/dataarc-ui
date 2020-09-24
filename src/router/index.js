@@ -239,6 +239,28 @@ const routes = [
         ]
       },
       {
+        path: 'concepts',
+        name: 'Concepts',
+        component: () => import('@/views/Collections/Concepts.vue'),
+        props: true,
+        children: [
+          {
+            path: 'create',
+            name: 'Create Concept',
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true
+          },
+          {
+            path: 'update/:id',
+            name: 'Update Concept',
+            component: () =>
+              import('@/views/Collections/CreateUpdateDelete.vue'),
+            props: true
+          },
+        ]
+      },
+      {
         path: 'topic-map/:id',
         name: 'TopicMap View',
         component: () => import('@/views/Collections/TopicMapsView.vue'),

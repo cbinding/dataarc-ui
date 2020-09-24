@@ -127,6 +127,7 @@ export default {
         datasets: [],
         events: [],
         combinators: [],
+        concepts: [],
         queries: [],
         dataset_templates: [],
         operator: 'and',
@@ -419,10 +420,19 @@ export default {
   watch: {
     categories(val) {
       this.schema.fields.filter((field) => {
-        if(field.model && field.model === 'category') {
+        if (field.model && field.model === 'category') {
           field.values = val
         }
       })
+    },
+    concepts(val) {
+      if (val) {
+        this.schema.fields.filter((field) => {
+          if (field.model && field.model === 'concepts') {
+            field.values = val
+          }
+        })
+      }
     },
     datasets(val) {
       if (val && val.length > 0) {
@@ -496,6 +506,7 @@ export default {
           this.$apollo.queries.combinator.refetch()
         }
         this.$apollo.queries.allDatasets.skip = false
+        this.$apollo.queries.allConcepts.skip = false
       }
       else if (this.$route.name === 'Update TopicMap') {
         this.currentId = this.$route.params.id

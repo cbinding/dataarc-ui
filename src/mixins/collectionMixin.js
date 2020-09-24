@@ -82,6 +82,59 @@ const apollo = {
       }
     },
   },
+  allConcepts: {
+    query: gql`
+      query concepts($start: Int, $limit: Int) {
+        concepts(start: $start, limit: $limit) {
+          id
+          title
+          description
+          citation
+          url
+          group
+          combinators_count
+          topics_count
+          created_by {
+            id
+            username
+          }
+          updated_by {
+            id
+            username
+          }
+        }
+        countConcepts
+      }
+    `,
+    skip: true,
+    ssr: false,
+    variables() {
+      // Use vue reactive properties here
+      return {
+        limit: this && this.concepts && this.concepts.length === 0 && this.currentPage === 1 ? 20 : 100,
+        start: this && this.concepts && this.concepts.length === 0 && this.currentPage === 1 ? 0 : this.concepts.length,
+      };
+    },
+    update(data) {
+      return data.allConcepts;
+    },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        if (this.concepts.length === 0) {
+          this.concepts = data.concepts
+        }
+        else {
+          this.concepts = _.unionWith(this.concepts, data.concepts, _.isEqual)
+        }
+        if (this.rows !== data.countConcepts) {
+          this.rows = data.countConcepts
+        }
+        if (this.concepts.length === this.rows) {
+          this.$apollo.queries.allConcepts.skip = true
+        }
+      }
+    },
+  },
   allCategories: {
     query: gql`
       query {
@@ -783,28 +836,6 @@ const methods = {
 };
 
 const asyncComputed = {
-  // Keeping _***** values to get cache working later on possibly
-  concepts: {
-    get() {
-      if (this._concepts && this._concepts.length > 0) {
-        return this._concepts
-      }
-      return this.getSource('concepts?_limit=-1').then((concepts) => {
-        this._concepts = concepts;
-        if (this.schema) {
-          this.setFormField(this._concepts, 'concepts');
-        }
-        return this._concepts;
-      });
-    },
-    shouldUpdate() {
-      return (
-        this.collectionType === 'Combinators' ||
-        this.collectionType === 'Concepts' ||
-        this.component === 'Concepts'
-      );
-    },
-  },
   roles: {
     get() {
       if (this._roles && this._roles.length > 0) {
@@ -836,6 +867,7 @@ const data = function () {
     features: [],
     mapLayers: [],
     categories: [],
+    concepts: [],
     temporalCoverages: [],
     topicMaps: [],
     currentDataset: {},
