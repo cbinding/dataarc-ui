@@ -236,15 +236,23 @@ const routes = [
               import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true
           },
+        ]
+      },
+      {
+        path: 'topic-map/:id',
+        name: 'TopicMap View',
+        component: () => import('@/views/Collections/TopicMapsView.vue'),
+        props: true,
+        children: [
           {
-            path: 'update/:id',
+            path: '',
             name: 'Update TopicMap',
             component: () =>
               import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true
-          }
-        ]
-      }
+            props: true,
+          },
+        ],
+      },
     ],
     meta: {
       auth: true,

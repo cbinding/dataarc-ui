@@ -21,7 +21,7 @@
       </div>
       <div size="lg" class="justify-content-center">
         <b-input-group>
-          <b-input v-model="filters" @update="$emit('inputChanged', filters, component)" placeholder="Filter Columns"></b-input>
+          <b-input v-model="filters" @update="$emit('inputChanged', filters, component)" placeholder="Filter by Keyword"></b-input>
           <b-button v-if="filters" @click="clear">Clear<b-icon-x></b-icon-x></b-button>
         </b-input-group>
       </div>

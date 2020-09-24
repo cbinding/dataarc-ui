@@ -20,6 +20,9 @@
         <b-table
           ref="users"
           id="users"
+          :busy="usersLoading"
+          :per-page="perPage"
+          :current-page="currentPage"
           table-variant="light"
           head-variant="light"
           :filter="filter"
@@ -27,6 +30,12 @@
           :fields="displayFields"
           @filtered="updatePagination"
         >
+          <template v-slot:table-busy>
+            <div class="text-center my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
           <template v-slot:cell(confirmed)="row">
             <b-form-checkbox v-model="row.item.confirmed" @change="row.item.confirmed != row.item.confirmed" />
           </template>
@@ -76,6 +85,7 @@ export default {
       total: '',
       dismissSecs: 3,
       dismissCountDown: 0,
+      usersLoading: true,
     }
   },
   computed: {
@@ -92,6 +102,7 @@ export default {
     users(val) {
       if (val.items) {
         this.total = val.items.length
+        this.usersLoading = this.loadingState(this.total)
         this.rows = this.total
       }
     },

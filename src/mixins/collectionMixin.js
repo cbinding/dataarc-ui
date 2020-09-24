@@ -58,7 +58,7 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
-        limit: this && this.combinators.length === 0 && this.currentPage === 1 ? 20 : 50,
+        limit: this && this.combinators.length === 0 && this.currentPage === 1 ? 20 : 60,
         start: this && this.combinators.length === 0 && this.currentPage === 1 ? 0 : this.combinators.length,
       };
     },
@@ -75,6 +75,9 @@ const apollo = {
         }
         if (this.rows !== data.countCombinators) {
           this.rows = data.countCombinators
+        }
+        if (this.combinators.length === this.rows) {
+          this.$apollo.queries.allCombinators.skip = true
         }
       }
     },
@@ -310,6 +313,45 @@ const apollo = {
       console.error("We've got an error!", error);
     },
   },
+  topicMap: {
+    query: gql`
+      query topicMaps($id: ID!) {
+        topicMaps(where: {id: $id}) {
+          id
+          title
+          description
+          citation
+          url
+        }
+      }
+    `,
+    // Reactive parameters
+    variables() {
+      // Use vue reactive properties here
+      return {
+        id: this.currentId,
+      };
+    },
+    skip: true,
+    ssr: false,
+    // Variables: deep object watch
+    deep: false,
+    update(data) {
+      // The returned value will update
+      // the vue property 'currentDataset'
+      return data.id;
+    },
+    // Optional result hook
+    result({ data, loading, networkStatus }) {
+      if (data && data.topicMaps) {
+        [this.currentTopicMap] = data.topicMaps;
+      }
+    },
+    // Error handling
+    error(error) {
+      console.error("We've got an error!", error);
+    },
+  },
   combinator: {
     query: gql`
       query combinators($id: ID!) {
@@ -477,6 +519,56 @@ const apollo = {
       console.error("We've got an error!", error);
     },
   },
+  getTopics: {
+    query: gql`
+      query topics($id: ID!, $start: Int, $limit: Int){
+        topics(where: {topic_map: $id}, start: $start, limit: $limit) {
+          id
+          title
+          description
+          citation
+        }
+        countTopics(where: {topic_map: $id})
+      }
+    `,
+    // Reactive parameters
+    variables() {
+      // Use vue reactive properties here
+      return {
+        id: this.currentId,
+        limit: this && this.topics.length === 0 && this.currentPage === 1 ? 20 : 100,
+        start: this && this.topics.length === 0 && this.currentPage === 1 ? 0 : this.topics.length,
+      };
+    },
+    skip: true,
+    ssr: false,
+    // Variables: deep object watch
+    deep: false,
+    update(data) {
+      return data.id;
+    },
+    // Optional result hook
+    result({ data, loading, networkStatus }) {
+      if (data && data.topics) {
+        if (this.topics.length === 0) {
+          this.topics = data.topics
+        }
+        else {
+          this.topics = _.unionWith(this.topics, data.topics, _.isEqual)
+        }
+        if (this.rows !== data.countTopics) {
+          this.rows = data.countTopics
+        }
+        if (this.topics.length === this.rows) {
+          this.$apollo.queries.getTopics.skip = true
+        }
+      }
+    },
+    // Error handling
+    error(error) {
+      console.error("We've got an error!", error);
+    },
+  },
 };
 
 const methods = {
@@ -537,14 +629,22 @@ const methods = {
       });
     }
   },
+  loadingState(length, component) {
+    if (length === 0) {
+      return false
+    }
+    if (component) {
+      return ((this[`current${component}Page`] * this[`current${component}Limit`]) - (this[`current${component}Limit`] - 1)) > length
+    }
+    return ((this.currentPage * this.perPage) - (this.perPage - 1)) > length
+  },
   updatePage(val, component) {
     if (this.$route.name === 'Dataset View') {
       this[`current${component}Page`] = val;
     } else {
       this.currentPage = val;
-      if (this.$route.name === 'Combinators') {
-        this.combinatorsLoading = (this.currentPage * this.perPage) - (this.perPage - 1) > this.combinators.length
-      }
+      let array = this.lcFirst(component)
+      this[`${array}Loading`] = (this.currentPage * this.perPage) - (this.perPage - 1) > this[array].length
     }
   },
   updateLimit(val, component) {
@@ -598,11 +698,15 @@ const methods = {
     if (this.$route.name === 'Dataset View') {
       if (array[0].__typename === 'DatasetField') {
         this.fieldsCount = val;
+        this.currentFieldsPage = 1
       } else {
         this.combinatorsCount = val;
+        this.currentCombinatorsPage = 1
       }
     }
-    this.currentPage = 1
+    else {
+      this.currentPage = 1
+    }
     this.rows = val
   },
   _equals(string, val, type) {
@@ -735,6 +839,7 @@ const data = function () {
     temporalCoverages: [],
     topicMaps: [],
     currentDataset: {},
+    currentTopicMap: {},
     currentCombinator: null,
     currentFieldsPage: 1,
     currentCombinatorsPage: 1,

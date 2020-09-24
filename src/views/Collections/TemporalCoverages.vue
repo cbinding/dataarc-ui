@@ -26,6 +26,7 @@
           v-if="temporalCoverages"
           ref="temporalCoverages"
           id="temporalCoverages"
+          :busy="temporalCoveragesLoading"
           :per-page="perPage"
           :current-page="currentPage"
           :filter="filter"
@@ -36,6 +37,12 @@
           :fields="displayFields"
           @filtered="updatePagination"
         >
+          <template v-slot:table-busy>
+            <div class="text-center my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
           <template v-slot:cell(title)="row" class="Title">
             <div class="text-wrap" style="width: 200px; max-width: 200px;" v-if="row.item.title">
               {{ row.item.title }}
@@ -84,9 +91,15 @@ export default {
         { key: 'start_date', sortable: true },
         { key: 'end_date', sortable: true },
       ],
+      temporalCoveragesLoading: true,
     }
   },
   watch: {
+    temporalCoverages(val) {
+      if (val) {
+        this.temporalCoveragesLoading = this.loadingState(val.length)
+      }
+    },
     $route(to, from) {
       if (to.name !== 'TemporalCoverages') {
         this.$apollo.queries.allTemporalCoverages.skip = true

@@ -21,6 +21,7 @@
           v-if="mapLayers"
           ref="mapLayers"
           id="mapLayers"
+          :busy="mapLayersLoading"
           responsive
           :filter="filter"
           :per-page="perPage"
@@ -31,6 +32,12 @@
           :fields="displayFields"
           @filtered="updatePagination"
         >
+          <template v-slot:table-busy>
+            <div class="text-center my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group size="sm">
               <b-button :to="{ name: 'Update MapLayer', params: { id: row.item.id } }" variant="primary" v-text="'Edit'"></b-button>
@@ -55,6 +62,7 @@ export default {
         { key: 'title', sortable: true },
         { key: 'description', sortable: true },
       ],
+      mapLayersLoading: true,
     }
   },
   mixins: [collectionMixin],
@@ -62,6 +70,11 @@ export default {
     this.$apollo.queries.allMapLayers.skip = false
   },
   watch: {
+    mapLayers(val) {
+      if (val) {
+        this.mapLayersLoading = this.loadingState(val.length)
+      }
+    },
     $route(to, from) {
       if (to.name !== 'MapLayers') {
         this.$apollo.queries.allMapLayers.skip = true

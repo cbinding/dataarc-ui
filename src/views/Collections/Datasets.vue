@@ -13,12 +13,19 @@
           :filter="filter"
           :per-page="perPage"
           :current-page="currentPage"
+          :busy="datasetsLoading"
           responsive
           table-variant="light"
           head-variant="light"
           :items="datasets"
           :fields="displayFields"
           @filtered="updatePagination">
+          <template v-slot:table-busy>
+            <div class="text-center my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
           <template v-slot:cell(title)="row" class="Title">
             <div class="text-wrap" style="width: 200px; max-width: 200px;" v-if="row.item.title">
               {{ row.item.title }}
@@ -125,6 +132,7 @@ export default {
       fieldsCount: [],
       featuresCount: [],
       combinatorsCount: [],
+      datasetsLoading: true,
     }
   },
   created() {
@@ -149,6 +157,11 @@ export default {
   },
   mixins: [collectionMixin],
   watch: {
+    datasets(val) {
+      if (val) {
+        this.datasetsLoading = this.loadingState(val.length)
+      }
+    },
     $route(to, from) {
       if (to.name !== 'Datasets') {
         this.$apollo.queries.allDatasets.skip = true
