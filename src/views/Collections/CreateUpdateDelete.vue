@@ -288,7 +288,8 @@ export default {
               return (model.type === 'Combinators' && model.dataset) ||
               model.type === 'Datasets' ||
               model.type === 'TemporalCoverages' ||
-              model.type === 'TopicMaps'
+              model.type === 'TopicMaps' ||
+              model.type === 'Concepts'
             },
             autocomplete: 'off'
           },
@@ -300,7 +301,30 @@ export default {
             visible: function(model) {
               return model.type === 'Datasets' ||
               model.type === 'TemporalCoverages' ||
-              model.type === 'TopicMaps'
+              model.type === 'TopicMaps' ||
+              model.type === 'Concepts'
+            },
+          },
+          {
+            type: 'select',
+            values: [
+              {type: 'Activities', value: 'activities'},
+              {type: 'Actors', value: 'actors'},
+              {type: 'Community Places', value: 'community_places'},
+              {type: 'Events', value: 'events'},
+              {type: 'Ideas', value: 'ideas'},
+              {type: 'Imaginary Landscape', value: 'imaginary_landscape'},
+              {type: 'Physical Landscape', value: 'physical_landscape'},
+              {type: 'Physical Processes', value: 'physical_processes'},
+              ],
+            label: 'Group',
+            model: 'group',
+            visible: function(model) {
+              return model.type === 'Concepts'
+            },
+            selectOptions: {
+              value: 'value',
+              name: 'type',
             },
           },
           {
@@ -376,6 +400,35 @@ export default {
             },
           },
           {
+            type: 'vueMultiSelect',
+            multiSelect: true,
+            label: 'Topics',
+            model: 'topics',
+            values: this.topics ? this.topics : ['1', '2'],
+            visible: function(model) {
+              return model.type === 'Concepts'
+            },
+            selectOptions: {
+              key: 'title',
+              label: 'title',
+              customLabel: function({topic_map, name}) {
+                return `${topic_map ? topic_map.name : 'null'}.${name}`
+              },
+              multiple: true,
+              searchable: true,
+              clearOnSelect: true,
+              hideSelected: true,
+              trackBy: 'id',
+              onNewTag(newTag, id, options, value) {
+                options.push(newTag)
+                value.push(newTag)
+              },
+            },
+            onChanged(model, newVal, oldVal, field) {
+              model = newVal
+            },
+          },
+          {
             type: 'submit',
             buttonText: 'Submit',
             inputType: 'submit',
@@ -429,6 +482,15 @@ export default {
       if (val) {
         this.schema.fields.filter((field) => {
           if (field.model && field.model === 'concepts') {
+            field.values = val
+          }
+        })
+      }
+    },
+    topics(val) {
+      if (val) {
+        this.schema.fields.filter((field) => {
+          if (field.model && field.model === 'topics') {
             field.values = val
           }
         })
@@ -515,6 +577,9 @@ export default {
       }
       else if (this.$route.name === 'Create Dataset') {
         this.$apollo.queries.allCategories.skip = false
+      }
+      else if (this.$route.name === 'Create Concept' || this.$route.name === 'Update Concept') {
+        this.$apollo.queries.allTopics.skip = false
       }
       if (this.$route.name !== 'Update Combinator') {
         this.loading = false

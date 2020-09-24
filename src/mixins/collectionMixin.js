@@ -8,6 +8,7 @@ import {
   DatasetFields,
   TemporalCoverages,
   TopicMaps,
+  Concepts,
 } from '../models';
 import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue';
 
@@ -20,6 +21,7 @@ const Models = {
   DatasetFields,
   TemporalCoverages,
   TopicMaps,
+  Concepts,
 };
 
 const apollo = {
@@ -131,6 +133,51 @@ const apollo = {
         }
         if (this.concepts.length === this.rows) {
           this.$apollo.queries.allConcepts.skip = true
+        }
+      }
+    },
+  },
+  allTopics: {
+    query: gql`
+      query topics($start: Int, $limit: Int) {
+        topics(start: $start, limit: $limit) {
+          id
+          name
+          title
+          topic_map {
+            id
+            name
+            title
+          }
+        }
+        countTopics
+      }
+    `,
+    skip: true,
+    ssr: false,
+    variables() {
+      // Use vue reactive properties here
+      return {
+        limit: 100,
+        start: this && this.topics && this.topics.length === 0 && this.currentPage === 1 ? 0 : this.topics.length,
+      };
+    },
+    update(data) {
+      return data.allTopics;
+    },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        if (this.topics.length === 0) {
+          this.topics = data.topics
+        }
+        else {
+          this.topics = _.unionWith(this.topics, data.topics, _.isEqual)
+        }
+        if (this.rows !== data.countTopics) {
+          this.rows = data.countTopics
+        }
+        if (this.topics.length === this.rows) {
+          this.$apollo.queries.allTopics.skip = true
         }
       }
     },
@@ -870,6 +917,7 @@ const data = function () {
     concepts: [],
     temporalCoverages: [],
     topicMaps: [],
+    topics: [],
     currentDataset: {},
     currentTopicMap: {},
     currentCombinator: null,
