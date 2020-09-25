@@ -94,6 +94,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 .app-header {
 }
 </style>

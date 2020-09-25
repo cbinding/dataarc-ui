@@ -2,7 +2,10 @@
 <template>
   <div>
     <b-row>
-      <b-overlay :show="loading" no-wrap></b-overlay>
+      <b-overlay
+        :show="loading"
+        no-wrap
+      />
       <b-col :sm="model && model.type === 'Combinators' ? '7' : '12'">
         <b-container>
           <div class="panel panel-default">
@@ -29,47 +32,94 @@
           </div>
         </b-container>
       </b-col>
-      <b-col sm="5" v-if="model && model.type === 'Combinators'">
-        <div class="panel panel-default" v-if="currentDataset.id">
+      <b-col
+        v-if="model && model.type === 'Combinators'"
+        sm="5"
+      >
+        <div
+          v-if="currentDataset.id"
+          class="panel panel-default"
+        >
           <div class="panel-heading">
             Query Results: {{ filteredFeatures.matched_count ? filteredFeatures.matched_count : 0 }} out of {{ filteredFeatures.total_count ? filteredFeatures.total_count : currentDataset.features_count }} records
             <br>
             <span v-if="filters && filteredFeatures.matched_count">
-              Filtered features: {{rows}} out of {{filteredFeatures.matched_count}} results
+              Filtered features: {{ rows }} out of {{ filteredFeatures.matched_count }} results
             </span>
           </div>
-          <div class="panel-body" style="max-height: 75vh; overflow-y: auto;">
-            <div class="d-flex justify-content-between" v-if="filteredFeatures.matched_count">
+          <div
+            class="panel-body"
+            style="max-height: 75vh; overflow-y: auto;"
+          >
+            <div
+              v-if="filteredFeatures.matched_count"
+              class="d-flex justify-content-between"
+            >
               <b-pagination
-                size="sm"
                 v-model="currentPage"
-                @change="updatePage"
+                size="sm"
                 :total-rows="rows"
                 :per-page="(perPage === 0 ? 10 : perPage)"
                 :limit="4"
                 first-number
                 last-number
+                @change="updatePage"
               />
               <div class="justify-content-between">
                 <b-input-group>
-                  <b-input v-model="filters" placeholder="Filter"></b-input>
-                  <b-button v-if="filters" @click="filters = ''">Clear<b-icon-x></b-icon-x></b-button>
+                  <b-input
+                    v-model="filters"
+                    placeholder="Filter"
+                  />
+                  <b-button
+                    v-if="filters"
+                    @click="filters = ''"
+                  >
+                    Clear<b-icon-x />
+                  </b-button>
                 </b-input-group>
               </div>
               <div class="justify-content-end">
-                <b-dropdown id="dropdown-1" :text="perPage.toString()" >
-                  <div v-for="limit in limits" :key="limit">
-                    <b-dropdown-item @click="perPage = limit">{{ limit }}</b-dropdown-item>
+                <b-dropdown
+                  id="dropdown-1"
+                  :text="perPage.toString()"
+                >
+                  <div
+                    v-for="limit in limits"
+                    :key="limit"
+                  >
+                    <b-dropdown-item @click="perPage = limit">
+                      {{ limit }}
+                    </b-dropdown-item>
                   </div>
                 </b-dropdown>
                 <small> per Page</small>
               </div>
             </div>
-            <b-table v-if="currentDataset.features_count" :filter="filters" :current-page="currentPage" responsive :items="filteredFeatures.features" :fields="resultsFields" :per-page="perPage" @filtered="updatePagination">
-              <template v-slot:cell(properties)="row" class="Properties">
-                <div class="w-200 text-wrap" style="max-width: 800px;" v-if="row.item.properties">
+            <b-table
+              v-if="currentDataset.features_count"
+              :filter="filters"
+              :current-page="currentPage"
+              responsive
+              :items="filteredFeatures.features"
+              :fields="resultsFields"
+              :per-page="perPage"
+              @filtered="updatePagination"
+            >
+              <template
+                v-slot:cell(properties)="row"
+                class="Properties"
+              >
+                <div
+                  v-if="row.item.properties"
+                  class="w-200 text-wrap"
+                  style="max-width: 800px;"
+                >
                   {
-                  <span v-for="(property, key, index) in row.item.properties" :key="key">
+                  <span
+                    v-for="(property, key, index) in row.item.properties"
+                    :key="key"
+                  >
                     {{ key }}: <strong>{{ property }}</strong> <span v-if="(index + 1) !== Object.keys(row.item.properties).length"> | </span>
                   </span>
                   }
@@ -139,10 +189,10 @@ export default {
             values: this.datasets ? this.datasets : [''],
             label: 'Dataset',
             model: 'dataset',
-            disabled: function(model) {
+            disabled(model) {
               return model.action === 'Update'
             },
-            visible: function(model) {
+            visible(model) {
               return model.type === 'Combinators'
             },
             selectOptions: {
@@ -157,7 +207,7 @@ export default {
             label: 'Queries',
             model: 'queries',
             values: ['field1', 'field2'],
-            visible: function(model) {
+            visible(model) {
               return (model.type === 'Combinators' && model.action === 'Update') || (model.type === 'Combinators' && model.dataset)
             },
             required: true,
@@ -169,27 +219,27 @@ export default {
           {
             type: 'select',
             values: [
-              {type: 'And', value: 'and'},
-              {type: 'Or', value: 'or'},
-              {type: 'Nor', value: 'nor'},
-              {type: 'Not', value: 'not'},
-              ],
+              { type: 'And', value: 'and' },
+              { type: 'Or', value: 'or' },
+              { type: 'Nor', value: 'nor' },
+              { type: 'Not', value: 'not' },
+            ],
             label: 'Operator',
             model: 'operator',
             default: 'and',
-            visible: function(model) {
+            visible(model) {
               return (model.type === 'Combinators' && model.action === 'Update') || (model.type === 'Combinators' && model.dataset)
             },
             selectOptions: {
               value: 'value',
               name: 'type',
-            }
+            },
           },
           {
             type: 'submit',
             buttonText: 'Test Queries',
             inputType: 'submit',
-            visible: function(model) {
+            visible(model) {
               return model.type === 'Combinators' && model.dataset && Object.keys(model.queries).length > 0
             },
             onSubmit: this.testQueries,
@@ -199,7 +249,7 @@ export default {
             inputType: 'text',
             label: 'Provider',
             model: 'provider',
-            visible: function(model) {
+            visible(model) {
               return model.type === 'Users'
             },
           },
@@ -208,7 +258,7 @@ export default {
             label: 'Confirmed',
             model: 'confirmed',
             default: false,
-            visible: function(model) {
+            visible(model) {
               return model.type === 'Users'
             },
           },
@@ -217,7 +267,7 @@ export default {
             label: 'Blocked',
             model: 'blocked',
             default: false,
-            visible: function(model) {
+            visible(model) {
               return model.type === 'Users'
             },
           },
@@ -227,7 +277,7 @@ export default {
             label: 'Role',
             model: 'role',
             default: false,
-            visible: function(model) {
+            visible(model) {
               return model.type === 'Users'
             },
           },
@@ -238,7 +288,7 @@ export default {
             model: 'title',
             featured: true,
             required: true,
-            visible: function(model) {
+            visible(model) {
               return ((model.type !== 'Combinators' && model.type !== 'Users') || (model.type === 'Combinators' && model.dataset))
             },
           },
@@ -248,8 +298,8 @@ export default {
             model: 'description',
             id: 'description',
             featured: true,
-            visible: function(model) {
-              return (model.type === 'Combinators' && model.dataset) || (model.type !== 'Users' && model.type !== 'Combinators' )
+            visible(model) {
+              return (model.type === 'Combinators' && model.dataset) || (model.type !== 'Users' && model.type !== 'Combinators')
             },
             required: false,
             autocomplete: 'off',
@@ -258,43 +308,42 @@ export default {
             type: 'wrap',
             label: 'Citation',
             model: 'citation',
-            visible: true,
-            visible: function(model) {
-              return (model.type === 'Combinators' && model.dataset) ||
-              model.type === 'Datasets' ||
-              model.type === 'TemporalCoverages' ||
-              model.type === 'TopicMaps' ||
-              model.type === 'Concepts'
+            visible(model) {
+              return (model.type === 'Combinators' && model.dataset)
+              || model.type === 'Datasets'
+              || model.type === 'TemporalCoverages'
+              || model.type === 'TopicMaps'
+              || model.type === 'Concepts'
             },
-            autocomplete: 'off'
+            autocomplete: 'off',
           },
           {
             type: 'input',
             inputType: 'url',
             label: 'Url',
             model: 'url',
-            visible: function(model) {
-              return model.type === 'Datasets' ||
-              model.type === 'TemporalCoverages' ||
-              model.type === 'TopicMaps' ||
-              model.type === 'Concepts'
+            visible(model) {
+              return model.type === 'Datasets'
+              || model.type === 'TemporalCoverages'
+              || model.type === 'TopicMaps'
+              || model.type === 'Concepts'
             },
           },
           {
             type: 'select',
             values: [
-              {type: 'Activities', value: 'activities'},
-              {type: 'Actors', value: 'actors'},
-              {type: 'Community Places', value: 'community_places'},
-              {type: 'Events', value: 'events'},
-              {type: 'Ideas', value: 'ideas'},
-              {type: 'Imaginary Landscape', value: 'imaginary_landscape'},
-              {type: 'Physical Landscape', value: 'physical_landscape'},
-              {type: 'Physical Processes', value: 'physical_processes'},
-              ],
+              { type: 'Activities', value: 'activities' },
+              { type: 'Actors', value: 'actors' },
+              { type: 'Community Places', value: 'community_places' },
+              { type: 'Events', value: 'events' },
+              { type: 'Ideas', value: 'ideas' },
+              { type: 'Imaginary Landscape', value: 'imaginary_landscape' },
+              { type: 'Physical Landscape', value: 'physical_landscape' },
+              { type: 'Physical Processes', value: 'physical_processes' },
+            ],
             label: 'Group',
             model: 'group',
-            visible: function(model) {
+            visible(model) {
               return model.type === 'Concepts'
             },
             selectOptions: {
@@ -306,7 +355,7 @@ export default {
             type: 'upload',
             label: 'Image',
             model: 'image',
-            visible: function(model) {
+            visible(model) {
               return model.type === 'Datasets'
             },
             onChanged(model, schema, event) {
@@ -317,9 +366,9 @@ export default {
             type: 'upload',
             label: 'Source',
             model: 'source',
-            visible: function(model) {
-              return model.type === 'Datasets' ||
-              model.type === 'TopicMaps'
+            visible(model) {
+              return model.type === 'Datasets'
+              || model.type === 'TopicMaps'
             },
             required: false,
             onChanged(model, schema, event) {
@@ -331,7 +380,7 @@ export default {
             values: this.categories ? this.categories : ['1', '2'],
             label: 'Category',
             model: 'category',
-            visible: function(model) {
+            visible(model) {
               return model.type === 'Datasets'
             },
             selectOptions: {
@@ -344,7 +393,7 @@ export default {
             inputType: 'text',
             label: 'Color',
             model: 'color',
-            visible: function(model) {
+            visible(model) {
               return model.type === 'Categories'
             },
           },
@@ -354,7 +403,7 @@ export default {
             label: 'Concepts',
             model: 'concepts',
             values: this.groupedConcepts ? this.groupedConcepts : ['1', '2'],
-            visible: function(model) {
+            visible(model) {
               return (model.type === 'Combinators' && model.action === 'Update') || (model.type === 'Combinators' && model.dataset)
             },
             selectOptions: {
@@ -382,13 +431,13 @@ export default {
             label: 'Topics',
             model: 'topics',
             values: this.topics ? this.topics : ['1', '2'],
-            visible: function(model) {
+            visible(model) {
               return model.type === 'Concepts'
             },
             selectOptions: {
               key: 'title',
               label: 'title',
-              customLabel: function({topic_map, name}) {
+              customLabel({ topic_map, name }) {
                 return `${topic_map ? topic_map.name : 'null'}.${name}`
               },
               multiple: true,
@@ -409,7 +458,7 @@ export default {
             type: 'submit',
             buttonText: 'Submit',
             inputType: 'submit',
-            visible: function(model) {
+            visible(model) {
               return model.type !== 'Combinators' || model.dataset
             },
             onSubmit: this.update,
@@ -418,7 +467,7 @@ export default {
             type: 'submit',
             buttonText: 'Cancel',
             inputType: 'submit',
-            visible: function(model) {
+            visible(model) {
               return model.action === 'Update'
             },
             onSubmit: this.back,
@@ -484,7 +533,7 @@ export default {
     },
     roles(val) {
       this.schema.fields.filter((field) => {
-        if(field.model && field.model === 'role') {
+        if (field.model && field.model === 'role') {
           field.values = val
         }
       })
@@ -515,7 +564,7 @@ export default {
     },
     currentTopicMap(val) {
       if (val) {
-        Object.keys(val).forEach(key => {
+        Object.keys(val).forEach((key) => {
           if (key !== '__typename') {
             this.model[key] = val[key]
           }
@@ -547,7 +596,7 @@ export default {
           this.$apollo.queries.combinator.refetch()
         }
       }
-      else if (this.$route.name === 'Update TopicMap') {
+      else if (this.$route.name === 'TopicMap View') {
         this.currentId = this.$route.params.id
         this.$apollo.queries.topicMap.skip = false
         this.$apollo.queries.topicMap.refetch()
@@ -595,7 +644,7 @@ export default {
       if (val) {
         this.$router.go(-1)
       }
-    }
+    },
   },
 }
 </script>
