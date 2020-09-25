@@ -168,7 +168,12 @@ export default {
           },
           {
             type: 'select',
-            values: [{type: 'And', value: 'and'}, {type: 'Or', value: 'or'}],
+            values: [
+              {type: 'And', value: 'and'},
+              {type: 'Or', value: 'or'},
+              {type: 'Nor', value: 'nor'},
+              {type: 'Not', value: 'not'},
+              ],
             label: 'Operator',
             model: 'operator',
             default: 'and',
@@ -344,11 +349,11 @@ export default {
             },
           },
           {
-            type: 'vueMultiSelect',
+            type: 'multi',
             multiSelect: true,
             label: 'Concepts',
             model: 'concepts',
-            values: this.concepts ? this.concepts : ['1', '2'],
+            values: this.groupedConcepts ? this.groupedConcepts : ['1', '2'],
             visible: function(model) {
               return (model.type === 'Combinators' && model.action === 'Update') || (model.type === 'Combinators' && model.dataset)
             },
@@ -358,6 +363,8 @@ export default {
               multiple: true,
               searchable: true,
               clearOnSelect: true,
+              groupValues: 'values',
+              groupLabel: 'group',
               hideSelected: true,
               trackBy: 'id',
               onNewTag(newTag, id, options, value) {
@@ -448,7 +455,7 @@ export default {
         }
       })
     },
-    concepts(val) {
+    groupedConcepts(val) {
       if (val) {
         this.schema.fields.filter((field) => {
           if (field.model && field.model === 'concepts') {
@@ -532,13 +539,13 @@ export default {
 
       this.collectionType = (variables[1] !== 'Category' ? `${variables[1]}s` : 'Categories')
       if (this.$route.name === 'Create Combinator' || this.$route.name === 'Update Combinator') {
+        this.$apollo.queries.allDatasets.skip = false
+        this.$apollo.queries.allConcepts.skip = false
         if (this.$route.params.id) {
           this.currentId = this.$route.params.id
           this.$apollo.queries.combinator.skip = false
           this.$apollo.queries.combinator.refetch()
         }
-        this.$apollo.queries.allDatasets.skip = false
-        this.$apollo.queries.allConcepts.skip = false
       }
       else if (this.$route.name === 'Update TopicMap') {
         this.currentId = this.$route.params.id

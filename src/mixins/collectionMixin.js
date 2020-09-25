@@ -127,6 +127,15 @@ const apollo = {
         }
         else {
           this.concepts = _.unionWith(this.concepts, data.concepts, _.isEqual)
+          this.groupedConcepts = _.groupBy(this.concepts, 'group')
+          let temp = []
+          for(var group in this.groupedConcepts) {
+            temp.push({'group': _.startCase(group), 'values': _.sortBy(this.groupedConcepts[group], 'title')})
+          }
+          if (temp.length > 0) {
+            let sorted = _.sortBy(temp, 'group')
+            this.groupedConcepts = sorted
+          }
         }
         if (this.rows !== data.countConcepts) {
           this.rows = data.countConcepts
@@ -511,20 +520,7 @@ const apollo = {
     // Optional result hook
     result({ data, loading, networkStatus }) {
       if (data && data.combinators) {
-        this.currentCombinator = data.combinators[0];
-
-        // Set Concepts to complete concept objects
-        if (this.concepts) {
-          let concepts = []
-          this.currentCombinator.concepts.forEach((concept) => {
-            this.concepts.filter((val) => {
-              if (val.id === concept.id) {
-                concepts.push(val)
-              }
-            })
-          })
-          this.currentCombinator.concepts = concepts
-        }
+        [this.currentCombinator] = data.combinators;
         this.model = this.currentCombinator
         if (this.model.dataset && this.model.dataset.id) {
           this.model.dataset = this.model.dataset.id
@@ -928,6 +924,7 @@ const data = function () {
     start: 0,
     filter: '',
     filteredFeatures: [],
+    groupedConcepts: [],
     loading: true,
     rows: 0,
   };

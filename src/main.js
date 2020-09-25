@@ -23,6 +23,7 @@ import Debug from '@/components/partials/Debug.vue';
 import MyPlugin from './plugins/my-plugin';
 import fieldQuery from './views/Collections/templates/fieldQuery.vue';
 import fieldWrap from './views/Collections/templates/fieldWrap.vue';
+import fieldMulti from './views/Collections/templates/fieldMulti.vue';
 
 // Globals
 window.axios = require('axios');
@@ -36,6 +37,7 @@ Vue.use(AsyncComputed);
 Vue.component('Debug', Debug);
 Vue.component('fieldQuery', fieldQuery);
 Vue.component('fieldWrap', fieldWrap);
+Vue.component('fieldMulti', fieldMulti);
 
 // Apply plugins
 Vue.use(VueFormGenerator);
