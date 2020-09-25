@@ -168,7 +168,12 @@ export default {
           },
           {
             type: 'select',
-            values: [{type: 'And', value: 'and'}, {type: 'Or', value: 'or'}],
+            values: [
+              {type: 'And', value: 'and'},
+              {type: 'Or', value: 'or'},
+              {type: 'Nor', value: 'nor'},
+              {type: 'Not', value: 'not'},
+              ],
             label: 'Operator',
             model: 'operator',
             default: 'and',
