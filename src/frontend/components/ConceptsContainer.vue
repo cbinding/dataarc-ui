@@ -68,7 +68,12 @@
             id="conceptContainer"
             style="width: 100%"
           >
-            <div id="topicmap" />
+            <div id="topicmap">
+              <network
+                :node-list="nodes"
+                :link-list="links"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -77,8 +82,27 @@
 </template>
 
 <script>
-export default {
 
+import Network from './concepts-components/Network.vue'
+export default {
+  components: {
+    Network,
+  },
+  data() {
+    return {
+      nodes: [
+      	{ id: 'Myriel', group: 1 },
+      	{ id: 'Napoleon', group: 1 },
+        { id: 'Labarre', group: 2 },
+        { id: 'Valjean', group: 2 },
+      ],
+      links: [
+        { source: 'Napoleon', target: 'Myriel', value: 1 },
+        { source: 'Valjean', target: 'Labarre', value: 1 },
+        { source: 'Napoleon', target: 'Valjean', value: 2 },
+      ],
+    }
+  },
 }
 </script>
 
