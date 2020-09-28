@@ -44,7 +44,7 @@
               </li>
             </ul>
           </div>
-          <leaflet />
+          <leaflet :features="features" />
         </div>
       </div>
     </div>
@@ -53,11 +53,37 @@
 
 <script>
 import Leaflet from './map-components/LeafletContainer.vue'
+import gql from 'graphql-tag'
 
+const featuresQuery = gql`
+  query featureCollection ($limit: Int!) {
+    features (limit: $limit) {
+      id
+      latitude
+      longitude
+    }
+  }
+`
 export default {
   name: 'MapContainer',
   components: {
     Leaflet,
+  },
+  data () {
+    return {
+      limit: -1,
+      start: 0
+    }
+  },
+  apollo: {
+    features: {
+      query: featuresQuery,
+      variables () {
+        return {
+          limit: this.limit
+        }
+      }
+    },
   },
 }
 </script>

@@ -28,35 +28,35 @@
                 title="zoom in"
                 class="btn btn-secondary"
               >
-                <span class="fa fa-search-plus" />
+                <fa-icon icon="search-plus" />
               </button>
               <button
                 id="topicmapZoomOut"
                 title="zoom out"
                 class="btn btn-secondary"
               >
-                <span class="fa fa-search-minus" />
+                <fa-icon icon="search-minus" />
               </button>
               <button
                 id="topicmapReset"
                 title="reset"
                 class="btn btn-secondary"
               >
-                <span class="fa fa-repeat" />
+                <fa-icon icon="redo" />
               </button>
               <button
                 id="topicmapPause"
                 title="pause"
                 class="btn btn-secondary"
               >
-                <span class="fa fa-pause" />
+                <fa-icon icon="pause" />
               </button>
               <button
                 id="topicmapProceed"
                 title="continue"
                 class="btn btn-secondary"
               >
-                <span class="fa fa-play" />
+                <fa-icon icon="play" />
               </button>
             </div>
             <div
@@ -102,7 +102,7 @@ const topicMapQuery = gql`
     }
   }
 `
-console.log(TopicMapsJSON.data)
+
 export default {
   apollo: {
     topicMaps: topicMapQuery,

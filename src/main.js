@@ -5,7 +5,7 @@ import '@/scss/style.scss'
 import Vue from 'vue'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCompass, faSitemap } from '@fortawesome/free-solid-svg-icons'
+import { faCompass, faSitemap, faPlay, faSearchPlus, faSearchMinus, faRedo, faPause } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -31,7 +31,7 @@ import fieldQuery from './views/Collections/templates/fieldQuery.vue'
 import fieldWrap from './views/Collections/templates/fieldWrap.vue'
 import fieldMulti from './views/Collections/templates/fieldMulti.vue'
 
-library.add([faCompass, faSitemap])
+library.add([faCompass, faSitemap, faPlay, faSearchPlus, faSearchMinus, faRedo, faPause])
 library.add(faClock)
 Vue.component('fa-icon', FontAwesomeIcon)
 
