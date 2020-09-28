@@ -64,6 +64,13 @@ const featuresQuery = gql`
     }
   }
 `
+
+const featuresCountQuery = gql`
+  query {
+    countFeatures
+  }
+`
+
 export default {
   name: 'MapContainer',
   components: {
@@ -71,7 +78,7 @@ export default {
   },
   data () {
     return {
-      limit: -1,
+      limit: 100,
       start: 0
     }
   },
@@ -84,7 +91,13 @@ export default {
         }
       }
     },
+    featuresCount: {
+      query: featuresCountQuery,
+    },
   },
+  mounted () {
+    
+  }
 }
 </script>
 
