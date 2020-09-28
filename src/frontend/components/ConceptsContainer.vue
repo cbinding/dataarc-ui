@@ -72,6 +72,7 @@
               <network
                 :node-list="nodes"
                 :link-list="links"
+                :svg-size="{height: 600, width: 800}"
               />
             </div>
           </div>
@@ -82,17 +83,31 @@
 </template>
 
 <script>
-
+import gql from 'graphql-tag'
 import Network from './concepts-components/Network.vue'
+
+const topicMapQuery = gql`
+  query {
+    topicMaps(where:{name:"topic_map_2020"}) {
+      name
+      nodes
+      edges
+    }
+  }
+`
+
 export default {
+  apollo: {
+    topicMaps: topicMapQuery,
+  },
   components: {
     Network,
   },
   data() {
     return {
       nodes: [
-      	{ id: 'Myriel', group: 1 },
-      	{ id: 'Napoleon', group: 1 },
+        { id: 'Myriel', group: 1 },
+        { id: 'Napoleon', group: 1 },
         { id: 'Labarre', group: 2 },
         { id: 'Valjean', group: 2 },
       ],
@@ -102,6 +117,9 @@ export default {
         { source: 'Napoleon', target: 'Valjean', value: 2 },
       ],
     }
+  },
+  mounted() {
+    console.log(this.topicMaps)
   },
 }
 </script>

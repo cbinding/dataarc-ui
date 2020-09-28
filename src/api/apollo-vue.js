@@ -14,16 +14,21 @@ const httpLink = createHttpLink({
 // Cache implementation
 const cache = new InMemoryCache()
 
+const { Authorization } = authHeader()
 // Create a new Middleware Link using setContext
 const middlewareLink = setContext(() => {
   return {
     headers: {
-      authorization: authHeader().Authorization,
+      authorization: Authorization,
     },
   }
 })
 
-const link = middlewareLink.concat(httpLink)
+let link = httpLink
+if (Authorization) {
+  link = middlewareLink.concat(httpLink)
+}
+
 
 // Create the apollo client
 const apolloClient = new ApolloClient({

@@ -10,6 +10,7 @@
       v-text="linkTextContent"
     />
     <svg
+      ref="svg"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       :width="svgSize.width"
@@ -74,8 +75,18 @@
 </template>
 
 <script>
-import * as d3 from 'd3'
-
+import * as d3api from 'd3'
+import * as d3Force from 'd3-force'
+import * as d3Zoom from 'd3-zoom'
+import * as d3Scale from 'd3-scale'
+import * as d3Selection from 'd3-selection'
+import * as d3Drag from 'd3-drag'
+import * as d3Dispatch from 'd3-dispatch'
+// import * as d3ScaleChromatic from 'd3-scale-chromatic'
+// import d3SelectionMulti from "d3-selection-multi";
+const d3 = {
+  ...d3api, ...d3Force, ...d3Zoom, ...d3Scale, ...d3Selection, ...d3Drag, ...d3Dispatch,
+}
 DOMTokenList.prototype.indexOf = Array.prototype.indexOf
 
 export default {
@@ -156,9 +167,10 @@ export default {
         links: [],
         nodes: [],
       },
-
+      pinned: [],
       force: null,
       zoom: d3.zoom(),
+      transform: null,
       nodeColor: d3.scaleOrdinal(d3.schemeCategory10),
       linkTextVisible: false,
       linkTextPosition: {
@@ -240,11 +252,23 @@ export default {
         .id((d) => d.id)
         .distance(this.linkDistance),
       )
-
+      // .force('charge',
+      //   d3
+      //   .forceManyBody()
+      //   .strength(_this.settings.gravity)
+      //   .distanceMax(600)
+      //   .distanceMin(100))
+      .force('collide',
+        d3
+        .forceCollide(15)
+        .strength(2)
+        .iterations(50))
       .force(
         'center',
         d3.forceCenter(this.svgSize.width / 2, this.svgSize.height / 2),
       )
+      // controls how long the animations run, default is 0.0228, closer to 1 means animation decays faster
+      .alphaDecay(0.1)
     },
     initDragTickZoom() {
       d3.selectAll('.node').call(this.drag(this.force))
@@ -272,11 +296,15 @@ export default {
       })
 
 
-      this.zoom.scaleExtent([0.1, 4]).on('zoom', this.zoomed)
+      this.zoom.scaleExtent([0.1, 7]).on('zoom', this.zoomed)
 
-      d3.select('svg')
-      .call(this.zoom)
-      .on('dblclick.zoom', null)
+      this.transform = d3.zoomIdentity
+      .translate(this.svgSize.width / 6, this.svgSize.height / 6)
+      .scale(0.5)
+
+      d3.select(this.$refs.svg)
+      .call(this.zoom.transform, this.transform)
+      .call(this.zoom.on('zoom', this.zoomed))
     },
     clickLink(e) {
       this.$emit('clickLink', e, e.target.__data__)
@@ -388,32 +416,33 @@ export default {
       this.selection.nodes = []
       this.selection.links = []
     },
-    zoomed() {
+    zoomed(event, d) {
+      console.log(d)
       d3.select('#container').attr(
         'transform',
         `translate(${
-          d3.event.transform.x
+          event.transform.x
         },${
-          d3.event.transform.y
+          event.transform.y
         }) scale(${
-          d3.event.transform.k
+          event.transform.k
         })`,
       )
     },
     drag(simulation) {
-      function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+      function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart()
         d.fx = d.x
         d.fy = d.y
       }
 
-      function dragged(d) {
-        d.fx = d3.event.x
-        d.fy = d3.event.y
+      function dragged(event, d) {
+        d.fx = event.x
+        d.fy = event.y
       }
 
-      function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0)
+      function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0)
         d.fx = null
         d.fy = null
       }
