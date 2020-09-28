@@ -66,13 +66,16 @@
           </div>
           <div
             id="conceptContainer"
+            ref="topicmap"
             style="width: 100%"
           >
-            <div id="topicmap">
+            <div
+              id="topicmap"
+            >
               <network
                 :node-list="nodes"
                 :link-list="links"
-                :svg-size="{height: 600, width: 800}"
+                :svg-size="networkSizeSettings"
                 svg-theme="light"
               />
             </div>
@@ -111,10 +114,15 @@ export default {
     return {
       nodes: TopicMapsJSON.data.topicMaps[0].nodes,
       links: TopicMapsJSON.data.topicMaps[0].edges,
+      networkSizeSettings: {
+        height: 600,
+        width: 800,
+      },
     }
   },
   mounted() {
-    console.log(TopicMapsJSON)
+    this.networkSizeSettings.height = this.$refs.topicmap.clientHeight
+    this.networkSizeSettings.width = this.$refs.topicmap.clientWidth
   },
 }
 </script>

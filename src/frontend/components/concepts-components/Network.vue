@@ -47,7 +47,7 @@
         <!-- node and node-text -->
         <g id="node-group">
           <g
-            v-for="node, index in nodes"
+            v-for="node in nodes"
             :key="node.index"
           >
             <circle
@@ -55,7 +55,7 @@
               :stroke-width="highlightNodes.indexOf(node.id) == -1? 3:10"
               :stroke="highlightNodes.indexOf(node.id) == -1? theme.nodeStroke: 'gold' "
               :class="`${node[nodeTypeKey]} ${node.showText?'selected' : ''} node element`"
-              :r="(index + 1) * 0.06"
+              :r="nodeSize"
               :cy="svgSize.height / 2"
               :cx="svgSize.width / 2"
             />
@@ -84,10 +84,10 @@ import * as d3Scale from 'd3-scale'
 import * as d3Selection from 'd3-selection'
 import * as d3Drag from 'd3-drag'
 import * as d3Dispatch from 'd3-dispatch'
-// import * as d3ScaleChromatic from 'd3-scale-chromatic'
+import * as d3ScaleChromatic from 'd3-scale-chromatic'
 // import d3SelectionMulti from "d3-selection-multi";
 const d3 = {
-  ...d3api, ...d3Force, ...d3Zoom, ...d3Scale, ...d3Selection, ...d3Drag, ...d3Dispatch,
+  ...d3api, ...d3Force, ...d3Zoom, ...d3Scale, ...d3Selection, ...d3Drag, ...d3Dispatch, ...d3ScaleChromatic,
 }
 DOMTokenList.prototype.indexOf = Array.prototype.indexOf
 
@@ -99,7 +99,7 @@ export default {
 
     nodeSize: {
       type: Number,
-      default: 14,
+      default: 10,
     },
     nodeTextKey: {
       type: String,
@@ -124,7 +124,7 @@ export default {
     },
     linkTextKey: {
       type: String,
-      default: 'value',
+      default: 'label',
     },
     linkTypeKey: {
       type: String,
@@ -136,7 +136,7 @@ export default {
     },
     linkDistance: {
       type: Number,
-      default: 50,
+      default: 40,
     },
 
     svgSize: {
@@ -169,11 +169,13 @@ export default {
         links: [],
         nodes: [],
       },
+      minZoom: 0.1,
+      maxZoom: 7,
       pinned: [],
       force: null,
       zoom: d3.zoom(),
       transform: null,
-      nodeColor: d3.scaleOrdinal(d3.schemeCategory10),
+      nodeColor: d3.scaleOrdinal(d3.interpolateSpectral),
       linkTextVisible: false,
       linkTextPosition: {
         top: 0,
@@ -202,7 +204,7 @@ export default {
       if (this.svgTheme === 'light') {
         return {
           bgcolor: 'white',
-          nodeStroke: 'white',
+          // nodeStroke: 'white',
           linkStroke: 'lightgray',
           textFill: 'black',
         }
@@ -210,10 +212,13 @@ export default {
 
       return {
         bgcolor: 'black',
-        nodeStroke: 'white',
+        // nodeStroke: 'white',
         linkStroke: 'rgba(200,200,200)',
         textFill: 'white',
       }
+    },
+    svg() {
+      return d3.select(this.$refs.svg)
     },
   },
   watch: {
@@ -257,7 +262,7 @@ export default {
       .force('charge',
         d3
         .forceManyBody()
-        .strength(0.1)
+        .strength(-100)
         .distanceMax(600)
         .distanceMin(100))
       .force('collide',
@@ -270,10 +275,15 @@ export default {
         d3.forceCenter(this.svgSize.width / 2, this.svgSize.height / 2),
       )
       // controls how long the animations run, default is 0.0228, closer to 1 means animation decays faster
-      .alphaDecay(0.1)
+      .alphaDecay(0.5)
     },
     initDragTickZoom() {
-      d3.selectAll('.node').call(this.drag(this.force))
+      d3
+      .selectAll('.node')
+      .call(
+        this.drag(this.force),
+      )
+
       this.force.on('tick', () => {
         d3.selectAll('.link')
         .data(this.links)
@@ -291,6 +301,7 @@ export default {
         .data(this.nodes)
         .attr('x', (d) => d.x)
         .attr('y', (d) => d.y)
+
         d3.selectAll('.link-text')
         .data(this.links)
         .attr('x', (d) => (d.source.x + d.target.x) / 2)
@@ -298,13 +309,19 @@ export default {
       })
 
 
-      this.zoom.scaleExtent([0.1, 7]).on('zoom', this.zoomed)
+      this.zoom.scaleExtent(
+        [
+          this.minZoom,
+          this.maxZoom,
+        ],
+      )
+      .on('zoom', this.zoomed)
 
       this.transform = d3.zoomIdentity
       .translate(this.svgSize.width / 6, this.svgSize.height / 6)
       .scale(0.5)
 
-      d3.select(this.$refs.svg)
+      this.svg
       .call(this.zoom.transform, this.transform)
       .call(this.zoom.on('zoom', this.zoomed))
     },
@@ -328,7 +345,6 @@ export default {
       }
     },
     svgMouseover(e) {
-      console.log(e)
       if (e.target.nodeName === 'circle') {
         if (this.pinned.length === 0) {
           this.selectedState(e)
@@ -337,11 +353,16 @@ export default {
         this.$forceUpdate()
         this.$emit('hoverNode', e, e.target.__data__)
       } else if (e.target.nodeName === 'line') {
+        console.log(e)
         this.linkTextPosition = {
-          left: `${e.clientX}px`,
-          top: `${e.clientY - 50}px`,
+          left: `0px`,
+          top: `0px`,
         }
-        this.linkTextContent = e.target.__data__[this.linkTextKey]
+        // this.linkTextPosition = {
+        //   left: `${e.clientX}px`,
+        //   top: `${e.clientY}px`,
+        // }
+        this.linkTextContent = `${e.target.__data__.source.label} to ${e.target.__data__.target.label}`
         this.linkTextVisible = true
         this.$emit('hoverLink', e, e.target.__data__)
       }
@@ -420,7 +441,6 @@ export default {
       this.selection.links = []
     },
     zoomed(event, d) {
-      console.log(d)
       d3.select('#container').attr(
         'transform',
         `translate(${
