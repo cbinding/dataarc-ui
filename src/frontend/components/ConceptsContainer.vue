@@ -73,6 +73,7 @@
                 :node-list="nodes"
                 :link-list="links"
                 :svg-size="{height: 600, width: 800}"
+                svg-theme="light"
               />
             </div>
           </div>
@@ -83,7 +84,10 @@
 </template>
 
 <script>
+
 import gql from 'graphql-tag'
+import TopicMapsJSON from './topicmap.json'
+
 import Network from './concepts-components/Network.vue'
 
 const topicMapQuery = gql`
@@ -95,7 +99,7 @@ const topicMapQuery = gql`
     }
   }
 `
-
+console.log(TopicMapsJSON.data)
 export default {
   apollo: {
     topicMaps: topicMapQuery,
@@ -105,21 +109,12 @@ export default {
   },
   data() {
     return {
-      nodes: [
-        { id: 'Myriel', group: 1 },
-        { id: 'Napoleon', group: 1 },
-        { id: 'Labarre', group: 2 },
-        { id: 'Valjean', group: 2 },
-      ],
-      links: [
-        { source: 'Napoleon', target: 'Myriel', value: 1 },
-        { source: 'Valjean', target: 'Labarre', value: 1 },
-        { source: 'Napoleon', target: 'Valjean', value: 2 },
-      ],
+      nodes: TopicMapsJSON.data.topicMaps[0].nodes,
+      links: TopicMapsJSON.data.topicMaps[0].edges,
     }
   },
   mounted() {
-    console.log(this.topicMaps)
+    console.log(TopicMapsJSON)
   },
 }
 </script>

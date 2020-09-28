@@ -47,7 +47,7 @@
         <!-- node and node-text -->
         <g id="node-group">
           <g
-            v-for="node in nodes"
+            v-for="node, index in nodes"
             :key="node.index"
           >
             <circle
@@ -55,16 +55,18 @@
               :stroke-width="highlightNodes.indexOf(node.id) == -1? 3:10"
               :stroke="highlightNodes.indexOf(node.id) == -1? theme.nodeStroke: 'gold' "
               :class="`${node[nodeTypeKey]} ${node.showText?'selected' : ''} node element`"
-              :r="nodeSize"
+              :r="(index + 1) * 0.06"
+              :cy="svgSize.height / 2"
+              :cx="svgSize.width / 2"
             />
             <text
               v-show="node.showText"
               :dx="nodeSize + 5"
               dy="0"
-              class="node-text"
+              class="node-text boundary"
               :fill="theme.textFill"
               :font-size="nodeTextFontSize"
-            >{{ node[nodeTextKey] }}</text>
+            >{{ node.label }}</text>
           </g>
           <g />
         </g>
@@ -252,12 +254,12 @@ export default {
         .id((d) => d.id)
         .distance(this.linkDistance),
       )
-      // .force('charge',
-      //   d3
-      //   .forceManyBody()
-      //   .strength(_this.settings.gravity)
-      //   .distanceMax(600)
-      //   .distanceMin(100))
+      .force('charge',
+        d3
+        .forceManyBody()
+        .strength(0.1)
+        .distanceMax(600)
+        .distanceMin(100))
       .force('collide',
         d3
         .forceCollide(15)
@@ -326,6 +328,7 @@ export default {
       }
     },
     svgMouseover(e) {
+      console.log(e)
       if (e.target.nodeName === 'circle') {
         if (this.pinned.length === 0) {
           this.selectedState(e)
