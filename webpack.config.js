@@ -1,20 +1,30 @@
 module.exports = {
-  configureWebpack: {
-    module: {
-      rules: [
-        {
-          test: /\.pug$/,
-          oneOf: [
-            {
-              resourceQuery: /^\?vue/,
-              use: ['pug-plain-loader'],
+  configureWebpack: (config) => {
+    config.module.rules = [
+      {
+        test: /\.pug$/,
+        oneOf: [
+          {
+            resourceQuery: /^\?vue/,
+            use: ['pug-plain-loader'],
+          },
+          {
+            use: ['raw-loader', 'pug-plain-loader'],
+          },
+        ],
+      },
+      {
+        test: /\.worker\.js$/i,
+        use: [
+          {
+            loader: 'comlink-loader',
+            options: {
+              singleton: true,
             },
-            {
-              use: ['raw-loader', 'pug-plain-loader'],
-            },
-          ],
-        },
-      ],
-    },
+          },
+        ],
+      },
+      ...config.module.rules,
+    ]
   },
 }

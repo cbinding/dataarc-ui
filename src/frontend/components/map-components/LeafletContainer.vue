@@ -1,31 +1,34 @@
 <template>
   <div id="map">
-    <v-map ref="map" :max-zoom="15" :zoom="2">
+    <v-map
+      ref="map"
+      :max-zoom="15"
+      :zoom="2"
+    >
       <v-marker-cluster v-if="features">
         <v-marker
           v-for="feature in features"
-          :key="feature.id"
+          :key="feature._id"
           :lat-lng="[feature.latitude, feature.longitude]"
-        >
-        </v-marker>
+        />
       </v-marker-cluster>
     </v-map>
   </div>
 </template>
 
 <script>
-import { control as LControl } from "leaflet";
-import { LMap, LMarker, LPopup } from "vue2-leaflet";
-import Vue2LeafletMarkerCluster from "vue2-leaflet-markercluster";
+import { control as LControl } from 'leaflet'
+import { LMap, LMarker, LPopup } from 'vue2-leaflet'
+import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
-import baseMaps from "./basemaps";
+import baseMaps from './basemaps'
 
 export default {
   components: {
-    "v-map": LMap,
-    "v-marker": LMarker,
-    "v-popup": LPopup,
-    "v-marker-cluster": Vue2LeafletMarkerCluster,
+    'v-map': LMap,
+    'v-marker': LMarker,
+    'v-popup': LPopup,
+    'v-marker-cluster': Vue2LeafletMarkerCluster,
   },
   props: {
     features: {
@@ -38,30 +41,30 @@ export default {
       baseMaps,
       mapObject: null,
       baseMapGroup: [],
-      defaultBaseMap: "ESRI Topographic",
-    };
+      defaultBaseMap: 'ESRI Topographic',
+    }
   },
   mounted() {
     this.$nextTick(() => {
-      this.mapObject = this.$refs.map.mapObject;
-      this._initMap();
-    });
+      this.mapObject = this.$refs.map.mapObject
+      this._initMap()
+    })
   },
   methods: {
     _initMap() {
-      this._initBaseMaps();
-      this._setupMapControls();
-      this.$emit("map-ready", this.mapObject);
+      this._initBaseMaps()
+      this._setupMapControls()
+      this.$emit('map-ready', this.mapObject)
     },
     _initBaseMaps() {
-      this.mapObject.addLayer(this.baseMaps[this.defaultBaseMap]);
+      this.mapObject.addLayer(this.baseMaps[this.defaultBaseMap])
     },
     _setupMapControls(map) {
-      const controlLayers = LControl.layers(this.baseMaps);
-      this.mapObject.addControl(controlLayers);
+      const controlLayers = LControl.layers(this.baseMaps)
+      this.mapObject.addControl(controlLayers)
     },
   },
-};
+}
 </script>
 
 <style>

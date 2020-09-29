@@ -104,9 +104,9 @@ const topicMapQuery = gql`
 `
 
 export default {
-  apollo: {
-    topicMaps: topicMapQuery,
-  },
+  // apollo: {
+  //   topicMaps: topicMapQuery,
+  // },
   components: {
     Network,
   },

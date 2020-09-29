@@ -33,11 +33,7 @@
               </li>
             </ul>
           </div>
-          <div id="timeline">
-            <div class="loader h-100 justify-content-center align-items-center">
-              <h1><span class="fa fa-cog fa-spin fa-2x" /></h1>
-            </div>
-          </div>
+          <timeline />
           <button
             class="btn btn-primary"
             data-toggle="modal"
@@ -123,8 +119,12 @@
 </template>
 
 <script>
+import Timeline from './timeline-components/Timeline.vue'
 export default {
-
+  name: 'TimelineContainer',
+  components: {
+    Timeline,
+  },
 }
 </script>
 

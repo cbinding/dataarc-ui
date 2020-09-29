@@ -1,5 +1,5 @@
-const ExtractTextPlugin = require('mini-css-extract-plugin');
-const path = require('path');
+const ExtractTextPlugin = require('mini-css-extract-plugin')
+const path = require('path')
 
 module.exports = {
   devServer: {
@@ -8,16 +8,22 @@ module.exports = {
   },
   runtimeCompiler: true,
   chainWebpack: (config) => {
-    config.optimization.delete('splitChunks');
+    config.optimization.delete('splitChunks')
 
-    config.output.filename('[name].js');
+    config.output.filename('[name].js')
 
     config.plugin('extract-css').use(ExtractTextPlugin, [
       {
         filename: '[name].css',
         allChunks: true,
       },
-    ]);
+    ])
+    // config.module
+    // .rule('workers')
+    // .test(/\.worker\.js$/i)
+    // .use('comlink-loader', { singleton: true })
+    // .loader('comlink-loader')
+    // .end()
   },
   configureWebpack: {
     output: {
@@ -40,4 +46,4 @@ module.exports = {
       },
     },
   },
-};
+}

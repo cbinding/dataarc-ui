@@ -52,12 +52,13 @@
 </template>
 
 <script>
-import Leaflet from './map-components/LeafletContainer.vue'
 import gql from 'graphql-tag'
+import BatchLoader from '@/workers/apollo-batch-loader.worker.js'
+import Leaflet from './map-components/LeafletContainer.vue'
 
 const featuresQuery = gql`
-  query featureCollection ($limit: Int!) {
-    features (limit: $limit) {
+  query featureCollection ($limit: Int!, $start: Int!) {
+    features (limit: $limit, start: $start) {
       id
       latitude
       longitude
@@ -76,28 +77,52 @@ export default {
   components: {
     Leaflet,
   },
-  data () {
+  data() {
     return {
       limit: 100,
-      start: 0
+      start: 0,
+      features: [],
+      featuresCount: 0,
+      getPromises: [],
+      step: 5000,
     }
   },
-  apollo: {
-    features: {
-      query: featuresQuery,
-      variables () {
-        return {
-          limit: this.limit
-        }
-      }
-    },
-    featuresCount: {
+  mounted() {
+    this.$apollo.query({
       query: featuresCountQuery,
+    }).then(({ data }) => {
+      this.featuresCount = data.countFeatures
+      this.loadFeatures()
+    })
+  },
+  methods: {
+    loadFeatures() {
+      if (this.start >= this.featuresCount) return
+      // while (this.start <= this.featuresCount) {
+      //   this.getPromises.push(
+      //     window.axios.get(`${this.$apiUrl}/features?_limit=${this.step}&_start=${this.start}`).then(({ data }) => {
+      //       this.features = [...this.features, ...data.filter((feature) => {
+      //         return feature.latitude && feature.longitude
+      //       })]
+      //       console.log(this.features)
+      //     }),
+      //   )
+      //   this.start += this.step
+      // }
+
+      // this.$apollo.query({
+      //   query: featuresQuery,
+      //   variables: {
+      //     start: this.start,
+      //     limit: this.limit,
+      //   },
+      // }).then(({ data }) => {
+      //   this.features = [...this.features, ...data.features]
+      //   this.start += 100
+      //   this.loadFeatures()
+      // })
     },
   },
-  mounted () {
-    
-  }
 }
 </script>
 
