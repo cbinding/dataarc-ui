@@ -5,7 +5,10 @@
   >
     <div class="container call-to-action">
       <div class="row">
-        <div class="col-lg-12 text-center">
+        <div
+          ref="timelineContainer"
+          class="col-lg-12 text-center"
+        >
           <h2 class="section-heading">
             Timeline<sup><a
               href="http://www.data-arc.org/time/"
@@ -33,7 +36,9 @@
               </li>
             </ul>
           </div>
-          <timeline />
+
+          <timeline :width="timelineWidth" />
+
           <button
             class="btn btn-primary"
             data-toggle="modal"
@@ -124,6 +129,14 @@ export default {
   name: 'TimelineContainer',
   components: {
     Timeline,
+  },
+  data() {
+    return {
+      timelineWidth: 1160,
+    }
+  },
+  mounted() {
+    this.timelineWidth = this.$refs.timelineContainer.clientWidth
   },
 }
 </script>
