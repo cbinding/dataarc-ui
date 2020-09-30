@@ -178,6 +178,7 @@ export default class TimelineObject {
     .attr('width', (d) => { return `${_this.settings.rectWidth - 0.5}%` })
     .attr('height', (d) => { return `${(_this.settings.rectHeight * 3) - 2}%` })
     .classed('highlighted', true)
+
     if (_this.settings.type == 'millennium' || _this.settings.type == 'century') {
       _this.subTimeline = new TimelineObject(_this.settings.type == 'millennium' ? 'century' : 'decade', parseInt(d.label))
       _this.subTimeline.refresh()
