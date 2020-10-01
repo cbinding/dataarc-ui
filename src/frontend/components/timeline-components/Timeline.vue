@@ -75,79 +75,172 @@ export default {
       sampleTimelineData: [
         {
           category: 'ARCHAEOLOGICAL',
-          millennium: [
+          counts: [
             {
               period: -2000,
               count: 20,
+            },
+            {
+              period: -1000,
+              count: 45,
+            },
+            {
+              period: 0,
+              count: 3,
+            },
+            {
+              period: 1000,
+              count: 24,
+            },
+            {
+              period: 2000,
+              count: 87,
+            },
+            {
+              period: -6000,
+              count: 6,
+            },
+            {
+              period: -5000,
+              count: 567,
+            },
+            {
+              period: -4000,
+              count: 620,
             },
           ],
         },
         {
           category: 'TEXTUAL',
-          millenium: [
+          counts: [
+            {
+              period: -2000,
+              count: 20,
+            },
+            {
+              period: -1000,
+              count: 45,
+            },
+            {
+              period: 0,
+              count: 3,
+            },
+            {
+              period: 1000,
+              count: 24,
+            },
+            {
+              period: 2000,
+              count: 87,
+            },
+            {
+              period: -6000,
+              count: 6,
+            },
+            {
+              period: -5000,
+              count: 567,
+            },
             {
               period: -4000,
+              count: 620,
+            },
+          ],
+        },
+        {
+          category: 'ENVIRONMENTAL',
+          counts: [
+            {
+              period: -2000,
               count: 20,
+            },
+            {
+              period: -1000,
+              count: 45,
+            },
+            {
+              period: 0,
+              count: 3,
+            },
+            {
+              period: 1000,
+              count: 24,
+            },
+            {
+              period: 2000,
+              count: 87,
+            },
+            {
+              period: -6000,
+              count: 6,
+            },
+            {
+              period: -5000,
+              count: 567,
+            },
+            {
+              period: -4000,
+              count: 620,
             },
           ],
         },
       ],
-      timelineData: {
-        ARCHAEOLOGICAL: {
-          millennium: {
-            '-5000': 4,
-            '-1000': 2,
-            '1000': 4,
-            '2000': 5,
-            '4000': 6,
-          },
-          century: {
-            '-500': 4,
-            '-100': 2,
-            '100': 4,
-            '200': 5,
-            '400': 6,
-          },
-        },
-        TEXTUAL: {
-          millennium: {
-            '-5000': 4,
-            '-1000': 2,
-            '1000': 4,
-            '2000': 5,
-            '4000': 6,
-          },
-          century: {
-            '-100': 4,
-            '-500': 2,
-            '100': 4,
-            '200': 5,
-            '400': 6,
-          },
-          decade: {
-            '-10': 4,
-            '-50': 2,
-            '10': 4,
-            '20': 5,
-            '40': 6,
-          },
-        },
-        ENVIRONMENTAL: {
-          millennium: {
-            '-4000': 4,
-            '-1000': 10,
-            '1000': 3,
-            '2000': 76,
-          },
-          decade: {
-            '-10': 4,
-            '-50': 2,
-            '10': 4,
-            '20': 5,
-            '40': 6,
-          },
-        },
-      },
+      // timelineData: {
+      //   ARCHAEOLOGICAL: {
+      //     millennium: {
+      //       '-5000': 4,
+      //       '-1000': 2,
+      //       '1000': 4,
+      //       '2000': 5,
+      //       '4000': 6,
+      //     },
+      //     century: {
+      //       '-500': 4,
+      //       '-100': 2,
+      //       '100': 4,
+      //       '200': 5,
+      //       '400': 6,
+      //     },
+      //   },
+      //   TEXTUAL: {
+      //     millennium: {
+      //       '-5000': 4,
+      //       '-1000': 2,
+      //       '1000': 4,
+      //       '2000': 5,
+      //       '4000': 6,
+      //     },
+      //     century: {
+      //       '-100': 4,
+      //       '-500': 2,
+      //       '100': 4,
+      //       '200': 5,
+      //       '400': 6,
+      //     },
+      //     decade: {
+      //       '-10': 4,
+      //       '-50': 2,
+      //       '10': 4,
+      //       '20': 5,
+      //       '40': 6,
+      //     },
+      //   },
+      //   ENVIRONMENTAL: {
+      //     millennium: {
+      //       '-4000': 4,
+      //       '-1000': 10,
+      //       '1000': 3,
+      //       '2000': 76,
+      //     },
+      //     decade: {
+      //       '-10': 4,
+      //       '-50': 2,
+      //       '10': 4,
+      //       '20': 5,
+      //       '40': 6,
+      //     },
+      //   },
+      // },
     }
   },
   computed: {
@@ -156,16 +249,36 @@ export default {
     },
   },
   mounted() {
-    this.loaded = true
-    this.parseData()
+    this
+    .getTimelineDataByPeriod(
+      this.initialPeriod,
+      this.initialStartDate,
+    )
+    .then(({ data }) => {
+      this.timelines[this.initialPeriod] = this.parseData(data)
+      this.timelines[this.initialPeriod].loaded = true
+    })
   },
   methods: {
-    getTimelineDataByPeriod(period, range) {
-      const parsedData = {
-        labels: {},
-        values: [],
-      }
-      const { timelineData } = this
+    getTimelineDataByPeriod(period, startDate) {
+      return Promise((resolve, reject) => {
+        setTimeout(() => {
+          console.log({ startDate })
+          // This will need to be changed
+          // Here just imitating a wait on the return
+          resolve(
+            this.parseData(period, startDate, this.sampleTimelineData),
+          )
+        }, 250)
+      })
+    },
+    parseData(period, startDate, dataFromApi) {
+      const labels = []
+      const buckets = []
+      const values = []
+      const step = this.ranges[period]
+      for
+
       const categories = Object.keys(this.timelineData)
       categories.forEach((category) => {
         if (Object.prototype.hasOwnProperty.call(timelineData, period)) {
@@ -173,12 +286,6 @@ export default {
         }
       })
     },
-    parseData() {
-      // this.ranges.keys().forEach((range) => {
-      //   this.timelines[range] = this.collectTimeLineData(range)
-      // })
-    },
-
     collectTimeLineData(category) {
       const parsedData = {
         labels: {},
