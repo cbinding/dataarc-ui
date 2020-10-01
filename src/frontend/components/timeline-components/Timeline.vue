@@ -11,7 +11,7 @@
       <h1><span class="fa fa-cog fa-spin fa-2x" /></h1>
     </div>
     <timeline-svg
-      v-for="timeline in timelineData"
+      v-for="timeline in timelines"
       v-show="loaded"
       :key="timeline.id"
       :items="timeline"
@@ -67,12 +67,32 @@ export default {
       ],
       svg: null,
       labels: null,
-      timelineData: [],
+      timelines: {},
       ranges: { millennium: 1000, century: 100, decade: 10 },
       rangeCount: 10,
       opacities: [0.25, 0.5, 0.75, 1.0],
       buckets: 5,
-      timelineDataCounts: {
+      sampleTimelineData: [
+        {
+          category: 'ARCHAEOLOGICAL',
+          millennium: [
+            {
+              period: -2000,
+              count: 20,
+            },
+          ],
+        },
+        {
+          category: 'TEXTUAL',
+          millenium: [
+            {
+              period: -4000,
+              count: 20,
+            },
+          ],
+        },
+      ],
+      timelineData: {
         ARCHAEOLOGICAL: {
           millennium: {
             '-5000': 4,
@@ -140,10 +160,23 @@ export default {
     this.parseData()
   },
   methods: {
-    parseData() {
-      this.categories.forEach((category) => {
-        this.timelineData.push(this.collectTimeLineData(category))
+    getTimelineDataByPeriod(period, range) {
+      const parsedData = {
+        labels: {},
+        values: [],
+      }
+      const { timelineData } = this
+      const categories = Object.keys(this.timelineData)
+      categories.forEach((category) => {
+        if (Object.prototype.hasOwnProperty.call(timelineData, period)) {
+          parsedData.values.push(timelineData[period])
+        }
       })
+    },
+    parseData() {
+      // this.ranges.keys().forEach((range) => {
+      //   this.timelines[range] = this.collectTimeLineData(range)
+      // })
     },
 
     collectTimeLineData(category) {
@@ -163,13 +196,13 @@ export default {
 
         // Get the value
         let value = 0
-        if (this.timelineDataCounts[category.key]) {
-          if (this.timelineDataCounts[category.key][this.categoryType]) {
+        if (this.timelineData[category.key]) {
+          if (this.timelineData[category.key][this.categoryType]) {
             values = [
               ...values,
-              ...Object.values(this.timelineDataCounts[category.key][this.categoryType])]
-            if (this.timelineDataCounts[category.key][this.categoryType][period]) {
-              value = this.timelineDataCounts[category.key][this.categoryType][period]
+              ...Object.values(this.timelineData[category.key][this.categoryType])]
+            if (this.timelineData[category.key][this.categoryType][period]) {
+              value = this.timelineData[category.key][this.categoryType][period]
               values.push(value)
             }
           }
