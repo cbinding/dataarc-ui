@@ -79,8 +79,10 @@
           >
             <div
               id="topicmap"
+              style="box-shadow: inset 0px 0px 10px rgba(0,0,0,0.9);padding:10px;"
             >
               <network
+                v-if="networkSizeSettings.width > 0"
                 :node-list="nodes"
                 :link-list="links"
                 :svg-size="networkSizeSettings"
@@ -115,9 +117,6 @@ const topicMapQuery = gql`
 `
 
 export default {
-  // apollo: {
-  //   topicMaps: topicMapQuery,
-  // },
   components: {
     Network,
   },
@@ -128,13 +127,14 @@ export default {
       nodeTextBoolean: false,
       networkSizeSettings: {
         height: 600,
-        width: 800,
+        width: 0,
       },
     }
   },
   mounted() {
-    this.networkSizeSettings.height = this.$refs.topicmap.clientHeight
-    this.networkSizeSettings.width = this.$refs.topicmap.clientWidth
+    this.$nextTick(() => {
+      this.networkSizeSettings.width = this.$refs.topicmap.clientWidth - 20
+    })
   },
   methods: {
     nodeSelected({ node }) {
