@@ -6,7 +6,7 @@
       </h3>
       <hr>
       <p class="card-text">
-        {{ result.total }}
+        {{ result.totalCount }}
       </p>
       <!-- <h5>Sources</h5>
       <hr> -->

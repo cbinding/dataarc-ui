@@ -3,21 +3,12 @@
     id="results-section"
     class="bg-dark text-white"
   >
-    <div class="call-to-action">
-      <div class="text-center">
-        <h2 class="section-heading">
-          Results
-        </h2>
-        <hr class="primary">
-        <p>&nbsp;</p>
-        <results
-          v-for="(result, index) in resultTypes"
-          :key="index"
-          :filters="filters"
-          :result-type="result"
-        />
-      </div>
-    </div>
+    <results
+      v-for="(result, index) in resultTypes"
+      :key="index"
+      :filters="filters"
+      :result-type="result"
+    />
   </section>
 </template>
 

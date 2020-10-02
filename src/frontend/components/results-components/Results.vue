@@ -1,5 +1,5 @@
 <template>
-  <div class="result-type-container text-center">
+  <div class="container result-type-container text-center">
     <h2>
       <span class="result-type-title">
         {{ resultType }} Results
