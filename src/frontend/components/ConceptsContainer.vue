@@ -58,6 +58,14 @@
               >
                 <fa-icon icon="play" />
               </button>
+              <button
+                title="Label All Nodes"
+                class="btn btn-secondary"
+                :class="nodeTextBoolean ? 'active' : ''"
+                @click.prevent="nodeTextBoolean = !nodeTextBoolean"
+              >
+                <fa-icon icon="font" />
+              </button>
             </div>
             <div
               id="topicSearch"
@@ -77,6 +85,9 @@
                 :link-list="links"
                 :svg-size="networkSizeSettings"
                 svg-theme="light"
+                :show-node-text="nodeTextBoolean"
+                @clickNode="nodeSelected"
+                @clickLink="linkSelected"
               />
             </div>
           </div>
@@ -114,6 +125,7 @@ export default {
     return {
       nodes: TopicMapsJSON.data.topicMaps[0].nodes,
       links: TopicMapsJSON.data.topicMaps[0].edges,
+      nodeTextBoolean: false,
       networkSizeSettings: {
         height: 600,
         width: 800,
@@ -123,6 +135,14 @@ export default {
   mounted() {
     this.networkSizeSettings.height = this.$refs.topicmap.clientHeight
     this.networkSizeSettings.width = this.$refs.topicmap.clientWidth
+  },
+  methods: {
+    nodeSelected({ node }) {
+      console.log(node)
+    },
+    linkSelected({ link }) {
+      console.log(link)
+    },
   },
 }
 </script>
