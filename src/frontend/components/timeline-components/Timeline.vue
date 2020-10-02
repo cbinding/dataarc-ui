@@ -20,12 +20,20 @@
       @range-selected="setTimeline"
     />
     <timeline-svg
-      v-if="loaded && activePeriod === 'century'"
+      v-if="activePeriod !== 'millenium'"
       :labels="timelineData[initialPeriod][0].periods"
       :data="timelineData[initialPeriod]"
       :rect-height="realRectHeight(timelineData[initialPeriod])"
-      :period-name="initialPeriod"
+      :period-name="'decade'"
       :collapsed="activePeriod === 'decade'"
+      @range-selected="setTimeline"
+    />
+    <timeline-svg
+      v-if="activePeriod === 'decade'"
+      :labels="timelineData[initialPeriod][0].periods"
+      :data="timelineData[initialPeriod]"
+      :rect-height="realRectHeight(timelineData[initialPeriod])"
+      :period-name="'decade'"
       @range-selected="setTimeline"
     />
   </div>
@@ -130,7 +138,6 @@ export default {
       return (90 / timelineDataValue.length)
     },
     getTimelineDataByPeriod(period, startDate) {
-      this.timelineData[period] = []
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           // This will need to be changed

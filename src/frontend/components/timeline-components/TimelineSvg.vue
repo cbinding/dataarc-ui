@@ -157,7 +157,7 @@ export default {
     },
     createElements() {
       this.svg = d3
-      .select('svg.timeline-content')
+      .select(this.$refs.svg)
     },
     rectMouseover(e) {
       this.rectHover(e.target)
