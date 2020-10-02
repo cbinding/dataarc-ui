@@ -4,7 +4,7 @@
     class="bg-dark text-white"
   >
     <div class="call-to-action">
-      <div class="container text-center">
+      <div class="text-center">
         <h2 class="section-heading">
           Results
         </h2>
