@@ -13,32 +13,33 @@
         v-show="!collapsed"
         :key="key"
         class="label"
-        :x="_calcLabelX(label)"
-        :y="_calcLabelY(label)"
+        :x="_calcLabelX(key)"
+        :y="_calcLabelY(key)"
         style="text-anchor:middle"
       >
-        {{ label.label }}
+        {{ label }}
       </text>
     </g>
     <g
-      ref="periodContainer"
+      v-for="(category, categoryIndex) in data"
+      :key="categoryIndex"
     >
       <rect
-        v-for="value in values"
-        :key="`${value.category}.${value.period}`"
+        v-for="(count, countIndex) in category.counts"
+        :key="countIndex"
         class="period bordered"
-        :data-category="value.category"
-        :data-period="value.period"
-        :x="_calcRectX(value)"
-        :y="_calcRectY(value)"
+        :data-category="categoryIndex"
+        :data-period="countIndex"
+        :x="_calcRectX(countIndex)"
+        :y="_calcRectY(categoryIndex)"
         :width="rectWidth + '%'"
         :height="rectHeight + '%'"
-        :style="rectStyle(value)"
+        :style="rectStyle(category.color, count)"
         @mouseover.prevent="rectMouseover"
         @mouseout="rectMouseout"
         @click="rectClick"
       >
-        <title>{{ value.value }}</title>
+        <title>{{ count }}</title>
       </rect>
     </g>
     <rect
@@ -79,7 +80,7 @@ export default {
       type: Number,
       default: 200,
     },
-    values: {
+    data: {
       type: Array,
       required: true,
     },
@@ -103,32 +104,56 @@ export default {
       type: Number,
       default: 10,
     },
+    periodName: {
+      type: String,
+      default: 'millenium',
+    },
   },
   data() {
     return {
       activeRect: -1,
+      opacityBins: 5,
+      opacitySteps: [0.25, 0.5, 0.75, 1.0],
+      opacityByQuantileGenerator: null,
     }
   },
   mounted() {
+    this.opacityByQuantileGenerator = d3
+    .scaleQuantile()
+    .domain(
+      [
+        0,
+        this.opacityBins,
+        window._.max(
+          this.data.map((category) => {
+            return window._.max(category.counts)
+          }),
+        ),
+      ],
+    )
+    .range(this.opacitySteps)
     this.$nextTick(() => {
-    //   this.parseData()
       this.createElements()
       this.createChart()
-      //   this.restoreSelection()
     })
   },
   methods: {
-    _calcLabelX(label) {
-      return `${((label.id - 1) * this.rectWidth) + 5}%`
+    opacityByQuantile(count) {
+      if (this.opacityByQuantileGenerator) {
+        return this.opacityByQuantileGenerator(count)
+      }
     },
-    _calcLabelY(label) {
+    _calcLabelX(index) {
+      return `${((index) * this.rectWidth) + 5}%`
+    },
+    _calcLabelY(index) {
       return '7%'
     },
-    _calcRectX(rectData) {
-      return `${(rectData.period - 1) * this.rectWidth}%`
+    _calcRectX(index) {
+      return `${(index) * this.rectWidth}%`
     },
-    _calcRectY(rectData) {
-      return `${(rectData.category - 1) * this.realRectHeight + this.labelHeight}%`
+    _calcRectY(index) {
+      return `${(index) * this.rectHeight + this.labelHeight}%`
     },
     createElements() {
       this.svg = d3
@@ -138,14 +163,17 @@ export default {
       this.rectHover(e.target)
     },
     rectHover(rect) {
-      this.activeRect = rect.dataset.period - 1
+      this.activeRect = rect.dataset.period
     },
     rectMouseout(e) {
       this.activeRect = -1
     },
     rectClick(e) {
-      console.log('Clicked')
-      console.log(e)
+      this.$emit('range-selected',
+        {
+          startDate: this.data[e.target.dataset.category].periods[e.target.dataset.period],
+          period: this.periodName,
+        })
 
       this.svgCollapsed = true
 
@@ -155,10 +183,10 @@ export default {
       .attr('viewBox', `0 0 1000 ${this.height / 3}`)
       // this.shrink(d)
     },
-    rectStyle(rectData) {
+    rectStyle(color, count) {
       return {
-        'fill': rectData.color,
-        'fill-opacity': rectData.opacity,
+        'fill': color,
+        'fill-opacity': this.opacityByQuantile(count),
       }
     },
     createChart() {

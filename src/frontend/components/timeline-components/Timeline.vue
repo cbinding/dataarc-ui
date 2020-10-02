@@ -11,11 +11,12 @@
       <h1><span class="fa fa-cog fa-spin fa-2x" /></h1>
     </div>
     <timeline-svg
-      v-for="timeline in timelines"
-      v-show="loaded"
-      :key="timeline.id"
-      :items="timeline"
-      :rect-height="realRectHeight"
+      v-if="loaded"
+      :labels="timelineData[initialPeriod][0].periods"
+      :data="timelineData[initialPeriod]"
+      :rect-height="realRectHeight(timelineData[initialPeriod])"
+      :period-name="initialPeriod"
+      @range-selected="setTimeline"
     />
   </div>
 </template>
@@ -26,9 +27,9 @@ import * as d3api from 'd3'
 import * as d3Selection from 'd3-selection'
 
 import TimelineSvg from './TimelineSvg.vue'
-const d3 = {
-  ...d3api, ...d3Selection,
-}
+// const d3 = {
+//   ...d3api, ...d3Selection,
+// }
 
 const category_colors = ['#6177aa', '#fc8d62', '#66c2a5', '#54278f', '#a63603']
 
@@ -54,6 +55,7 @@ export default {
   data() {
     return {
       loaded: false,
+      initialPeriod: 'millenium',
       categories: [
         {
           id: 1, key: 'ARCHAEOLOGICAL', label: 'Archaeological', color: category_colors[0],
@@ -71,182 +73,36 @@ export default {
       ranges: { millennium: 1000, century: 100, decade: 10 },
       rangeCount: 10,
       opacities: [0.25, 0.5, 0.75, 1.0],
+      initialStartDate: -7000,
       buckets: 5,
+      timelineData: {},
       sampleTimelineData: [
         {
           category: 'ARCHAEOLOGICAL',
-          counts: [
-            {
-              period: -2000,
-              count: 20,
-            },
-            {
-              period: -1000,
-              count: 45,
-            },
-            {
-              period: 0,
-              count: 3,
-            },
-            {
-              period: 1000,
-              count: 24,
-            },
-            {
-              period: 2000,
-              count: 87,
-            },
-            {
-              period: -6000,
-              count: 6,
-            },
-            {
-              period: -5000,
-              count: 567,
-            },
-            {
-              period: -4000,
-              count: 620,
-            },
-          ],
+          label: 'Archaeological',
+          categoryId: 0,
+          color: category_colors[0],
+          periods: [-7000, -6000, -5000, -4000, -3000, -2000, -1000, 0, 1000, 2000],
+          counts: [0, 36, 0, 0, 45, 23, 34, 53, 45, 0],
         },
         {
           category: 'TEXTUAL',
-          counts: [
-            {
-              period: -2000,
-              count: 20,
-            },
-            {
-              period: -1000,
-              count: 45,
-            },
-            {
-              period: 0,
-              count: 3,
-            },
-            {
-              period: 1000,
-              count: 24,
-            },
-            {
-              period: 2000,
-              count: 87,
-            },
-            {
-              period: -6000,
-              count: 6,
-            },
-            {
-              period: -5000,
-              count: 567,
-            },
-            {
-              period: -4000,
-              count: 620,
-            },
-          ],
+          categoryId: 1,
+          label: 'Textual',
+          color: category_colors[1],
+          periods: [-7000, -6000, -5000, -4000, -3000, -2000, -1000, 0, 1000, 2000],
+          counts: [0, 36, 0, 0, 45, 23, 34, 53, 45, 0],
         },
         {
           category: 'ENVIRONMENTAL',
-          counts: [
-            {
-              period: -2000,
-              count: 20,
-            },
-            {
-              period: -1000,
-              count: 45,
-            },
-            {
-              period: 0,
-              count: 3,
-            },
-            {
-              period: 1000,
-              count: 24,
-            },
-            {
-              period: 2000,
-              count: 87,
-            },
-            {
-              period: -6000,
-              count: 6,
-            },
-            {
-              period: -5000,
-              count: 567,
-            },
-            {
-              period: -4000,
-              count: 620,
-            },
-          ],
+          categoryId: 2,
+          label: 'Environmental',
+          color: category_colors[2],
+          periods: [-7000, -6000, -5000, -4000, -3000, -2000, -1000, 0, 1000, 2000],
+          counts: [0, 36, 0, 0, 45, 23, 34, 53, 45, 0],
         },
       ],
-      // timelineData: {
-      //   ARCHAEOLOGICAL: {
-      //     millennium: {
-      //       '-5000': 4,
-      //       '-1000': 2,
-      //       '1000': 4,
-      //       '2000': 5,
-      //       '4000': 6,
-      //     },
-      //     century: {
-      //       '-500': 4,
-      //       '-100': 2,
-      //       '100': 4,
-      //       '200': 5,
-      //       '400': 6,
-      //     },
-      //   },
-      //   TEXTUAL: {
-      //     millennium: {
-      //       '-5000': 4,
-      //       '-1000': 2,
-      //       '1000': 4,
-      //       '2000': 5,
-      //       '4000': 6,
-      //     },
-      //     century: {
-      //       '-100': 4,
-      //       '-500': 2,
-      //       '100': 4,
-      //       '200': 5,
-      //       '400': 6,
-      //     },
-      //     decade: {
-      //       '-10': 4,
-      //       '-50': 2,
-      //       '10': 4,
-      //       '20': 5,
-      //       '40': 6,
-      //     },
-      //   },
-      //   ENVIRONMENTAL: {
-      //     millennium: {
-      //       '-4000': 4,
-      //       '-1000': 10,
-      //       '1000': 3,
-      //       '2000': 76,
-      //     },
-      //     decade: {
-      //       '-10': 4,
-      //       '-50': 2,
-      //       '10': 4,
-      //       '20': 5,
-      //       '40': 6,
-      //     },
-      //   },
-      // },
     }
-  },
-  computed: {
-    realRectHeight() {
-      return (90 / this.categories.length)
-    },
   },
   mounted() {
     this
@@ -254,94 +110,26 @@ export default {
       this.initialPeriod,
       this.initialStartDate,
     )
-    .then(({ data }) => {
-      this.timelines[this.initialPeriod] = this.parseData(data)
-      this.timelines[this.initialPeriod].loaded = true
-    })
   },
   methods: {
+    setTimeline(rangeData) {
+      this.getTimelineDataByPeriod(rangeData.period, rangeData.startDate)
+    },
+    realRectHeight(timelineDataValue) {
+      return (90 / timelineDataValue.length)
+    },
     getTimelineDataByPeriod(period, startDate) {
-      return Promise((resolve, reject) => {
+      this.timelineData[period] = []
+      return new Promise((resolve, reject) => {
         setTimeout(() => {
-          console.log({ startDate })
           // This will need to be changed
           // Here just imitating a wait on the return
-          resolve(
-            this.parseData(period, startDate, this.sampleTimelineData),
-          )
-        }, 250)
+          resolve(this.sampleTimelineData)
+        }, 1000)
+      }).then(() => {
+        this.timelineData[period] = this.sampleTimelineData
+        this.loaded = true
       })
-    },
-    parseData(period, startDate, dataFromApi) {
-      const labels = []
-      const buckets = []
-      const values = []
-      const step = this.ranges[period]
-      for
-
-      const categories = Object.keys(this.timelineData)
-      categories.forEach((category) => {
-        if (Object.prototype.hasOwnProperty.call(timelineData, period)) {
-          parsedData.values.push(timelineData[period])
-        }
-      })
-    },
-    collectTimeLineData(category) {
-      const parsedData = {
-        labels: {},
-        values: [],
-      }
-
-      const collectedEntries = []
-      let values = []
-
-      //   this.categories.forEach((category) => {
-      for (let i = 0; i < this.rangeCount; i++) {
-        // const id = i + 1
-        // const period = `${i * this.ranges[this.categoryType] + this.timelineBase}`
-        // parsedData.labels[i] = { id, key: period, label: period }
-
-        // Get the value
-        let value = 0
-        if (this.timelineData[category.key]) {
-          if (this.timelineData[category.key][this.categoryType]) {
-            values = [
-              ...values,
-              ...Object.values(this.timelineData[category.key][this.categoryType])]
-            if (this.timelineData[category.key][this.categoryType][period]) {
-              value = this.timelineData[category.key][this.categoryType][period]
-              values.push(value)
-            }
-          }
-        }
-        collectedEntries.push({
-          category: category.id,
-          value,
-          color: category.color,
-        })
-      }
-
-      const min = window._.min(values)
-      const step = this.ranges[category]
-
-      //   })
-      // Break the values into quantiles and set the opacity according to the value
-      const opacityQuantile = d3
-      .scaleQuantile()
-      .domain([0, this.buckets - 1, d3.max(values)])
-      .range(this.opacities)
-
-
-
-      // Calculate the opacity for each
-      parsedData.values = collectedEntries.map((entry, index) => {
-        entry.opacity = entry.value ? opacityQuantile(entry.value) : 0.05
-        entry.label = index + 1 * step + (Math.round(min / step) * step)
-        entry.id = index + 1
-        return entry
-      })
-
-      return parsedData
     },
   },
 }
