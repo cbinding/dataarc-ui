@@ -21,7 +21,6 @@
       @mouseout="svgMouseout"
     >
       <g id="container">
-        <!-- links and link-text 注：先绘制边 -->
         <g>
           <g
             v-for="link in links"
@@ -29,10 +28,9 @@
           >
             <line
               :class="`${link[linkTypeKey]} ${link.selected} link element`"
-              :stroke="theme.linkStroke"
+              :stroke="link.pinned ? 'blue' : theme.linkStroke"
               :stroke-width="linkWidth"
             />
-            <!-- dx dy 文字左下角坐标 -->
             <text
               v-if="showLinkText"
               dx="0"
@@ -51,7 +49,7 @@
             :key="node.index"
           >
             <circle
-              :fill="nodeColor(node[nodeTypeKey])"
+              :fill="node.selected ? 'blue' : nodeColor(node[nodeTypeKey])"
               :stroke-width="highlightNodes.indexOf(node.id) == -1? 3:10"
               :stroke="highlightNodes.indexOf(node.id) == -1? theme.nodeStroke: 'gold' "
               :class="`${node[nodeTypeKey]} ${node.showText?'selected' : ''} node element`"
@@ -60,10 +58,11 @@
               :cx="svgSize.width / 2"
             />
             <text
-              v-show="node.showText"
+              v-show="showNodeText || node.showText"
               :dx="nodeSize + 5"
               dy="0"
               class="node-text boundary"
+              :class="(!node.showText) && ((pinned.length && !node.showText) || (hoveredNode && hoveredNode.id !== node.id)) ? 'mute-not-selected' : ''"
               :fill="theme.textFill"
               :font-size="nodeTextFontSize"
             >{{ node.label }}</text>
@@ -94,8 +93,14 @@ DOMTokenList.prototype.indexOf = Array.prototype.indexOf
 export default {
   name: 'Network',
   props: {
-    nodeList: Array,
-    linkList: Array,
+    nodeList: {
+      type: Array,
+      required: true,
+    },
+    linkList: {
+      type: Array,
+      required: true,
+    },
 
     nodeSize: {
       type: Number,
@@ -116,7 +121,7 @@ export default {
 
     linkWidth: {
       type: Number,
-      default: 2,
+      default: 5,
     },
     showLinkText: {
       type: Boolean,
@@ -138,7 +143,10 @@ export default {
       type: Number,
       default: 40,
     },
-
+    showNodeText: {
+      type: Boolean,
+      default: false,
+    },
     svgSize: {
       type: Object,
       default: () => {
@@ -150,12 +158,16 @@ export default {
     },
     svgTheme: {
       type: String,
+      default: 'light',
     },
     bodyStrength: {
       type: Number,
       default: -150,
     },
-
+    breadthDepth: {
+      type: Number,
+      default: 3,
+    },
     highlightNodes: {
       type: Array,
       default: () => {
@@ -182,6 +194,7 @@ export default {
         left: 0,
       },
       linkTextContent: '',
+      hoveredNode: null,
     }
   },
   computed: {
@@ -245,7 +258,6 @@ export default {
     this.initData()
   },
   mounted() {
-    console.log(d3)
     this.initDragTickZoom()
   },
   methods: {
@@ -263,19 +275,19 @@ export default {
         d3
         .forceManyBody()
         .strength(-100)
-        .distanceMax(600)
+        .distanceMax(800)
         .distanceMin(100))
       .force('collide',
         d3
         .forceCollide(15)
         .strength(2)
         .iterations(50))
+      // controls how long the animations run, default is 0.0228, closer to 1 means animation decays faster
       .force(
         'center',
-        d3.forceCenter(this.svgSize.width / 2, this.svgSize.height / 2),
+        d3.forceCenter(this.svgSize.width, this.svgSize.height / 1.5),
       )
-      // controls how long the animations run, default is 0.0228, closer to 1 means animation decays faster
-      .alphaDecay(0.5)
+      .alphaDecay(0.2)
     },
     initDragTickZoom() {
       d3
@@ -326,23 +338,45 @@ export default {
       .call(this.zoom.on('zoom', this.zoomed))
     },
     clickLink(e) {
-      this.$emit('clickLink', e, e.target.__data__)
+      this.pinned.forEach((node) => {
+        node.target.__data__.selected = false
+        node.target.__data__.pinned = false
+      })
+      this.pinned = []
+      e.target.__data__.pinned = true
+      this.pinned.push(e)
+      this.$emit('clickLink', { e, link: e.target.__data__ })
     },
     clickNode(e) {
       if (this.pinned.length === 0) {
         this.pinnedState(e)
       } else {
         d3.selectAll('.element').style('opacity', 0.2)
+        this.pinned.forEach((node) => {
+          node.target.__data__.selected = false
+          node.target.__data__.pinned = false
+        })
         this.pinned = []
       }
-      this.$emit('clickNode', e, e.target.__data__)
+      this.$emit('clickNode', { e, node: e.target.__data__ })
     },
     clickEle(e) {
       if (e.target.tagName === 'circle') {
         this.clickNode(e)
       } else if (e.target.tagName === 'line') {
         this.clickLink(e)
+      } else {
+        this.clearSelected()
       }
+    },
+    clearSelected() {
+      this.pinned.forEach((node) => {
+        node.target.__data__.selected = false
+        node.target.__data__.pinned = false
+      })
+      this.pinned = []
+      this.darkenNerbor()
+      d3.selectAll('.element').style('opacity', 1)
     },
     svgMouseover(e) {
       if (e.target.nodeName === 'circle') {
@@ -351,18 +385,15 @@ export default {
         }
 
         this.$forceUpdate()
+        this.hoveredNode = e.target.__data__
+
         this.$emit('hoverNode', e, e.target.__data__)
       } else if (e.target.nodeName === 'line') {
-        console.log(e)
         this.linkTextPosition = {
           left: `0px`,
-          top: `0px`,
+          bottom: `0px`,
         }
-        // this.linkTextPosition = {
-        //   left: `${e.clientX}px`,
-        //   top: `${e.clientY}px`,
-        // }
-        this.linkTextContent = `${e.target.__data__.source.label} to ${e.target.__data__.target.label}`
+        this.linkTextContent = `From: ${e.target.__data__.source.label} To: ${e.target.__data__.target.label}`
         this.linkTextVisible = true
         this.$emit('hoverLink', e, e.target.__data__)
       }
@@ -373,7 +404,7 @@ export default {
         if (this.pinned.length === 0) {
           this.noSelectedState(e)
         }
-
+        this.hoveredNode = null
         this.$forceUpdate()
       }
     },
@@ -382,35 +413,44 @@ export default {
       e.target.classList.add('selected')
       this.selection.nodes.push(e.target.__data__)
 
-      this.lightNeibor(e.target.__data__)
+      this.highlightNeighbors(e.target.__data__)
 
       d3.selectAll('.element').style('opacity', 0.2)
     },
     noSelectedState(e) {
       e.target.__data__.showText = false
-
+      e.target.__data__.selected = false
 
       this.darkenNerbor()
 
       d3.selectAll('.element').style('opacity', 1)
     },
     pinnedState(e) {
-      this.pinned.push(e.target.__data__.index)
+      this.pinned.push(e)
+      if (e.target.nodeName === 'circle') {
+        e.target.__data__.selected = true
+      }
       d3.selectAll('.element').style('opacity', 0.05)
     },
-    lightNeibor(node) {
+    highlightNeighbors(node, iteration = 0) {
       this.links.forEach((link) => {
         if (link.source.index === node.index) {
           link.selected = 'selected'
           this.selection.links.push(link)
           this.selection.nodes.push(link.target)
           this.lightNode(link.target)
+          if (iteration < this.breadthDepth) {
+            this.highlightNeighbors(link.target, iteration + 1)
+          }
         }
         if (link.target.index === node.index) {
           link.selected = 'selected'
           this.selection.links.push(link)
           this.selection.nodes.push(link.source)
           this.lightNode(link.source)
+          if (iteration < this.breadthDepth) {
+            this.highlightNeighbors(link.source, iteration + 1)
+          }
         }
       })
     },
@@ -454,7 +494,7 @@ export default {
     },
     drag(simulation) {
       function dragstarted(event, d) {
-        if (!event.active) simulation.alphaTarget(0.3).restart()
+        if (!event.active) simulation.alphaTarget(0.05).restart()
         d.fx = d.x
         d.fy = d.y
       }
@@ -490,6 +530,10 @@ svg {
 }
 .selected {
   opacity: 1 !important;
+}
+
+.mute-not-selected {
+  opacity: 0.2 !important
 }
 .node,
 .link {
