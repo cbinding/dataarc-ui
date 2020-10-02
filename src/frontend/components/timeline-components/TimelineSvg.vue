@@ -158,6 +158,10 @@ export default {
     createElements() {
       this.svg = d3
       .select(this.$refs.svg)
+
+      this.rects = d3.select('rect')
+      this.rects.transition()
+      .duration(this.transitionDuration)
     },
     rectMouseover(e) {
       this.rectHover(e.target)

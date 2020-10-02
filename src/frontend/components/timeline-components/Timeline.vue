@@ -10,32 +10,38 @@
     >
       <h1><span class="fa fa-cog fa-spin fa-2x" /></h1>
     </div>
-    <timeline-svg
-      v-if="loaded"
-      :labels="timelineData[initialPeriod][0].periods"
-      :data="timelineData[initialPeriod]"
-      :rect-height="realRectHeight(timelineData[initialPeriod])"
-      :period-name="'century'"
-      :collapsed="activePeriod !== 'millenium'"
-      @range-selected="setTimeline"
-    />
-    <timeline-svg
-      v-if="activePeriod !== 'millenium'"
-      :labels="timelineData[initialPeriod][0].periods"
-      :data="timelineData[initialPeriod]"
-      :rect-height="realRectHeight(timelineData[initialPeriod])"
-      :period-name="'decade'"
-      :collapsed="activePeriod === 'decade'"
-      @range-selected="setTimeline"
-    />
-    <timeline-svg
-      v-if="activePeriod === 'decade'"
-      :labels="timelineData[initialPeriod][0].periods"
-      :data="timelineData[initialPeriod]"
-      :rect-height="realRectHeight(timelineData[initialPeriod])"
-      :period-name="'decade'"
-      @range-selected="setTimeline"
-    />
+    <transition name="fade">
+      <timeline-svg
+        v-if="loaded"
+        :labels="timelineData[initialPeriod][0].periods"
+        :data="timelineData[initialPeriod]"
+        :rect-height="realRectHeight(timelineData[initialPeriod])"
+        :period-name="'century'"
+        :collapsed="activePeriod !== 'millenium'"
+        @range-selected="setTimeline"
+      />
+    </transition>
+    <transition name="fade">
+      <timeline-svg
+        v-if="activePeriod !== 'millenium'"
+        :labels="timelineData[initialPeriod][0].periods"
+        :data="timelineData[initialPeriod]"
+        :rect-height="realRectHeight(timelineData[initialPeriod])"
+        :period-name="'decade'"
+        :collapsed="activePeriod === 'decade'"
+        @range-selected="setTimeline"
+      />
+    </transition>
+    <transition name="fade">
+      <timeline-svg
+        v-if="activePeriod === 'decade'"
+        :labels="timelineData[initialPeriod][0].periods"
+        :data="timelineData[initialPeriod]"
+        :rect-height="realRectHeight(timelineData[initialPeriod])"
+        :period-name="'decade'"
+        @range-selected="setTimeline"
+      />
+    </transition>
   </div>
 </template>
 
@@ -190,5 +196,10 @@ export default {
   stroke-width: 2px;
 }
 
-
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 </style>
