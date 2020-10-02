@@ -1,29 +1,17 @@
 <template>
   <div>
-    <timeline />
-    <map-section />
-    <concepts />
-    <results />
-    <why />
+    <data-arc />
   </div>
 </template>
 
 <script>
 
-import Timeline from '../components/TimelineContainer.vue'
-import MapSection from '../components/MapContainer.vue'
-import Concepts from '../components/ConceptsContainer.vue'
-import Results from '../components/ResultsContainer.vue'
-import Why from '../components/WhyContainer.vue'
+import DataArc from '../components/DataARC.vue'
 
 export default {
   name: 'HomeView',
   components: {
-    Timeline,
-    MapSection,
-    Concepts,
-    Results,
-    Why,
+    DataArc,
   },
 }
 </script>

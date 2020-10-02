@@ -285,7 +285,7 @@ export default {
       // controls how long the animations run, default is 0.0228, closer to 1 means animation decays faster
       .force(
         'center',
-        d3.forceCenter(this.svgSize.width, this.svgSize.height / 1.5),
+        d3.forceCenter(this.svgSize.width / 2, this.svgSize.height / 2),
       )
       .alphaDecay(0.2)
     },
