@@ -15,7 +15,17 @@
       :labels="timelineData[initialPeriod][0].periods"
       :data="timelineData[initialPeriod]"
       :rect-height="realRectHeight(timelineData[initialPeriod])"
+      :period-name="'century'"
+      :collapsed="activePeriod !== 'millenium'"
+      @range-selected="setTimeline"
+    />
+    <timeline-svg
+      v-if="loaded && activePeriod === 'century'"
+      :labels="timelineData[initialPeriod][0].periods"
+      :data="timelineData[initialPeriod]"
+      :rect-height="realRectHeight(timelineData[initialPeriod])"
       :period-name="initialPeriod"
+      :collapsed="activePeriod === 'decade'"
       @range-selected="setTimeline"
     />
   </div>
@@ -54,6 +64,7 @@ export default {
   },
   data() {
     return {
+      activePeriod: 'millenium',
       loaded: false,
       initialPeriod: 'millenium',
       categories: [
@@ -128,6 +139,7 @@ export default {
         }, 1000)
       }).then(() => {
         this.timelineData[period] = this.sampleTimelineData
+        this.activePeriod = period
         this.loaded = true
       })
     },
