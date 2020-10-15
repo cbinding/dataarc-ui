@@ -21,7 +21,7 @@ const actions = {
     .then(
       (response) => {
         commit('loginSuccess', response)
-        router.push('/basic')
+        router.push('/')
       },
       (error) => {
         commit('loginFailure', error)

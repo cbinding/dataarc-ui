@@ -87,7 +87,7 @@ export default {
     },
     handleLogout() {
       this.logout()
-      this.$router.push('/login')
+      this.$router.push('/')
     },
   },
 }
