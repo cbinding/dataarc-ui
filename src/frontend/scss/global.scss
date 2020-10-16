@@ -8,6 +8,7 @@
 
 body,
 html {
+  padding-top: 54px;
   width: 100%;
   height: 100%;
 }
@@ -305,10 +306,10 @@ fieldset[disabled] .btn-primary:hover {
   background-color: #0089d0;
 }
 
-.btn-primary .badge {
-  color: #0089d0;
-  background-color: white;
-}
+// .btn-primary .badge {
+//   color: #0089d0;
+//   background-color: white;
+// }
 
 .btn {
   font-weight: 700;

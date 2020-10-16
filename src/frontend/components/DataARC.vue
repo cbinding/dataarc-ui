@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="sticky-top">
+      <b-button href="#Results" class="float-right" variant="primary">Results <b-badge variant="danger">0</b-badge></b-button>
+      <b-button href="#Filters" class="float-right" variant="primary">Filters <b-badge variant="success">0</b-badge></b-button>
+    </div>
     <timeline
       @filtered="processFilter"
     />
@@ -10,9 +14,11 @@
       @filtered="processFilter"
     />
     <results
+      id="Results"
       :filters="filters"
     />
     <why
+      id="Filters"
       :filters="filters"
     />
   </div>

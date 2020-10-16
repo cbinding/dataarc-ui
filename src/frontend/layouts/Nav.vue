@@ -61,24 +61,6 @@
           <li class="nav-item">
             <a
               class="nav-link js-scroll-trigger"
-              href="#filters-section"
-            >Filters <span
-              id="filters-count"
-              class="badge badge-success"
-            >0</span></a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link js-scroll-trigger"
-              href="#results-section"
-            >Results <span
-              id="results-count"
-              class="badge badge-danger"
-            >0</span></a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link js-scroll-trigger"
               href="#why-section"
             >Why</a>
           </li>
