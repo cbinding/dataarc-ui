@@ -36,8 +36,9 @@ a {
 
 a:focus,
 a:hover {
-  color: #0089d0;
+  color: #0089d0!important;
 }
+
 
 p {
   font-size: 16px;
@@ -58,7 +59,7 @@ section {
 }
 
 .section-heading sup {
-  postion: absolute;
+  position: absolute;
   top: -1rem;
   font-size: 1rem;
 }

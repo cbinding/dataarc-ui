@@ -28,6 +28,7 @@ $RECYCLE.BIN/
 *.njsproj
 *.sln
 *.sw?
+.history
 
 # local env files
 .env

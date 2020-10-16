@@ -1,13 +1,13 @@
 <template>
-  <nav
+  <b-navbar
     id="mainNav"
     class="navbar navbar-expand-lg navbar-light navbar-shrink fixed-top"
   >
     <div class="container">
-      <a
+      <b-navbar-brand
         class="navbar-brand js-scroll-trigger"
         href="#page-top"
-      >DataARC</a>
+      >DataARC</b-navbar-brand>
       <a
         class="navbar-about btn btn-sm btn-outline-dark"
         href="/about"
@@ -23,11 +23,12 @@
       >
         <span class="navbar-toggler-icon" />
       </button>
-      <div
+      <b-collapse
         id="navbarResponsive"
         class="collapse navbar-collapse"
+        is-nav
       >
-        <ul class="navbar-nav ml-auto">
+        <b-navbar-nav class="navbar-nav ml-auto">
           <li class="nav-item">
             <a
               class="nav-link js-scroll-trigger"
@@ -70,21 +71,15 @@
               href="/auth/login"
             >Login</a>
           </li>
-          <!-- <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Manage
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" :to="{name: 'Profile' }">Profile</a>
-              <a class="dropdown-item" href="#">Admin</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#" @click="handleLogout()">Signout</a>
-            </div>
-          </li> -->
-        </ul>
-      </div>
+          <b-nav-item-dropdown text="Manage" right>
+            <b-dropdown-item :to="{name: 'Profile' }">Profile</b-dropdown-item>
+            <b-dropdown-item :to="{name: 'authenticated' }">Admin</b-dropdown-item>
+            <b-dropdown-item @click="handleLogout()">Signout</b-dropdown-item>
+          </b-nav-item-dropdown>
+        </b-navbar-nav>
+      </b-collapse>
     </div>
-  </nav>
+  </b-navbar>
 </template>
 
 <script>
@@ -136,6 +131,13 @@ export default {
   font-weight: 700;
   text-transform: uppercase;
   color: #222222;
+}
+
+#mainNav .navbar-nav{
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color:#222222
 }
 
 #mainNav .navbar-nav>li.nav-item>a.nav-link:focus:hover,

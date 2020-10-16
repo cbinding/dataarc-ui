@@ -54,7 +54,18 @@ export default {
 
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+
+body,
+html {
+  padding-top: unset;
+}
+
+.btn {
+  font-weight: unset;
+  text-transform: unset;
+  border: unset;
+}
 
 .app {
 }
