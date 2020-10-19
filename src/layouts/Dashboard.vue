@@ -55,12 +55,6 @@ export default {
 </script>
 
 <style lang="scss">
-
-body,
-html {
-  padding-top: unset;
-}
-
 .btn {
   font-weight: unset;
   text-transform: unset;
@@ -68,5 +62,11 @@ html {
 }
 
 .app {
+}
+</style>
+
+<style lang="scss" scoped>
+.page-body-wrapper {
+  padding-top: 4px!important;
 }
 </style>
