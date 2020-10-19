@@ -65,13 +65,13 @@
               href="#why-section"
             >Why</a>
           </li>
-          <li class="nav-item">
+          <li v-if="!status.loggedIn" class="nav-item">
             <a
               class="nav-link js-scroll-trigger"
               href="/auth/login"
             >Login</a>
           </li>
-          <b-nav-item-dropdown text="Manage" right>
+          <b-nav-item-dropdown v-if="status.loggedIn" text="Manage" right>
             <b-dropdown-item :to="{name: 'Profile' }">Profile</b-dropdown-item>
             <b-dropdown-item :to="{name: 'authenticated' }">Admin</b-dropdown-item>
             <b-dropdown-item @click="handleLogout()">Signout</b-dropdown-item>
@@ -83,8 +83,17 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 export default {
-
+  computed: {
+    ...mapState('account', ['user', 'role', 'status']),
+  },
+  methods: {
+    ...mapActions('account', ['logout']),
+    handleLogout() {
+      this.logout()
+    },
+  },
 }
 </script>
 
