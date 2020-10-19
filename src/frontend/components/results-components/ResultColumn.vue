@@ -17,19 +17,9 @@
           class="list-group-item d-flex justify-content-between align-items-center text-left results-source"
         >
           {{ source.dataset }}
-          <span class="badge badge-dark">
-            {{ source.count }}
-          </span>
+          <button class="btn btn-primary btn-sm">View <span class="badge badge-dark">{{ source.count }}</span></button>
         </li>
       </ul>
-    </div>
-    <div class="card-footer">
-      <button
-        class="btn btn-block btn-primary"
-        @click.prevent="viewData"
-      >
-        View Data
-      </button>
     </div>
   </div>
 </template>

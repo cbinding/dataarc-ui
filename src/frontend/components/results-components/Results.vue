@@ -55,6 +55,11 @@ export default {
               dataset_id: 1,
               count: 3,
             },
+            {
+              dataset: 'Test 2',
+              dataset_id: 2,
+              count: 5,
+            },
           ],
         },
         {
@@ -67,6 +72,11 @@ export default {
               dataset_id: 1,
               count: 3,
             },
+            {
+              dataset: 'Test 2',
+              dataset_id: 2,
+              count: 5,
+            },
           ],
         },
         {
@@ -78,6 +88,11 @@ export default {
               dataset: 'Test 1',
               dataset_id: 1,
               count: 3,
+            },
+            {
+              dataset: 'Test 2',
+              dataset_id: 2,
+              count: 5,
             },
           ],
         },
