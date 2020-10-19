@@ -44,7 +44,8 @@
               </li>
             </ul>
           </div>
-          <leaflet :features="features" />
+          <open-layers />
+          <!-- <leaflet :features="features" /> -->
         </div>
       </div>
     </div>
@@ -55,6 +56,7 @@
 import gql from 'graphql-tag'
 import BatchLoader from '@/workers/apollo-batch-loader.worker.js'
 import Leaflet from './map-components/LeafletContainer.vue'
+import OpenLayers from './map-components/OpenLayersContainer'
 
 const featuresQuery = gql`
   query featureCollection ($limit: Int!, $start: Int!) {
@@ -76,6 +78,7 @@ export default {
   name: 'MapContainer',
   components: {
     Leaflet,
+    OpenLayers,
   },
   data() {
     return {
