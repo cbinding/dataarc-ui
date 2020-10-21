@@ -4,6 +4,7 @@ class Datasets {
     this.id = data.id;
     this.title = data.title;
     this.description = data.description;
+    this.metadata = data.metadata;
     this.citation = data.citation;
     this.url = data.url;
     if (data.image) {

@@ -157,6 +157,7 @@ export default {
         action: '',
         title: '',
         description: '',
+        metadata: '',
         citation: '',
         url: '',
         image: null,
@@ -301,6 +302,19 @@ export default {
             visible(model) {
               return (model.type === 'Combinators' && model.dataset) || (model.type !== 'Users' && model.type !== 'Combinators')
             },
+            required: false,
+            autocomplete: 'off',
+          },
+          {
+            type: 'wrap',
+            label: 'Metadata',
+            model: 'metadata',
+            id: 'metadata',
+            featured: true,
+            visible(model) {
+              return model.type === 'Datasets'
+            },
+            visible: true,
             required: false,
             autocomplete: 'off',
           },

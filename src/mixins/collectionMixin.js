@@ -309,9 +309,8 @@ const apollo = {
           title
           description
           citation
-          source{
-            name
-          }
+          source
+          metadata
           state
           state_msg
           state_at
@@ -368,6 +367,7 @@ const apollo = {
             name
             title
           }
+          metadata
           features_count
           fields_count
           combinators_count
