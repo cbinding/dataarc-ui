@@ -67,6 +67,6 @@ export default {
 
 <style lang="scss" scoped>
 .page-body-wrapper {
-  padding-top: 4px!important;
+  padding-top: unset!important;
 }
 </style>

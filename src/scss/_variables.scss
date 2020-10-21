@@ -59,15 +59,15 @@ $social-colors: (
   reddit: #ff4500
 );
 $theme-colors: (
-  primary: $blue,
-  secondary: $gray-300,
-  success: $green,
-  info: $purple,
-  warning: $orange,
-  danger: $red,
-  light: $gray-100,
-  dark: #424964,
-  teal: $teal,
+  // primary: $blue,
+  // secondary: $gray-300,
+  // success: $green,
+  // info: $purple,
+  // warning: $orange,
+  // danger: $red,
+  // light: $gray-100,
+  // dark: #424964,
+  // teal: $teal,
 );
 ////////// COLOR SYSTEM //////////
 
@@ -125,10 +125,11 @@ $sidebar-mini-menu-padding: 0.8125rem 1rem 0.8125rem 1rem;
 
 
 ///////// NAVBAR ////////
-$navbar-height: 58px;
-$navbar-light-color: #202339;
-$navbar-font-size: 0.9375rem;
-$navbar-icon-font-size: 1.25rem;
+$navbar-height: 54px;
+$navbar-light-color: #222222;
+// $navbar-light-color: #202339;
+// $navbar-font-size: 0.9375rem;
+// $navbar-icon-font-size: 1.25rem;
 ///////// NAVBAR ////////
 
 
