@@ -1,15 +1,11 @@
 class TopicMaps {
   constructor(data) {
-    this.formData = new FormData();
     this.id = data.id;
     this.title = data.title;
     this.description = data.description;
     this.citation = data.citation;
     this.url = data.url;
-    if (data.source && data.source.name) {
-      this.formData.append('files.source', data.source, data.source.name);
-    }
-    this.formData.append('data', JSON.stringify(this));
+    this.source = data.source;
     this.createUrl = `${process.env.VUE_APP_API_URL}/topic-maps`;
     this.editUrl = `${process.env.VUE_APP_API_URL}/topic-maps/${this.id}`;
     this.routeUrl = '/admin/topic-maps';
@@ -17,7 +13,7 @@ class TopicMaps {
 
   _create = async () => {
     try {
-      const resp = await axios.post(this.createUrl, this.formData);
+      const resp = await axios.post(this.createUrl, this);
       return resp;
     } catch (err) {
       console.log(err);
@@ -26,7 +22,7 @@ class TopicMaps {
 
   _update = async () => {
     try {
-      const resp = await axios.put(this.editUrl, this.formData);
+      const resp = await axios.put(this.editUrl, this);
       return resp;
     } catch (err) {
       console.log(err);

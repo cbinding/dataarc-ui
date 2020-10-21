@@ -86,11 +86,6 @@
               {{ getDate(row.item.state_at) }}
             </div>
           </template>
-          <template v-slot:cell(source)="row" class="source">
-            <div>
-              {{ row.item.source ? row.item.source.name : '' }}
-            </div>
-          </template>
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group size="sm">
               <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing' || !row.item.source" v-text="'Process'" @click="process(row.item, component)"></b-button>

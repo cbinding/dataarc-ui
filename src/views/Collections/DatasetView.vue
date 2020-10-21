@@ -246,14 +246,12 @@ export default {
             },
           },
           {
-            type: 'upload',
+            type: 'input',
+            inputType: 'text',
             label: 'Source',
             model: 'source',
             visible: true,
             required: false,
-            onChanged(model, schema, event) {
-              this.model.source = event.target.files[0]
-            },
           },
           {
             type: 'select',

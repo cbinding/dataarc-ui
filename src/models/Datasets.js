@@ -9,9 +9,7 @@ class Datasets {
     if (data.image) {
       this.formData.append('files.image', data.image, data.image.name);
     }
-    if (data.source && data.source.name) {
-      this.formData.append('files.source', data.source, data.source.name);
-    }
+    this.source = data.source;
     if (data.category) {
       this.category = data.category;
     }

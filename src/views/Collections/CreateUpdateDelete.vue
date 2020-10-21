@@ -363,7 +363,8 @@ export default {
             },
           },
           {
-            type: 'upload',
+            type: 'input',
+            inputType: 'text',
             label: 'Source',
             model: 'source',
             visible(model) {
@@ -371,9 +372,6 @@ export default {
               || model.type === 'TopicMaps'
             },
             required: false,
-            onChanged(model, schema, event) {
-              this.model.source = event.target.files[0]
-            },
           },
           {
             type: 'select',
@@ -618,7 +616,6 @@ export default {
           vm.item = value.data
           vm.model = vm.item
           vm.model.image = null
-          vm.model.source = null
           if (vm.model.category) {
             const temp = vm.model.category.id
             vm.model.category = temp
