@@ -15,8 +15,10 @@
     </div>
     <result-view
       v-if="selectedResult"
-      :result="selectedResult"
+      :key="resultType"
+      :source="selectedResult"
       :filters="filters"
+      :resultType="resultType"
     />
   </div>
 </template>
@@ -24,6 +26,7 @@
 <script>
 import ResultColumn from './ResultColumn.vue'
 import ResultView from './ResultView.vue'
+
 export default {
   name: 'Results',
   components: {
@@ -37,6 +40,10 @@ export default {
     },
     resultType: {
       type: String,
+      required: true,
+    },
+    resultTypes: {
+      type: Array,
       required: true,
     },
   },
@@ -54,11 +61,13 @@ export default {
               dataset: 'Test 1',
               dataset_id: 1,
               count: 3,
+              description: 'Test 1 description',
             },
             {
               dataset: 'Test 2',
               dataset_id: 2,
               count: 5,
+              description: 'Test 2 description',
             },
           ],
         },
@@ -68,14 +77,16 @@ export default {
           totalCount: 35000,
           counts: [
             {
-              dataset: 'Test 1',
+              dataset: 'Strategic Environmental Archaeology Database (SEAD) [Insects]',
               dataset_id: 1,
               count: 3,
+              description: 'The Strategic Environmental Archaeology Database (SEAD) is a research infrastructure for storing, manipulating and analyzing proxy data from archaeological and palaeoenvironmental investigations. The primary objectives of SEAD are to make environmental archaeology data available to the international research community and to provide online tools to assist in the analysis of these data.',
             },
             {
               dataset: 'Test 2',
               dataset_id: 2,
               count: 5,
+              description: 'Test 2 description',
             },
           ],
         },
@@ -88,11 +99,13 @@ export default {
               dataset: 'Test 1',
               dataset_id: 1,
               count: 3,
+              description: 'Test 1 description',
             },
             {
               dataset: 'Test 2',
               dataset_id: 2,
               count: 5,
+              description: 'Test 2 description',
             },
           ],
         },
@@ -103,8 +116,9 @@ export default {
     this.results = this.sampleResult
   },
   methods: {
-    setResultView(result) {
-      console.log(result)
+    setResultView(source, result) {
+      this.selectedResult = source
+      this.selectedResult.result = result
     },
   },
 }

@@ -16,8 +16,12 @@
           :key="index"
           class="list-group-item d-flex justify-content-between align-items-center text-left results-source"
         >
-          {{ source.dataset }}
-          <button class="btn btn-primary btn-sm">View <span class="badge badge-dark">{{ source.count }}</span></button>
+          <div class="col-sm-8">
+            {{ source.dataset }}
+          </div>
+          <div class="col-sm-4">
+            <button class="btn btn-primary btn-sm"  @click="viewData(source, result)">View <span class="badge badge-dark">{{ source.count }}</span></button>
+          </div>
         </li>
       </ul>
     </div>
@@ -34,8 +38,8 @@ export default {
     },
   },
   methods: {
-    viewData() {
-      this.$emit('result-data-view', this.result)
+    viewData(source, result) {
+      this.$emit('result-data-view', source, result)
     },
   },
 }

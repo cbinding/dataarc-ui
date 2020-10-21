@@ -8,6 +8,7 @@
       :key="index"
       :filters="filters"
       :result-type="result"
+      :result-types="resultTypes"
     />
   </section>
 </template>
