@@ -40,8 +40,8 @@
           </template>
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group size="sm">
-              <b-button :to="{name: 'Update Combinator', params: {id: row.item.id} }" variant="primary" :disabled="row.item.state === 'running'" v-text="'Edit'"></b-button>
-              <b-button variant="primary" :disabled="row.item.state === 'running'" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
+              <b-button :to="{name: 'Update Combinator', params: {id: row.item.id} }" variant="primary" v-text="'Edit'"></b-button>
+              <b-button variant="primary" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
             </b-button-group>
           </template>
         </b-table>

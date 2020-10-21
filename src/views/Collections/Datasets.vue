@@ -66,31 +66,19 @@
               </b-badge>
             </div>
           </template>
-          <template v-slot:cell(state)="row" class="state">
-            <div>
-              <b-badge :variant="status(row.item.state)">
-                {{ row.item.state ? row.item.state : 'pending' }}
-              </b-badge>
-            </div>
-          </template>
-          <template v-slot:cell(state_msg)="row" class="state_msg">
-            <div class="w-200 text-wrap" style="width: 225px;">
-              {{ row.item.state_msg ? row.item.state_msg : '' }}
-            </div>
-          </template>
-          <template v-slot:head(state_at)="row">
+          <template v-slot:head(processed_at)="row">
             <span>Last Updated</span>
           </template>
-          <template v-slot:cell(state_at)="row" class="state_at">
+          <template v-slot:cell(processed_at)="row" class="processed_at">
             <div>
-              {{ getDate(row.item.state_at) }}
+              {{ getDate(row.item.processed_at) }}
             </div>
           </template>
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group size="sm">
-              <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing' || !row.item.source" v-text="'Process'" @click="process(row.item, component)"></b-button>
-              <b-button size="sm" :to="{name: 'Dataset View', params: {id: row.item.id} }" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Edit'"></b-button>
-              <b-button size="sm" variant="primary" :disabled="row.item.state === 'processing'" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
+              <b-button size="sm" variant="primary" :disabled="row.item.processed_at === null || !row.item.source" v-text="'Process'" @click="process(row.item, component)"></b-button>
+              <b-button size="sm" :to="{name: 'Dataset View', params: {id: row.item.id} }" variant="primary" :disabled="row.item.processed_at === null" v-text="'Edit'"></b-button>
+              <b-button size="sm" variant="primary" :disabled="row.item.processed_at === null" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
             </b-button-group>
           </template>
         </b-table>
@@ -114,9 +102,7 @@ export default {
         { key: 'fields_count', sortable: true },
         { key: 'features_count', sortable: true },
         { key: 'combinators_count', sortable: true },
-        { key: 'state', sortable: true },
-        { key: 'state_msg', sortable: true },
-        { key: 'state_at', sortable: true },
+        { key: 'processed_at', sortable: true },
         { key: 'source', sortable: true },
       ],
       pending: 'warning',

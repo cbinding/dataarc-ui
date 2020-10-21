@@ -40,9 +40,6 @@ const apollo = {
             id
             title
           }
-          state
-          state_msg
-          state_at
           created_by {
             id
             username
@@ -257,6 +254,7 @@ const apollo = {
           description
           citation
           url
+          processed_at
           topics_count
         }
       }
@@ -311,9 +309,7 @@ const apollo = {
           citation
           source
           metadata
-          state
-          state_msg
-          state_at
+          processed_at
           fields_count
           features_count
           combinators_count
@@ -330,15 +326,7 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         let stopQuery = data.datasets.filter((dataset) => {
-          if (
-            !(
-              dataset.state === 'done' ||
-              dataset.state === 'pending' ||
-              dataset.state === 'failed' ||
-              dataset.state === '' ||
-              dataset.state === null
-            )
-          ) {
+          if (dataset.processed_at === null) {
             return dataset;
           }
         });
@@ -472,9 +460,6 @@ const apollo = {
           citation
           url
           operator
-          state
-          state_msg
-          state_at
           queries {
             id
             property
@@ -671,7 +656,7 @@ const methods = {
   async process(val, component) {
     this.currentId = val.id;
     let url = component === 'Datasets' ? 'datasets' : 'concept-maps'
-    val.state = 'processing';
+    val.processed_at = null;
     const resp = await axios.get(`${this.$apiUrl}/${url}/${val.id}/process`);
     if (resp) {
       this.$apollo.queries[`all${component}`].refetch();

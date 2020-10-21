@@ -60,19 +60,12 @@
               </b-dropdown>
             </div>
           </template>
-          <template v-slot:cell(state)="row" class="state">
-            <div>
-              <b-badge :variant="status(row.item.state)">
-                {{ row.item.state ? row.item.state : 'pending' }}
-              </b-badge>
-            </div>
-          </template>
-          <template v-slot:head(state_at)="row">
+          <template v-slot:head(processed_at)="row">
             <span>Last Updated</span>
           </template>
-          <template v-slot:cell(state_at)="row" class="state_at">
+          <template v-slot:cell(processed_at)="row" class="processed_at">
             <div>
-              {{ getDate(row.item.state_at) }}
+              {{ getDate(row.item.processed_at) }}
             </div>
           </template>
           <template v-slot:cell(save)="row" class="Save">
@@ -105,21 +98,6 @@
           <template v-slot:cell(citation)="row" class="citation">
             <div class="text-wrap" style="width: 300px; max-width: 350px;" v-if="row.item.citation">
               {{ shorten(row.item.citation) }}
-            </div>
-          </template>
-          <template v-slot:cell(state)="row" class="state">
-            <div>
-              <b-badge :variant="status(row.item.state)">
-                {{ row.item.state ? row.item.state : 'pending' }}
-              </b-badge>
-            </div>
-          </template>
-          <template v-slot:head(state_at)="row">
-            <span>Last Updated</span>
-          </template>
-          <template v-slot:cell(state_at)="row" class="state_at">
-            <div>
-              {{ getDate(row.item.state_at) }}
             </div>
           </template>
           <template v-slot:cell(actions)="row" class="Actions">
@@ -167,9 +145,7 @@ export default {
         { key: 'source', sortable: true },
         { key: 'title', sortable: true },
         { key: 'type', sortable: true },
-        { key: 'state', sortable: true },
-        { key: 'state_msg', sortable: true },
-        { key: 'state_at', sortable: true },
+        { key: 'processed_at', sortable: true },
       ],
       combinatorsList: [
         { key: 'actions', sortable: false },
@@ -177,9 +153,6 @@ export default {
         { key: 'title', sortable: true },
         { key: 'description', sortable: true },
         { key: 'citation', sortable: true },
-        { key: 'state', sortable: true },
-        { key: 'state_msg', sortable: true },
-        { key: 'state_at', sortable: true },
       ],
       filterFields: '',
       filterCombinators: '',
