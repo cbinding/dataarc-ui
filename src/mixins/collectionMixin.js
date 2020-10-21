@@ -7,7 +7,7 @@ import {
   Users,
   DatasetFields,
   TemporalCoverages,
-  TopicMaps,
+  ConceptMaps,
   Concepts,
 } from '../models';
 import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue';
@@ -20,7 +20,7 @@ const Models = {
   Users,
   DatasetFields,
   TemporalCoverages,
-  TopicMaps,
+  ConceptMaps,
   Concepts,
 };
 
@@ -153,7 +153,7 @@ const apollo = {
           id
           name
           title
-          topic_map {
+          concept_map {
             id
             name
             title
@@ -247,10 +247,10 @@ const apollo = {
       }
     },
   },
-  allTopicMaps: {
+  allConceptMaps: {
     query: gql`
       query {
-        topicMaps {
+        conceptMaps {
           id
           name
           title
@@ -266,12 +266,12 @@ const apollo = {
     update(data) {
       // The returned value will update
       // the vue property 'datasets'
-      return data.allTopicMaps;
+      return data.allConceptMaps;
     },
     result({ data, loading, networkStatus }) {
       if (data) {
-        this.topicMaps = data.topicMaps;
-        this.rows = this.topicMaps.length
+        this.conceptMaps = data.conceptMaps;
+        this.rows = this.conceptMaps.length
       }
     },
   },
@@ -422,10 +422,10 @@ const apollo = {
       console.error("We've got an error!", error);
     },
   },
-  topicMap: {
+  conceptMap: {
     query: gql`
-      query topicMaps($id: ID!) {
-        topicMaps(where: {id: $id}) {
+      query conceptMaps($id: ID!) {
+        conceptMaps(where: {id: $id}) {
           id
           title
           description
@@ -452,8 +452,8 @@ const apollo = {
     },
     // Optional result hook
     result({ data, loading, networkStatus }) {
-      if (data && data.topicMaps) {
-        [this.currentTopicMap] = data.topicMaps;
+      if (data && data.conceptMaps) {
+        [this.currentConceptMap] = data.conceptMaps;
       }
     },
     // Error handling
@@ -618,13 +618,13 @@ const apollo = {
   getTopics: {
     query: gql`
       query topics($id: ID!, $start: Int, $limit: Int){
-        topics(where: {topic_map: $id}, start: $start, limit: $limit) {
+        topics(where: {concept_map: $id}, start: $start, limit: $limit) {
           id
           title
           description
           citation
         }
-        countTopics(where: {topic_map: $id})
+        countTopics(where: {concept_map: $id})
       }
     `,
     // Reactive parameters
@@ -670,7 +670,7 @@ const apollo = {
 const methods = {
   async process(val, component) {
     this.currentId = val.id;
-    let url = component === 'Datasets' ? 'datasets' : 'topic-maps'
+    let url = component === 'Datasets' ? 'datasets' : 'concept-maps'
     val.state = 'processing';
     const resp = await axios.get(`${this.$apiUrl}/${url}/${val.id}/process`);
     if (resp) {
@@ -912,10 +912,10 @@ const data = function () {
     categories: [],
     concepts: [],
     temporalCoverages: [],
-    topicMaps: [],
+    conceptMaps: [],
     topics: [],
     currentDataset: {},
-    currentTopicMap: {},
+    currentConceptMap: {},
     currentCombinator: null,
     currentFieldsPage: 1,
     currentCombinatorsPage: 1,

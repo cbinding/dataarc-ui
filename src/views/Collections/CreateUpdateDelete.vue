@@ -326,7 +326,7 @@ export default {
               return (model.type === 'Combinators' && model.dataset)
               || model.type === 'Datasets'
               || model.type === 'TemporalCoverages'
-              || model.type === 'TopicMaps'
+              || model.type === 'ConceptMaps'
               || model.type === 'Concepts'
             },
             autocomplete: 'off',
@@ -339,7 +339,7 @@ export default {
             visible(model) {
               return model.type === 'Datasets'
               || model.type === 'TemporalCoverages'
-              || model.type === 'TopicMaps'
+              || model.type === 'ConceptMaps'
               || model.type === 'Concepts'
             },
           },
@@ -383,7 +383,7 @@ export default {
             model: 'source',
             visible(model) {
               return model.type === 'Datasets'
-              || model.type === 'TopicMaps'
+              || model.type === 'ConceptMaps'
             },
             required: false,
           },
@@ -449,8 +449,8 @@ export default {
             selectOptions: {
               key: 'title',
               label: 'title',
-              customLabel({ topic_map, name }) {
-                return `${topic_map ? topic_map.name : 'null'}.${name}`
+              customLabel({ concept_map, name }) {
+                return `${concept_map ? concept_map.name : 'null'}.${name}`
               },
               multiple: true,
               searchable: true,
@@ -574,7 +574,7 @@ export default {
         this.model.queries = val.queries
       }
     },
-    currentTopicMap(val) {
+    currentConceptMap(val) {
       if (val) {
         Object.keys(val).forEach((key) => {
           if (key !== '__typename') {
@@ -608,10 +608,10 @@ export default {
           this.$apollo.queries.combinator.refetch()
         }
       }
-      else if (this.$route.name === 'TopicMap View') {
+      else if (this.$route.name === 'ConceptMap View') {
         this.currentId = this.$route.params.id
-        this.$apollo.queries.topicMap.skip = false
-        this.$apollo.queries.topicMap.refetch()
+        this.$apollo.queries.conceptMap.skip = false
+        this.$apollo.queries.conceptMap.refetch()
       }
       else if (this.$route.name === 'Create Dataset') {
         this.$apollo.queries.allCategories.skip = false
@@ -623,7 +623,7 @@ export default {
         this.loading = false
       }
 
-      if (this.action === 'Update' && this.collectionType !== 'Datasets' && this.collectionType !== 'Combinators' && this.collectionType !== 'TopicMaps') {
+      if (this.action === 'Update' && this.collectionType !== 'Datasets' && this.collectionType !== 'Combinators' && this.collectionType !== 'ConceptMaps') {
         this.editUrl = `${pathArray[2]}/${this.$route.params.id}`
         const vm = this
         this.getSingle(this.editUrl).then((value) => {

@@ -2,7 +2,7 @@
   <b-container fluid>
     <router-view />
     <table-view-layout
-      v-if="$route.name === 'TopicMaps'"
+      v-if="$route.name === 'ConceptMaps'"
       :rows="rows"
       :component="component"
       :limits="limits"
@@ -10,30 +10,30 @@
       :per-page="perPage"
       @inputChanged="updateFilter"
       @change="updatePage"
-      @deleteConfirmed="deleteItem(itemToDelete, 'TopicMaps')"
+      @deleteConfirmed="deleteItem(itemToDelete, 'ConceptMaps')"
       @limitUpdated="updateLimit"
     >
       <template v-slot:button>
         <b-button
           variant="primary"
-          :to="{name: 'Create TopicMap' }"
+          :to="{name: 'Create ConceptMap' }"
         >
-          <b-icon-plus />Add new Topic Map
+          <b-icon-plus />Add new Concept Map
         </b-button>
       </template>
       <template v-slot:table>
         <b-table
-          v-if="topicMaps"
-          id="topicMaps"
-          ref="topicMaps"
-          :busy="topicMapsLoading"
+          v-if="conceptMaps"
+          id="conceptMaps"
+          ref="conceptMaps"
+          :busy="conceptMapsLoading"
           :per-page="perPage"
           :current-page="currentPage"
           :filter="filter"
           responsive
           table-variant="light"
           head-variant="light"
-          :items="topicMaps"
+          :items="conceptMaps"
           :fields="displayFields"
           @filtered="updatePagination"
         >
@@ -87,7 +87,7 @@
                 v-text="'Process'"
               />
               <b-button
-                :to="{name: 'TopicMap View', params: {id: row.item.id} }"
+                :to="{name: 'ConceptMap View', params: {id: row.item.id} }"
                 variant="primary"
                 v-text="'Edit'"
               />
@@ -111,7 +111,7 @@ export default {
   mixins: [collectionMixin],
   data() {
     return {
-      component: 'TopicMaps',
+      component: 'ConceptMaps',
       displayFields: [
         { key: 'actions', sortable: false },
         { key: 'title', sortable: true },
@@ -120,28 +120,28 @@ export default {
         { key: 'url', sortable: true },
         { key: 'topics_count', sortable: true },
       ],
-      topicMapsLoading: true,
+      conceptMapsLoading: true,
     }
   },
   watch: {
-    topicMaps(val) {
+    conceptMaps(val) {
       if (val) {
-        this.$emit('bv::refresh::table', 'topicMaps')
-        this.topicMapsLoading = this.loadingState(val.length)
+        this.$emit('bv::refresh::table', 'conceptMaps')
+        this.conceptMapsLoading = this.loadingState(val.length)
       }
     },
     $route(to, from) {
-      if (to.name !== 'TopicMaps') {
-        this.$apollo.queries.allTopicMaps.skip = true
+      if (to.name !== 'ConceptMaps') {
+        this.$apollo.queries.allConceptMaps.skip = true
       }
-      else if (from.name !== 'TopicMaps') {
-        this.$apollo.queries.allTopicMaps.skip = false
-        this.$apollo.queries.allTopicMaps.refetch()
+      else if (from.name !== 'ConceptMaps') {
+        this.$apollo.queries.allConceptMaps.skip = false
+        this.$apollo.queries.allConceptMaps.refetch()
       }
     },
   },
   created() {
-    this.$apollo.queries.allTopicMaps.skip = false
+    this.$apollo.queries.allConceptMaps.skip = false
   },
 }
 </script>

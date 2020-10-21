@@ -236,14 +236,14 @@ const routes = [
         ],
       },
       {
-        path: 'topic-maps',
-        name: 'TopicMaps',
-        component: () => import('@/views/Collections/TopicMaps.vue'),
+        path: 'concept-maps',
+        name: 'ConceptMaps',
+        component: () => import('@/views/Collections/ConceptMaps.vue'),
         props: true,
         children: [
           {
             path: 'create',
-            name: 'Create TopicMap',
+            name: 'Create ConceptMap',
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
@@ -270,13 +270,13 @@ const routes = [
         ],
       },
       {
-        path: 'topic-map/:id',
-        component: () => import('@/views/Collections/TopicMapsView.vue'),
+        path: 'concept-map/:id',
+        component: () => import('@/views/Collections/ConceptMapsView.vue'),
         props: true,
         children: [
           {
             path: '',
-            name: 'TopicMap View',
+            name: 'ConceptMap View',
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },

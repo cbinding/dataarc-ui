@@ -22,7 +22,7 @@
           :key="route.name"
           :to="route.path"
         >
-          <span v-if="route.name !== 'TopicMap View'">
+          <span v-if="route.name !== 'ConceptMap View'">
             <i class="mdi mdi-image-filter" />{{ route.name }}
           </span>
         </b-nav-item>

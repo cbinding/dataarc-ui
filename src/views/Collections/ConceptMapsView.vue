@@ -1,12 +1,12 @@
 <template>
   <b-container fluid>
-<!-- Update Topic Map -->
+<!-- Update Concept Map -->
     <router-view/>
     <br>
-<!-- Topics View -->
-    <table-view-layout :rows="rows" component="Topics" :limits="limits" :currentPage="currentPage" @inputChanged="updateFilter" :perPage="perPage" @change="updatePage" @limitUpdated="updateLimit">
+<!-- Concepts View -->
+    <table-view-layout :rows="rows" component="Concepts" :limits="limits" :currentPage="currentPage" @inputChanged="updateFilter" :perPage="perPage" @change="updatePage" @limitUpdated="updateLimit">
       <template v-slot:table>
-        <b-table v-if="topics" :filter="filter" :busy="topicsLoading" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="topics" :fields="fields" @filtered="updatePagination">
+        <b-table v-if="topics" :filter="filter" :busy="conceptsLoading" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="topics" :fields="fields" @filtered="updatePagination">
           <template v-slot:table-busy>
             <div class="text-center my-2">
               <b-spinner class="align-middle"></b-spinner>
@@ -24,7 +24,7 @@ import collectionMixin from '../../mixins/collectionMixin'
 export default {
   data() {
     return {
-      component: 'TopicMap View',
+      component: 'ConceptMap View',
       action: 'Update',
       topics: [],
       fields: [
@@ -32,14 +32,14 @@ export default {
         { key: 'description', sortable: true },
         { key: 'citation', sortable: true },
       ],
-      topicsLoading: true,
+      conceptsLoading: true,
     }
   },
   mixins: [collectionMixin],
   watch: {
     topics(val) {
       if (val) {
-        this.topicsLoading = this.loadingState(val.length)
+        this.conceptsLoading = this.loadingState(val.length)
       }
     },
   },
