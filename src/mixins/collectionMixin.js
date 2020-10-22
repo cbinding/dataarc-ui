@@ -346,10 +346,12 @@ const apollo = {
             name
             title
           }
+          source
           metadata
           features_count
           fields_count
           combinators_count
+          processed_at
           title_layout
           link_layout
           details_layout

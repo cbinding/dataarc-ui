@@ -66,18 +66,10 @@
               </b-badge>
             </div>
           </template>
-          <template v-slot:head(processed_at)="row">
-            <span>Last Updated</span>
-          </template>
-          <template v-slot:cell(processed_at)="row" class="processed_at">
-            <div>
-              {{ getDate(row.item.processed_at) }}
-            </div>
-          </template>
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group size="sm">
               <b-button size="sm" variant="primary" :disabled="row.item.processed_at === null || !row.item.source" v-text="'Process'" @click="process(row.item, component)"></b-button>
-              <b-button size="sm" :to="{name: 'Dataset View', params: {id: row.item.id} }" variant="primary" :disabled="row.item.processed_at === null" v-text="'Edit'"></b-button>
+              <b-button size="sm" :to="{name: 'Dataset View', params: {id: row.item.id} }" :disabled="row.item.processed_at === null" variant="primary" v-text="'Edit'"></b-button>
               <b-button size="sm" variant="primary" :disabled="row.item.processed_at === null" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
             </b-button-group>
           </template>
@@ -102,7 +94,6 @@ export default {
         { key: 'fields_count', sortable: true },
         { key: 'features_count', sortable: true },
         { key: 'combinators_count', sortable: true },
-        { key: 'processed_at', sortable: true },
         { key: 'source', sortable: true },
       ],
       pending: 'warning',
