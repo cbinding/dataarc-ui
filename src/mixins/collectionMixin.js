@@ -246,6 +246,7 @@ const apollo = {
           citation
           url
           processed_at
+          active
           topics_count
         }
       }

@@ -92,6 +92,7 @@
                 v-text="'Edit'"
               />
               <b-button
+                :disabled="row.item.active"
                 v-b-modal.deleteConfirmation
                 variant="primary"
                 @click="itemToDelete = row.item"
