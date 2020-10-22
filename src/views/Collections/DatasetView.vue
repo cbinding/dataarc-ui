@@ -52,7 +52,7 @@
           </template>
           <template v-slot:cell(type)="row" class="Type">
             <div style="max-width: 400px;" v-if="row.item.type">
-              <b-dropdown :text="row.item.type">
+              <b-dropdown :disabled="row.item.type === 'array'" :text="row.item.type">
                 <div v-for="type in fieldTypes" :key="type">
                   <b-dropdown-item v-model="row.item.type" @click="row.item.type = type">
                     {{type}}
@@ -139,7 +139,7 @@ export default {
       component: 'Dataset View',
       action: 'Update',
       sortList: ['Path', 'Type'],
-      fieldTypes: ['string', 'number', 'boolean', 'array', 'url', 'start_date', 'end_date', 'text_date'],
+      fieldTypes: ['string', 'number', 'boolean', 'array', 'url', 'latitude', 'longitude', 'begin_date', 'end_date'],
       fieldsList: [
         { key: 'save', sortable: false },
         { key: 'name', sortable: true },

@@ -66,7 +66,7 @@
           <b-list-group style="max-height:950px;overflow-y:auto;" horizontal class="d-flex flex-wrap">
             <div v-for="field in sorted(form.fields)" :key="field.id">
               <b-list-group-item flex-fill>
-                {{field.path}}
+                {{field.name}}
                 <b-badge :variant="type(field.type)">{{field.type}}</b-badge>
               </b-list-group-item>
             </div>

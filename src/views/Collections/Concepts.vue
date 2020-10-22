@@ -60,36 +60,6 @@
               {{ shorten(row.item.description) }}
             </div>
           </template>
-          <template v-slot:head(combinators_count)="row">
-            <div class="text-center">
-              # Combinators
-            </div>
-          </template>
-          <template v-slot:cell(combinators_count)="row">
-            <div class="text-center">
-              <b-badge
-                pill
-                variant="primary"
-              >
-                {{ row.item.combinators_count }}
-              </b-badge>
-            </div>
-          </template>
-          <template v-slot:head(topics_count)="row">
-            <div class="text-center">
-              # Topics
-            </div>
-          </template>
-          <template v-slot:cell(topics_count)="row">
-            <div class="text-center">
-              <b-badge
-                pill
-                variant="primary"
-              >
-                {{ row.item.topics_count ? row.item.topics_count : 0 }}
-              </b-badge>
-            </div>
-          </template>
           <template
             v-slot:cell(actions)="row"
             class="actions"
@@ -128,10 +98,6 @@ export default {
         { key: 'citation', sortable: true },
         { key: 'url', sortable: true },
         { key: 'group', sortable: true },
-        { key: 'combinators_count', sortable: true },
-        { key: 'topics_count', sortable: true },
-        { key: 'created_by', sortable: true },
-        { key: 'updated_by', sortable: true },
       ],
       conceptsLoading: true,
     }

@@ -7,7 +7,7 @@
             <b-input-group-prepend>
               <b-dropdown no-flip :text="getText(key)" variant="outline-secondary" aria-placeholder="Select Field">
                 <div v-for="value in schema.values" :key="value.id">
-                  <b-dropdown-item @click="setField(key, 'property', value.path, value.type)">{{ value.path }}</b-dropdown-item>
+                  <b-dropdown-item @click="setField(key, 'field', value.name, value.type)">{{ value.name }}</b-dropdown-item>
                 </div>
               </b-dropdown>
               <b-dropdown :text="(form[key] && form[key]['operator']) ? form[key]['operator'] : 'equals'" variant="outline-secondary">
@@ -141,9 +141,9 @@ export default {
   methods: {
     // If switching datasets, reset field if path is not contained in new dataset
     getText(val) {
-      if (this.form && this.form[val] && this.form[val].property) {
+      if (this.form && this.form[val] && this.form[val].field) {
         let test = this.schema.values.filter((field) => {
-          if (field.path === this.form[val].property) {
+          if (field.name === this.form[val].field) {
             return true
           }
         })
@@ -151,7 +151,7 @@ export default {
           return 'Select Field'
         }
         this.form[val].type = test[0].type
-        return this.form[val].property
+        return this.form[val].field
       }
       return 'Select Field'
     },
@@ -161,7 +161,7 @@ export default {
           return this[val.type]
         }
         let test = this.schema.values.filter((value) => {
-          if (val.property === value.path) {
+          if (val.field === value.name) {
             val.type = value.type
             return true
           }
@@ -212,7 +212,7 @@ export default {
       if (field === 'value') {
         this.$set(this.form[int], field, this.values[int])
       }
-      if (field === 'property') {
+      if (field === 'field') {
         this.$set(this.form[int], field, val)
         this.$set(this.form[int], 'type', type)
       }

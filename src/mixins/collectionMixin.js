@@ -83,16 +83,6 @@ const apollo = {
           citation
           url
           group
-          combinators_count
-          topics_count
-          created_by {
-            id
-            username
-          }
-          updated_by {
-            id
-            username
-          }
         }
         countConcepts
       }
@@ -362,7 +352,6 @@ const apollo = {
             name
             title
             type
-            path
             source
           }
           combinators {
@@ -456,10 +445,11 @@ const apollo = {
           operator
           queries {
             id
-            property
-            property_type
+            field
+            type
             operator
             value
+            review
           }
           concepts {
             id
@@ -473,7 +463,7 @@ const apollo = {
             title
             fields {
               id
-              path
+              name
               type
             }
           }
