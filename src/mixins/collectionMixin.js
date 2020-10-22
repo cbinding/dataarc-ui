@@ -40,14 +40,6 @@ const apollo = {
             id
             title
           }
-          created_by {
-            id
-            username
-          }
-          updated_by {
-            id
-            username
-          }
         }
         countCombinators
       }
@@ -220,13 +212,12 @@ const apollo = {
       query {
         temporalCoverages {
           id
-          name
           title
           description
           citation
           url
-          start_date
-          end_date
+          begin
+          end
         }
       }
     `,

@@ -28,16 +28,6 @@
               {{ row.item.dataset.title }}
             </div>
           </template>
-          <template v-slot:cell(created_by)="row" class="CreatedBy">
-            <div class="w-200 text-truncate" style="max-width: 400px;" v-if="row.item.created_by">
-              {{ row.item.created_by.email }}
-            </div>
-          </template>
-          <template v-slot:cell(updated_by)="row" class="UpdatedBy">
-            <div class="w-200 text-truncate" style="max-width: 400px;" v-if="row.item.updated_by">
-              {{ row.item.updated_by.email }}
-            </div>
-          </template>
           <template v-slot:cell(actions)="row" class="actions">
             <fa-icon
               v-if="row.item.review"
@@ -68,8 +58,6 @@ export default {
         { key: 'description', sortable: true },
         { key: 'citation', sortable: true },
         { key: 'dataset', sortable: true },
-        { key: 'created_by', sortable: true },
-        { key: 'updated_by', sortable: true },
       ],
       combinatorsLoading: true,
       combinators: [],

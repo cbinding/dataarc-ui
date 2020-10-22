@@ -314,7 +314,6 @@ export default {
             visible(model) {
               return model.type === 'Datasets'
             },
-            visible: true,
             required: false,
             autocomplete: 'off',
           },
