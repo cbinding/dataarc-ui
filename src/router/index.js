@@ -176,26 +176,6 @@ const routes = [
         ],
       },
       {
-        path: 'map-layers',
-        name: 'MapLayers',
-        component: () => import('@/views/Collections/MapLayers.vue'),
-        props: true,
-        children: [
-          {
-            path: 'create',
-            name: 'Create MapLayer',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-          {
-            path: 'update/:id',
-            name: 'Update MapLayer',
-            component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
-            props: true,
-          },
-        ],
-      },
-      {
         path: 'categories',
         name: 'Categories',
         component: () => import('@/views/Collections/Categories.vue'),

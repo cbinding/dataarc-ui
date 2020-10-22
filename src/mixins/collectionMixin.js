@@ -1,7 +1,6 @@
 import gql from 'graphql-tag';
 import {
   Combinators,
-  MapLayers,
   Categories,
   Datasets,
   Users,
@@ -14,7 +13,6 @@ import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue'
 
 const Models = {
   Combinators,
-  MapLayers,
   Categories,
   Datasets,
   Users,
@@ -252,31 +250,6 @@ const apollo = {
       if (data) {
         this.conceptMaps = data.conceptMaps;
         this.rows = this.conceptMaps.length
-      }
-    },
-  },
-  allMapLayers: {
-    query: gql`
-      query {
-        mapLayers {
-          id
-          name
-          title
-          description
-        }
-      }
-    `,
-    skip: true,
-    ssr: false,
-    update(data) {
-      // The returned value will update
-      // the vue property 'datasets'
-      return data.allMapLayers;
-    },
-    result({ data, loading, networkStatus }) {
-      if (data) {
-        this.mapLayers = data.mapLayers;
-        this.rows = this.mapLayers.length
       }
     },
   },
@@ -877,7 +850,6 @@ const data = function () {
     currentDatasetId: '',
     datasets: [],
     features: [],
-    mapLayers: [],
     categories: [],
     concepts: [],
     temporalCoverages: [],

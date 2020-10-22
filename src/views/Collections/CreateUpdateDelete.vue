@@ -489,7 +489,7 @@ export default {
         validateAfterLoad: true,
         validateAfterChanged: true,
       },
-      types: ['Datasets', 'Combinators', 'MapLayers', 'Categories'],
+      types: ['Datasets', 'Combinators', 'Categories'],
       createUrl: '',
       editUrl: '',
       routeUrl: '',
