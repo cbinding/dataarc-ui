@@ -180,6 +180,7 @@ export default {
         combinators: [],
         concepts: [],
         queries: [],
+        keywords: [],
         dataset_templates: [],
         operator: 'and',
       },
@@ -437,24 +438,25 @@ export default {
             },
           },
           {
-            type: 'vueMultiSelect',
+            type: 'multitag',
             multiSelect: true,
-            label: 'Topics',
-            model: 'topics',
-            values: this.topics ? this.topics : ['1', '2'],
+            label: 'Keywords',
+            model: 'keywords',
+            placeholder: "Start Typing to add a keyword",
+            values: [''],
             visible(model) {
               return model.type === 'Concepts'
             },
             selectOptions: {
-              key: 'title',
-              label: 'title',
-              customLabel({ concept_map, name }) {
-                return `${concept_map ? concept_map.name : 'null'}.${name}`
-              },
               multiple: true,
-              searchable: true,
+              key: 'title',
+              label: 'name',
+              groupValues: 'values',
+              groupLabel: 'group',
+              taggable: true,
               clearOnSelect: true,
               hideSelected: true,
+              tagPlaceholder: 'Add as new tag',
               trackBy: 'id',
               onNewTag(newTag, id, options, value) {
                 options.push(newTag)
@@ -615,9 +617,6 @@ export default {
       else if (this.$route.name === 'Create Dataset') {
         this.$apollo.queries.allCategories.skip = false
       }
-      else if (this.$route.name === 'Create Concept' || this.$route.name === 'Update Concept') {
-        this.$apollo.queries.allTopics.skip = false
-      }
       if (this.$route.name !== 'Update Combinator') {
         this.loading = false
       }
@@ -628,6 +627,9 @@ export default {
         this.getSingle(this.editUrl).then((value) => {
           vm.item = value.data
           vm.model = vm.item
+          if(!vm.model.keywords){
+            vm.model.keywords = []
+          }
           vm.model.image = null
           if (vm.model.category) {
             const temp = vm.model.category.id

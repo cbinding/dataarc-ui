@@ -81,6 +81,7 @@ const apollo = {
           citation
           url
           group
+          keywords
         }
         countConcepts
       }

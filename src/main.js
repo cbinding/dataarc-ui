@@ -32,6 +32,7 @@ import MyPlugin from './plugins/my-plugin'
 import fieldQuery from './views/Collections/templates/fieldQuery.vue'
 import fieldWrap from './views/Collections/templates/fieldWrap.vue'
 import fieldMulti from './views/Collections/templates/fieldMulti.vue'
+import fieldMultitag from './views/Collections/templates/fieldMultitag.vue'
 
 library.add([faFont, faCompass, faSitemap, faPlay, faSearchPlus, faSearchMinus, faRedo, faPause, faExclamationCircle])
 library.add(faClock)
@@ -50,6 +51,7 @@ Vue.component('Debug', Debug)
 Vue.component('fieldQuery', fieldQuery)
 Vue.component('fieldWrap', fieldWrap)
 Vue.component('fieldMulti', fieldMulti)
+Vue.component('fieldMultitag', fieldMultitag)
 
 // Apply plugins
 Vue.use(VueFormGenerator)
