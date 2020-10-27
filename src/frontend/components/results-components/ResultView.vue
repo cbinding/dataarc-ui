@@ -6,6 +6,7 @@
     header-bg-variant="dark"
     header-text-variant="light"
     :hide-footer="true"
+    size="xl"
   >
     <template class="modal-title" #modal-title>
       {{ `${resultType} Results: ${source.result.category}` }}
@@ -118,11 +119,6 @@ export default {
 </script>
 
 <style>
-.modal-dialog {
-	width: 98%!important;
-	max-width: 98%!important;
-	margin: 1% auto!important;
-}
 
 .modal-header {
 }

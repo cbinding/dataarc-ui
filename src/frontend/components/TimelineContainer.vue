@@ -42,84 +42,82 @@
           <button
             class="btn btn-primary"
             data-toggle="modal"
-            data-target="#timeline-filter"
+            v-b-modal.timeline-filter
           >
             <i class="fa fa-filter text-white sr-icons" /> Temporal Filter
           </button>
         </div>
       </div>
     </div>
-    <div
+    <b-modal
       id="timeline-filter"
-      class="modal fade"
-      tabindex="-1"
-      role="dialog"
+      class="modal-dialog"
       aria-hidden="true"
+      size="md"
+      header-bg-variant="dark"
+      header-text-variant="light"
+      hide-header-close
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header text-light bg-dark">
-            Temporal Filter
+      <template class="modal-title" #modal-title>
+        Temporal Filter
+      </template>
+      <template #default>
+        <p>Select a pre-defined time period from the list or select "Custom" and enter your values below.</p>
+        <form>
+          <div class="form-row">
+            <div class="col mb-3">
+              <label for="timeline-period">Time Period</label>
+              <select
+                id="timeline-period"
+                class="custom-select mr-sm-2"
+              >
+                <option selected>
+                  Custom
+                </option>
+              </select>
+            </div>
           </div>
-          <div class="modal-body">
-            <p>Select a pre-defined time period from the list or select "Custom" and enter your values below.</p>
-            <form>
-              <div class="form-row">
-                <div class="col mb-3">
-                  <label for="timeline-period">Time Period</label>
-                  <select
-                    id="timeline-period"
-                    class="custom-select mr-sm-2"
-                  >
-                    <option selected>
-                      Custom
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="col mb-3">
-                  <label for="timeline-startdate">Start Date *</label>
-                  <input
-                    id="timeline-startdate"
-                    type="text"
-                    class="form-control"
-                    placeholder="start"
-                  >
-                </div>
-                <div class="col mb-3">
-                  <label for="timeline-enddate">End Date *</label>
-                  <input
-                    id="timeline-enddate"
-                    type="text"
-                    class="form-control"
-                    placeholder="end"
-                  >
-                </div>
-              </div>
-            </form>
-            <p class="text-muted small">
-              * A negative number is used to represent B.C.E. dates. E.g. -1000 = 1000 B.C.E.
-            </p>
+          <div class="form-row">
+            <div class="col mb-3">
+              <label for="timeline-startdate">Start Date *</label>
+              <input
+                id="timeline-startdate"
+                type="text"
+                class="form-control"
+                placeholder="start"
+              >
+            </div>
+            <div class="col mb-3">
+              <label for="timeline-enddate">End Date *</label>
+              <input
+                id="timeline-enddate"
+                type="text"
+                class="form-control"
+                placeholder="end"
+              >
+            </div>
           </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-            >
-              Apply Filter
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+        </form>
+        <p class="text-muted small">
+          * A negative number is used to represent B.C.E. dates. E.g. -1000 = 1000 B.C.E.
+        </p>
+      </template>
+      <template #modal-footer>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+        >
+          Apply Filter
+        </button>
+      </template>
+    </b-modal>
   </section>
 </template>
 
