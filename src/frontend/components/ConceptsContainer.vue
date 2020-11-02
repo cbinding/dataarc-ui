@@ -70,7 +70,15 @@
             <div
               id="topicSearch"
               class="input-group"
-            />
+            >
+              <vue-bootstrap-typeahead
+                v-model="search"
+                :data="nodes"
+                :serializer="s => s.title"
+                placeholder="Concept Search"
+                @hit="selectedNode = $event"
+              />
+            </div>
           </div>
           <div
             id="conceptContainer"
@@ -83,6 +91,7 @@
             >
               <network
                 v-if="networkSizeSettings.width > 0"
+                :selectedNode="selectedNode"
                 :node-list="nodes"
                 :link-list="links"
                 :svg-size="networkSizeSettings"
@@ -90,6 +99,7 @@
                 :show-node-text="nodeTextBoolean"
                 @clickNode="nodeSelected"
                 @clickLink="linkSelected"
+                @nodeAdded="addNodeToFilter"
               />
             </div>
           </div>
@@ -103,6 +113,7 @@
 
 import gql from 'graphql-tag'
 import TopicMapsJSON from './topicmap.json'
+import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 
 import Network from './concepts-components/Network.vue'
 
@@ -119,9 +130,12 @@ const topicMapQuery = gql`
 export default {
   components: {
     Network,
+    VueBootstrapTypeahead
   },
   data() {
     return {
+      search: '',
+      selectedNode: {},
       nodes: TopicMapsJSON.data.topicMaps[0].nodes,
       links: TopicMapsJSON.data.topicMaps[0].edges,
       nodeTextBoolean: false,
@@ -143,10 +157,26 @@ export default {
     linkSelected({ link }) {
       console.log(link)
     },
+    test(search) {
+      console.log(search)
+    },
+    addNodeToFilter(node) {
+      this.$emit('filtered', 'conceptual', node)
+    },
   },
 }
 </script>
 
-<style>
+<style lang="scss">
+
+.input-group {
+  min-width: 274px!important;
+}
+
+.form-control {
+  min-width: 274px!important;
+}
+
+@import "../scss/concepts";
 
 </style>

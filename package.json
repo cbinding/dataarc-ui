@@ -40,6 +40,7 @@
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.3",
     "vue-async-computed": "^3.8.2",
+    "vue-bootstrap-typeahead": "^0.2.6",
     "vue-form-generator": "^2.3.4",
     "vue-jwt-decode": "^0.1.0",
     "vue-multiselect": "^2.1.6",

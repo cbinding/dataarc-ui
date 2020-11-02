@@ -70,6 +70,7 @@
               <select
                 id="timeline-period"
                 class="custom-select mr-sm-2"
+                v-model="timelineFilter.period"
               >
                 <option selected>
                   Custom
@@ -85,6 +86,7 @@
                 type="text"
                 class="form-control"
                 placeholder="start"
+                v-model="timelineFilter.start"
               >
             </div>
             <div class="col mb-3">
@@ -94,6 +96,7 @@
                 type="text"
                 class="form-control"
                 placeholder="end"
+                v-model="timelineFilter.end"
               >
             </div>
           </div>
@@ -131,6 +134,11 @@ export default {
   },
   data() {
     return {
+      timelineFilter: {
+        period: '',
+        start: 0,
+        end: 0,
+      },
       timelineWidth: 1160,
     }
   },
@@ -138,7 +146,10 @@ export default {
     this.timelineWidth = this.$refs.timelineContainer.clientWidth
   },
   methods: {
-    applyFilter() {
+    applyFilter(evt) {
+      evt.preventDefault()
+      this.$emit('filtered', 'temporal', this.timelineFilter)
+      // console.log(val);
       this.$bvModal.hide('timeline-filter')
     }
   },

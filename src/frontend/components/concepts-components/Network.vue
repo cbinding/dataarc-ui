@@ -3,6 +3,33 @@
     id="network"
     :style="{width: svgSize.width +'px', height: svgSize.height+'px'}"
   >
+    <div v-if="selectedNode && selectedNode.title" class="topic-message-container" style="display: block;">
+      <div class="topic-messages">
+        <table class="table table-sm">
+          <tbody>
+            <tr>
+              <td width="100%" align="center" class="node-name">
+                <strong>{{selectedNode.title}}</strong>
+                <span class="topic-message-buttons">
+                  <a class="zoomToNode btn btn-sm " title="Zoom to this concept" href="javascript:;">
+                    <fa-icon icon="search"/>
+                  </a>
+                  <a id="centerNode" class="btn btn-sm " title="Center this concept in a concentric layout" href="javascript:;">
+                    <fa-icon icon="dot-circle"/>
+                  </a>
+                  <a class="addNodeToFilter btn btn-sm " @click="nodeAdded" title="Add this concept to your filters" href="javascript:;">
+                    <fa-icon icon="filter"/>
+                  </a>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="topic-message-close">
+        <span class="fa fa-arrow-up" style="line-height:34px;vertical-align: middle;"></span>
+      </div>
+    </div>
     <div
       v-show="linkTextVisible"
       class="linkText"
@@ -93,6 +120,7 @@ DOMTokenList.prototype.indexOf = Array.prototype.indexOf
 export default {
   name: 'Network',
   props: {
+    selectedNode: Object,
     nodeList: {
       type: Array,
       required: true,
@@ -515,6 +543,9 @@ export default {
       .on('start', dragstarted)
       .on('drag', dragged)
       .on('end', dragended)
+    },
+    nodeAdded() {
+      this.$emit('nodeAdded', this.selectedNode)
     },
   },
 }

@@ -13,12 +13,17 @@
     <concepts
       @filtered="processFilter"
     />
+    <filters
+      id="Filters"
+      :filters="filters"
+      @removed="removeFilter"
+    />
     <results
       id="Results"
       :filters="filters"
     />
     <why
-      id="Filters"
+      id="Why"
       :filters="filters"
     />
   </div>
@@ -31,6 +36,7 @@ import MapSection from './MapContainer.vue'
 import Concepts from './ConceptsContainer.vue'
 import Results from './ResultsContainer.vue'
 import Why from './WhyContainer.vue'
+import Filters from './FiltersContainer.vue'
 
 export default {
   name: 'DataARC',
@@ -40,6 +46,7 @@ export default {
     Concepts,
     Results,
     Why,
+    Filters,
   },
   data() {
     return {
@@ -51,7 +58,7 @@ export default {
     }
   },
   methods: {
-    processFilter({ type, filter }) {
+    processFilter(type, filter) {
       this.filters[type].push(filter)
     },
     removeFilter(type, index) {
