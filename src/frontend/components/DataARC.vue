@@ -11,6 +11,7 @@
       @filtered="processFilter"
     />
     <concepts
+      id="concept-section"
       @filtered="processFilter"
     />
     <filters
@@ -23,7 +24,7 @@
       :filters="filters"
     />
     <why
-      id="Why"
+      id="why-section"
       :filters="filters"
     />
   </div>

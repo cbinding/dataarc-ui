@@ -1,5 +1,5 @@
 <template>
-  <div class="page-top">
+  <div id="page-top">
     <layout-header />
     <router-view />
     <layout-footer />

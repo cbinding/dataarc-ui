@@ -38,7 +38,7 @@
           <li class="nav-item">
             <a
               class="nav-link js-scroll-trigger"
-              href="#keyword-section"
+              href="#concept-section"
             >Keyword</a>
           </li>
           <li class="nav-item">
