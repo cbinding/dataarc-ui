@@ -26,7 +26,7 @@
         </b-row>
       </p>
       <div class="text-center">
-        <b-button variant="primary" to="/login">Continue to Login</b-button>
+        <b-button variant="primary" to="/auth/login">Continue to Login</b-button>
       </div>
     </b-jumbotron>
   </div>

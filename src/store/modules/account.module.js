@@ -40,7 +40,7 @@ const actions = {
     .then(
       (user) => {
         commit('registerSuccess', user)
-        router.push('/notice')
+        router.push('/auth/notice')
         setTimeout(() => {
           // display success message after route change completes
           dispatch('alert/success', 'Registration successful', { root: true })
