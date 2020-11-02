@@ -42,7 +42,7 @@
       {{ status.error.message }}
     </div>
     <router-link
-      to="/register"
+      to="/auth/register"
       class="btn btn-dark btn-lg btn-block mt-2"
     >
       Register
