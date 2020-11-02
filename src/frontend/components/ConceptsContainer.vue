@@ -13,7 +13,7 @@
               target="_blank"
               data-toggle="tooltip"
               title="How to use dataarc concepts in your search"
-            ><i class="fa fa-info-circle" /></a></sup>
+            ><fa-icon icon="info-circle" /></a></sup>
           </h2>
           <hr class="primary">
         </div>

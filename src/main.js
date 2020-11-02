@@ -6,7 +6,7 @@ import Vue from 'vue'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
-  faFont, faCompass, faSitemap, faPlay, faSearchPlus, faSearchMinus, faRedo, faPause, faExclamationCircle, faSearch, faDotCircle, faFilter
+  faFont, faCompass, faSitemap, faPlay, faSearchPlus, faSearchMinus, faRedo, faPause, faExclamationCircle, faSearch, faDotCircle, faFilter, faInfoCircle
 } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -34,7 +34,7 @@ import fieldWrap from './views/Collections/templates/fieldWrap.vue'
 import fieldMulti from './views/Collections/templates/fieldMulti.vue'
 import fieldMultitag from './views/Collections/templates/fieldMultitag.vue'
 
-library.add([faFont, faCompass, faSitemap, faPlay, faSearchPlus, faSearchMinus, faRedo, faPause, faExclamationCircle, faSearch, faDotCircle, faFilter])
+library.add([faFont, faCompass, faSitemap, faPlay, faSearchPlus, faSearchMinus, faRedo, faPause, faExclamationCircle, faSearch, faDotCircle, faFilter, faInfoCircle])
 library.add(faClock)
 Vue.component('fa-icon', FontAwesomeIcon)
 

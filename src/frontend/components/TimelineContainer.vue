@@ -16,7 +16,7 @@
               target="_blank"
               data-toggle="tooltip"
               title="How dataarc thinks about time"
-            ><i class="fa fa-info-circle" /></a></sup>
+            ><fa-icon icon="info-circle" /></a></sup>
           </h2>
           <hr class="primary">
           <p>Use the timeline to examine how data is distributed temporally.</p>
@@ -44,7 +44,7 @@
             data-toggle="modal"
             v-b-modal.timeline-filter
           >
-            <i class="fa fa-filter text-white sr-icons" /> Temporal Filter
+            <fa-icon icon="filter"/> Temporal Filter
           </button>
         </div>
       </div>

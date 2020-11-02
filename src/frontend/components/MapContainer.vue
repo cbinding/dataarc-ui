@@ -13,7 +13,7 @@
               target="_blank"
               data-toggle="tooltip"
               title="How dataarc thinks about space and place"
-            ><i class="fa fa-info-circle" /></a></sup>
+            ><fa-icon icon="info-circle" /></a></sup>
           </h2>
           <hr class="primary">
           <div class="legend justify-content-md-center">
