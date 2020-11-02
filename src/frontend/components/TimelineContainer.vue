@@ -113,6 +113,7 @@
         <button
           type="button"
           class="btn btn-primary"
+          @click="applyFilter"
         >
           Apply Filter
         </button>
@@ -135,6 +136,11 @@ export default {
   },
   mounted() {
     this.timelineWidth = this.$refs.timelineContainer.clientWidth
+  },
+  methods: {
+    applyFilter() {
+      this.$bvModal.hide('timeline-filter')
+    }
   },
 }
 </script>
