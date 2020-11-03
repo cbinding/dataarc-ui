@@ -6,13 +6,7 @@ class Concepts {
     this.citation = data.citation;
     this.url = data.url;
     this.group = data.group;
-    if (data.topics) {
-      let temp = []
-      data.topics.forEach((topic) => {
-        temp.push(topic.id)
-      })
-      this.topics = temp;
-    }
+    this.keywords = data.keywords;
     this.createUrl = `${process.env.VUE_APP_API_URL}/concepts`;
     this.editUrl = `${process.env.VUE_APP_API_URL}/concepts/${this.id}`;
     this.routeUrl = '/admin/concepts';
