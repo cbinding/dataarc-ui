@@ -44,8 +44,7 @@
               </li>
             </ul>
           </div>
-          <open-layers />
-          <!-- <leaflet :features="features" /> -->
+          <plotly />
         </div>
       </div>
     </div>
@@ -53,11 +52,12 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import gql from 'graphql-tag'
 import BatchLoader from '@/workers/apollo-batch-loader.worker.js'
-import Leaflet from './map-components/LeafletContainer.vue'
-import OpenLayers from './map-components/OpenLayersContainer'
-
+import Plotly from './map-components/PlotlyContainer.vue'
+import VuePapaParse from 'vue-papa-parse'
+Vue.use(VuePapaParse)
 const featuresQuery = gql`
   query featureCollection ($limit: Int!, $start: Int!) {
     features (limit: $limit, start: $start) {
@@ -77,8 +77,7 @@ const featuresCountQuery = gql`
 export default {
   name: 'MapContainer',
   components: {
-    Leaflet,
-    OpenLayers,
+    Plotly,
   },
   data() {
     return {
@@ -100,7 +99,12 @@ export default {
   },
   methods: {
     loadFeatures() {
-      if (this.start >= this.featuresCount) return
+      // window.axios.get(`${this.$apiUrl}/query/features`).then(({ data }) => {
+      //   this.features = this.$papa.parse(data, {header: true}).data
+
+      // })
+
+      // if (this.start >= this.featuresCount) return
       // while (this.start <= this.featuresCount) {
       //   this.getPromises.push(
       //     window.axios.get(`${this.$apiUrl}/features?_limit=${this.step}&_start=${this.start}`).then(({ data }) => {
