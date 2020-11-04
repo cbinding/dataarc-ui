@@ -7,7 +7,7 @@
             <b-input-group-prepend>
               <b-dropdown no-flip :text="getText(key)" variant="outline-secondary" aria-placeholder="Select Field">
                 <div v-for="value in schema.values" :key="value.id">
-                  <b-dropdown-item @click="setField(key, 'field', value.name, value.type)">{{ value.name }}</b-dropdown-item>
+                  <b-dropdown-item @click="setField(key, 'field', value.name, value.type, value.id)">{{ value.name }}</b-dropdown-item>
                 </div>
               </b-dropdown>
               <b-dropdown :text="(form[key] && form[key]['operator']) ? form[key]['operator'] : 'equals'" variant="outline-secondary">
@@ -199,7 +199,7 @@ export default {
       this.model.queries = queries
       this.form = this.model.queries
     },
-    setField(int, field, val, type) {
+    setField(int, field, val, type, id) {
       if (!this.form[int]) {
         this.$set(this.form, int, {})
       }
@@ -215,6 +215,7 @@ export default {
       if (field === 'field') {
         this.$set(this.form[int], field, val)
         this.$set(this.form[int], 'type', type)
+        this.$set(this.form[int], 'dataset_field', id)
       }
       else {
         this.$set(this.form[int], field, val)
