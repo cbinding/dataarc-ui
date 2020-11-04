@@ -438,36 +438,6 @@ export default {
             },
           },
           {
-            type: 'multitag',
-            multiSelect: true,
-            label: 'Keywords',
-            model: 'keywords',
-            placeholder: "Start Typing to add a keyword",
-            values: [''],
-            visible(model) {
-              return model.type === 'Concepts'
-            },
-            selectOptions: {
-              multiple: true,
-              key: 'title',
-              label: 'name',
-              groupValues: 'values',
-              groupLabel: 'group',
-              taggable: true,
-              clearOnSelect: true,
-              hideSelected: true,
-              tagPlaceholder: 'Add as new tag',
-              trackBy: 'id',
-              onNewTag(newTag, id, options, value) {
-                options.push(newTag)
-                value.push(newTag)
-              },
-            },
-            onChanged(model, newVal, oldVal, field) {
-              model = newVal
-            },
-          },
-          {
             type: 'submit',
             buttonText: 'Submit',
             inputType: 'submit',
