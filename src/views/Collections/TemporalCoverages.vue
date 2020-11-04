@@ -53,16 +53,6 @@
               {{ shorten(row.item.description) }}
             </div>
           </template>
-          <template v-slot:cell(start_date)="row">
-            <div>
-              {{ getDate(row.item.start_date) }}
-            </div>
-          </template>
-          <template v-slot:cell(end_date)="row">
-            <div>
-              {{ getDate(row.item.end_date) }}
-            </div>
-          </template>
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group size="sm">
               <b-button :to="{name: 'Update TemporalCoverage', params: {id: row.item.id} }" variant="primary" v-text="'Edit'"></b-button>
@@ -88,8 +78,8 @@ export default {
         { key: 'description', sortable: true },
         { key: 'citation', sortable: true },
         { key: 'url', sortable: true },
-        { key: 'start_date', sortable: true },
-        { key: 'end_date', sortable: true },
+        { key: 'begin', sortable: true },
+        { key: 'end', sortable: true },
       ],
       temporalCoveragesLoading: true,
     }
