@@ -8,7 +8,7 @@
     <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
       <a
         class="navbar-brand brand-logo"
-        href="/admin"
+        href="/"
         style="color:#000000"
       >DataARC</a>
     </div>
