@@ -84,16 +84,18 @@
             <b-button-group size="sm">
               <b-button
                 variant="primary"
+                :disabled="row.item.processing || !row.item.source"
                 @click="process(row.item, component)"
                 v-text="'Process'"
               />
               <b-button
+                :disabled="row.item.processing"
                 :to="{name: 'ConceptMap View', params: {id: row.item.id} }"
                 variant="primary"
                 v-text="'Edit'"
               />
               <b-button
-                :disabled="row.item.active"
+                :disabled="row.item.active || row.item.processing"
                 v-b-modal.deleteConfirmation
                 variant="primary"
                 @click="itemToDelete = row.item"

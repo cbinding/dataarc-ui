@@ -268,7 +268,9 @@ const apollo = {
           url
           processed_at
           active
+          source
           topics_count
+          processing
         }
       }
     `,
