@@ -7,6 +7,7 @@ import {
   DatasetFields,
   TemporalCoverages,
   ConceptMaps,
+  ConceptTopics,
   Concepts,
 } from '../models';
 import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue';
@@ -19,6 +20,7 @@ const Models = {
   DatasetFields,
   TemporalCoverages,
   ConceptMaps,
+  ConceptTopics,
   Concepts,
 };
 
@@ -702,7 +704,7 @@ const methods = {
       });
     } else {
       dataModel._update().then((value) => {
-        if (val.type === 'DatasetFields' || (val.type === 'Users' && this.$route.name === 'View Users')) {
+        if (val.type === 'DatasetFields' || val.type === 'ConceptTopics' || (val.type === 'Users' && this.$route.name === 'View Users')) {
           this.showAlert()
           return;
         } if (val.type === 'Combinators') {
