@@ -37,13 +37,40 @@
             ><span class="menu-title">{{ route.name }}</span>
           </router-link>
         </li>
+        <span v-if="role && role.name === 'Administrator'">
+          <br>
+          <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
+            <h4><strong>Admin Tools</strong></h4>
+            </div>
+          <li
+            v-for="route in compileAdminRoutes"
+            :key="route.name"
+            class="nav-item"
+          >
+
+            <router-link
+              v-if="route.name !== 'Dataset View' && route.name !== 'blank' && route.name !== 'Profile' && route.name !== 'ConceptMap View'"
+              class="nav-link"
+              active-class="active"
+              :to="route.path"
+              exact
+            >
+              <img
+                v-if="route.name !== 'Dataset View'"
+                class="menu-icon"
+                src="../../assets/images/menu_icons/01.png"
+                alt="menu icon"
+              ><span class="menu-title">{{ route.name }}</span>
+            </router-link>
+          </li>
+        </span>
       </ul>
     </nav>
   </section>
 </template>
 
 <script lang="js">
-
+import { mapState, mapActions } from 'vuex'
 import roleHandlerMixin from '@/router/role-handler.mixin'
 
 export default {
@@ -55,8 +82,12 @@ export default {
     }
   },
   computed: {
+    ...mapState('account', ['user', 'role']),
     compileRoutes() {
       return [...this.contributorRoutes, ...this.authenticatedRoutes]
+    },
+    compileAdminRoutes() {
+      return [...this.adminRoutes]
     },
   },
   mounted() {

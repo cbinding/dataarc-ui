@@ -13,20 +13,6 @@
       >DataARC</a>
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center ml-auto ml-lg-0">
-      <b-navbar-nav
-        v-if="role && role.name === 'Administrator'"
-        class="header-links d-none d-md-flex"
-      >
-        <b-nav-item
-          v-for="route in compileRoutes"
-          :key="route.name"
-          :to="route.path"
-        >
-          <span v-if="route.name !== 'ConceptMap View'">
-            <i class="mdi mdi-image-filter" />{{ route.name }}
-          </span>
-        </b-nav-item>
-      </b-navbar-nav>
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
         <b-nav-item-dropdown

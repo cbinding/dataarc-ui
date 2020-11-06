@@ -251,6 +251,7 @@ const routes = [
       },
       {
         path: 'concept-map/:id',
+        name: 'ConceptMap View',
         component: () => import('@/views/Collections/ConceptMapsView.vue'),
         props: true,
         children: [
