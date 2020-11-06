@@ -310,13 +310,11 @@ export default {
             visible: true
           },
           {
-            type: 'upload',
+            type: 'input',
+            inputType: 'text',
             label: 'Image',
             model: 'image',
             visible: true,
-            onChanged(model, schema, event) {
-              this.model.image = event.target.files[0];
-            }
           },
           {
             type: 'input',

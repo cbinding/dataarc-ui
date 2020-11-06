@@ -366,14 +366,12 @@ export default {
             },
           },
           {
-            type: 'upload',
+            type: 'input',
+            inputType: 'text',
             label: 'Image',
             model: 'image',
             visible(model) {
               return model.type === 'Datasets'
-            },
-            onChanged(model, schema, event) {
-              this.model.image = event.target.files[0]
             },
           },
           {
@@ -600,7 +598,6 @@ export default {
           if(!vm.model.keywords){
             vm.model.keywords = []
           }
-          vm.model.image = null
           if (vm.model.category) {
             const temp = vm.model.category.id
             vm.model.category = temp

@@ -352,6 +352,7 @@ const apollo = {
           description
           citation
           source
+          image
           metadata
           processed_at
           fields_count
@@ -401,6 +402,7 @@ const apollo = {
             title
           }
           source
+          image
           metadata
           features_count
           fields_count
