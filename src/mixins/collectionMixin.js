@@ -709,7 +709,7 @@ const methods = {
   async process(val, component) {
     this.currentId = val.id;
     let url = component === 'Datasets' ? 'datasets' : 'concept-maps';
-    val.processed_at = null;
+    val.processing = true;
     const resp = await axios.get(`${this.$apiUrl}/${url}/process/${val.id}`);
     if (resp) {
       this.$apollo.queries[`all${component}`].refetch();
