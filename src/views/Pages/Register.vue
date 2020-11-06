@@ -77,7 +77,6 @@ export default {
       user: {
         username: '',
         email: '',
-        institution: '',
         password: '',
       },
       errors: [],

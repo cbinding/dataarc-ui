@@ -4,7 +4,7 @@ import roles from './roles'
 const computed = {
   ...mapState('account', ['user', 'role']),
   contributorRoutes() {
-    return this.mapRoutes('contributor')
+    return this.mapRoutes('contributors')
   },
   authenticatedRoutes() {
     return this.mapRoutes('authenticated')

@@ -153,7 +153,7 @@ const routes = [
     ],
     meta: {
       auth: true,
-      role: 'contributor',
+      role: 'contributors',
     },
   },
 
