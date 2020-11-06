@@ -112,14 +112,13 @@
 <script>
 
 import gql from 'graphql-tag'
-import TopicMapsJSON from './topicmap.json'
 import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 
 import Network from './concepts-components/Network.vue'
 
-const topicMapQuery = gql`
+const conceptMapQuery = gql`
   query {
-    topicMaps(where:{name:"topic_map_2020"}) {
+    conceptMaps(where:{active:true}) {
       name
       nodes
       edges
@@ -136,8 +135,8 @@ export default {
     return {
       search: '',
       selectedNode: {},
-      nodes: TopicMapsJSON.data.topicMaps[0].nodes,
-      links: TopicMapsJSON.data.topicMaps[0].edges,
+      nodes: [],
+      links: [],
       nodeTextBoolean: false,
       networkSizeSettings: {
         height: 600,
@@ -146,11 +145,20 @@ export default {
     }
   },
   mounted() {
+    this.getNodes()
     this.$nextTick(() => {
       this.networkSizeSettings.width = this.$refs.topicmap.clientWidth - 20
     })
   },
   methods: {
+    getNodes() {
+      this.$apollo.query({
+        query: conceptMapQuery,
+      }).then(({ data }) => {
+        this.nodes = data.conceptMaps[0].nodes
+        this.links = data.conceptMaps[0].edges
+      })
+    },
     nodeSelected({ node }) {
       console.log(node)
     },

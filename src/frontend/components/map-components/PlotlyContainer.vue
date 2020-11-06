@@ -1,5 +1,5 @@
 <template>
-  <div id="plotly">
+  <div id="plotly" ref="plotly">
 
   </div>
 </template>
@@ -7,10 +7,10 @@
 <script>
 import Plotly from 'plotly.js-mapbox-dist'
 
-
 export default {
   mounted() {
     this.loadMap()
+
   },
   methods: {
     loadMap() {
@@ -35,13 +35,19 @@ export default {
 
           var layout = {
             dragmode: "zoom",
-            mapbox: { style: "open-street-map", center: { lat: 38, lon: -90 }, zoom: 3 },
+            mapbox: { style: "open-street-map", center: { lat: 62, lon: -18 }, zoom: 2 },
             margin: { r: 0, t: 0, b: 0, l: 0 }
           };
 
-          Plotly.newPlot("plotly", data, layout);
+          Plotly.newPlot("plotly", data, layout).then(gd => {
+            gd.on('plotly_click', (eventData) => {
+              console.log('clicked');
+              console.log(eventData);
+            })
+          })
         }
       )
+
     }
   }
 

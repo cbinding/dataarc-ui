@@ -92,7 +92,7 @@
               :class="(!node.showText) && ((pinned.length && !node.showText) || (hoveredNode && hoveredNode.id !== node.id)) ? 'mute-not-selected' : ''"
               :fill="theme.textFill"
               :font-size="nodeTextFontSize"
-            >{{ node.label }}</text>
+            >{{ node.title }}</text>
           </g>
           <g />
         </g>
