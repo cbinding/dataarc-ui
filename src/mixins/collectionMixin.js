@@ -372,7 +372,7 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         let stopQuery = data.datasets.filter(dataset => {
-          if (dataset.processed_at === null) {
+          if (dataset.processing) {
             return dataset;
           }
         });

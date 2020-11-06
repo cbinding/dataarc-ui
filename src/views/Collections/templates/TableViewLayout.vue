@@ -32,7 +32,7 @@
         Delete Confirmation
       </template>
       <p class="my-2">
-        Are you sure you want to delete this {{ component }}?
+        Are you sure you want to delete this {{ component.slice(0, -1) }}?
       </p>
       <template v-slot:modal-footer="{ ok, cancel }">
         <b-button size="sm" @click="cancel()">
