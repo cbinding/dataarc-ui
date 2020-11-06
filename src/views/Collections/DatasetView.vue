@@ -1,12 +1,15 @@
 <template>
   <b-container v-if="currentDataset" fluid>
-    <router-view/>
-<!-- Update Dataset -->
+    <router-view />
+    <!-- Update Dataset -->
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3>Updating: {{ model.title}}</h3>
-        <small>Last Updated: {{ getDate(model.processed_at) }}</small><br>
-        <router-link v-if="currentDataset" :to="{name: 'Update Templates'}">Edit Templates</router-link>
+        <h3>Updating: {{ model.title }}</h3>
+        <small>Last Updated: {{ getDate(model.processed_at) }}</small
+        ><br />
+        <router-link v-if="currentDataset" :to="{ name: 'Update Templates' }"
+          >Edit Templates</router-link
+        >
       </div>
       <div class="panel-body">
         <vue-form-generator
@@ -16,7 +19,7 @@
         />
       </div>
     </div>
-    <br>
+    <br />
     <b-col sm="2">
       <b-alert
         variant="success"
@@ -29,10 +32,32 @@
       </b-alert>
     </b-col>
 
-<!-- Fields View -->
-    <table-view-layout :fluid="true" :rows.sync="fieldsCount" component="Fields" :limits.sync="limits" :currentPage.sync="currentFieldsPage" @inputChanged="updateFilter" :perPage.sync="currentFieldsLimit" @change="updatePage" @limitUpdated="updateLimit">
+    <!-- Fields View -->
+    <table-view-layout
+      :fluid="true"
+      :rows.sync="fieldsCount"
+      component="Fields"
+      :limits.sync="limits"
+      :currentPage.sync="currentFieldsPage"
+      @inputChanged="updateFilter"
+      :perPage.sync="currentFieldsLimit"
+      @change="updatePage"
+      @limitUpdated="updateLimit"
+    >
       <template v-slot:table>
-        <b-table v-if="currentDataset" :busy="fieldsLoading" :filter="filterFields" :per-page="currentFieldsLimit" :current-page="currentFieldsPage" responsive table-variant="light" head-variant="light" :items="currentDataset.fields" :fields="fieldsList" @filtered="updatePagination">
+        <b-table
+          v-if="currentDataset"
+          :busy="fieldsLoading"
+          :filter="filterFields"
+          :per-page="currentFieldsLimit"
+          :current-page="currentFieldsPage"
+          responsive
+          table-variant="light"
+          head-variant="light"
+          :items="currentDataset.fields"
+          :fields="fieldsList"
+          @filtered="updatePagination"
+        >
           <template v-slot:table-busy>
             <div class="text-center my-2">
               <b-spinner class="align-middle"></b-spinner>
@@ -52,10 +77,16 @@
           </template>
           <template v-slot:cell(type)="row" class="Type">
             <div style="max-width: 400px;" v-if="row.item.type">
-              <b-dropdown :disabled="row.item.type === 'array'" :text="row.item.type">
+              <b-dropdown
+                :disabled="row.item.type === 'array'"
+                :text="row.item.type"
+              >
                 <div v-for="type in fieldTypes" :key="type">
-                  <b-dropdown-item v-model="row.item.type" @click="row.item.type = type">
-                    {{type}}
+                  <b-dropdown-item
+                    v-model="row.item.type"
+                    @click="row.item.type = type"
+                  >
+                    {{ type }}
                   </b-dropdown-item>
                 </div>
               </b-dropdown>
@@ -70,16 +101,40 @@
             </div>
           </template>
           <template v-slot:cell(save)="row" class="Save">
-            <b-button variant="primary" @click="updateField(row.item)">Save</b-button>
+            <b-button variant="primary" @click="updateField(row.item)"
+              >Save</b-button
+            >
           </template>
         </b-table>
       </template>
     </table-view-layout>
-    <br>
-<!-- Combinators View -->
-    <table-view-layout :fluid="true" :rows.sync="combinatorsCount" component="Combinators" :limits.sync="limits" :currentPage.sync="currentCombinatorsPage" :perPage.sync="currentCombinatorsLimit" @inputChanged="updateFilter" @change="updatePage" @limitUpdated="updateLimit">
+    <br />
+    <!-- Combinators View -->
+    <table-view-layout
+      :fluid="true"
+      :rows.sync="combinatorsCount"
+      component="Combinators"
+      :limits.sync="limits"
+      :currentPage.sync="currentCombinatorsPage"
+      :perPage.sync="currentCombinatorsLimit"
+      @inputChanged="updateFilter"
+      @change="updatePage"
+      @limitUpdated="updateLimit"
+    >
       <template v-slot:table>
-        <b-table v-if="currentDataset" :busy="combinatorsLoading" :filter="filterCombinators" :per-page="currentCombinatorsLimit" :current-page="currentCombinatorsPage" responsive table-variant="light" head-variant="light" :items="currentDataset.combinators" :fields="combinatorsList" @filtered="updatePagination">
+        <b-table
+          v-if="currentDataset"
+          :busy="combinatorsLoading"
+          :filter="filterCombinators"
+          :per-page="currentCombinatorsLimit"
+          :current-page="currentCombinatorsPage"
+          responsive
+          table-variant="light"
+          head-variant="light"
+          :items="currentDataset.combinators"
+          :fields="combinatorsList"
+          @filtered="updatePagination"
+        >
           <template v-slot:table-busy>
             <div class="text-center my-2">
               <b-spinner class="align-middle"></b-spinner>
@@ -87,30 +142,49 @@
             </div>
           </template>
           <template v-slot:cell(title)="row" class="Title">
-            <div class="text-wrap" style="width: 200px; max-width: 200px;" v-if="row.item.title">
+            <div
+              class="text-wrap"
+              style="width: 200px; max-width: 200px;"
+              v-if="row.item.title"
+            >
               {{ row.item.title }}
             </div>
           </template>
           <template v-slot:cell(description)="row" class="Description">
-            <div class="text-wrap" style="width: 300px; max-width: 350px;" v-if="row.item.description">
+            <div
+              class="text-wrap"
+              style="width: 300px; max-width: 350px;"
+              v-if="row.item.description"
+            >
               {{ shorten(row.item.description) }}
             </div>
           </template>
           <template v-slot:cell(citation)="row" class="citation">
-            <div class="text-wrap" style="width: 300px; max-width: 350px;" v-if="row.item.citation">
+            <div
+              class="text-wrap"
+              style="width: 300px; max-width: 350px;"
+              v-if="row.item.citation"
+            >
               {{ shorten(row.item.citation) }}
             </div>
           </template>
           <template v-slot:cell(actions)="row" class="Actions">
-            <router-link :to="{name: 'Update Combinator', params: {id: row.item.id} }">
+            <router-link
+              :to="{ name: 'Update Combinator', params: { id: row.item.id } }"
+            >
               <b-button variant="primary">Edit</b-button>
             </router-link>
           </template>
         </b-table>
       </template>
     </table-view-layout>
-    <br>
-    <b-modal hide-backdrop content-class="shadow" centered id="deleteDatasetConfirmation">
+    <br />
+    <b-modal
+      hide-backdrop
+      content-class="shadow"
+      centered
+      id="deleteDatasetConfirmation"
+    >
       <template v-slot:modal-title>
         Delete Confirmation
       </template>
@@ -121,39 +195,53 @@
         <b-button size="sm" @click="cancel()">
           Cancel
         </b-button>
-        <b-button size="sm" variant="danger" @click="deleteItem(model, 'Datasets')">
+        <b-button
+          size="sm"
+          variant="danger"
+          @click="deleteItem(model, 'Datasets')"
+        >
           Delete
         </b-button>
       </template>
     </b-modal>
-    <b-button variant="danger" v-b-modal.deleteDatasetConfirmation>Delete Dataset</b-button>
+    <b-button variant="danger" v-b-modal.deleteDatasetConfirmation
+      >Delete Dataset</b-button
+    >
   </b-container>
 </template>
 
 <script>
-import gql from 'graphql-tag'
-import collectionMixin from '../../mixins/collectionMixin'
+import gql from 'graphql-tag';
+import collectionMixin from '../../mixins/collectionMixin';
 export default {
   data() {
     return {
       component: 'Dataset View',
       action: 'Update',
       sortList: ['Path', 'Type'],
-      fieldTypes: ['string', 'number', 'boolean', 'array', 'url', 'latitude', 'longitude', 'begin_date', 'end_date'],
+      fieldTypes: [
+        'string',
+        'number',
+        'boolean',
+        'array',
+        'url',
+        'begin',
+        'end'
+      ],
       fieldsList: [
         { key: 'save', sortable: false },
         { key: 'name', sortable: true },
         { key: 'source', sortable: true },
         { key: 'title', sortable: true },
         { key: 'type', sortable: true },
-        { key: 'processed_at', sortable: true },
+        { key: 'processed_at', sortable: true }
       ],
       combinatorsList: [
         { key: 'actions', sortable: false },
         { key: 'name', sortable: true },
         { key: 'title', sortable: true },
         { key: 'description', sortable: true },
-        { key: 'citation', sortable: true },
+        { key: 'citation', sortable: true }
       ],
       filterFields: '',
       filterCombinators: '',
@@ -174,7 +262,7 @@ export default {
         url: '',
         image: null,
         source: null,
-        category: '',
+        category: ''
       },
       schema: {
         fields: [
@@ -185,7 +273,7 @@ export default {
             model: 'title',
             featured: true,
             required: true,
-            visible: true,
+            visible: true
           },
           {
             type: 'wrap',
@@ -195,7 +283,7 @@ export default {
             featured: true,
             visible: true,
             required: false,
-            autocomplete: 'off',
+            autocomplete: 'off'
           },
           {
             type: 'wrap',
@@ -205,21 +293,21 @@ export default {
             featured: true,
             visible: true,
             required: false,
-            autocomplete: 'off',
+            autocomplete: 'off'
           },
           {
             type: 'wrap',
             label: 'Citation',
             model: 'citation',
             visible: true,
-            autocomplete: 'off',
+            autocomplete: 'off'
           },
           {
             type: 'input',
             inputType: 'url',
             label: 'Url',
             model: 'url',
-            visible: true,
+            visible: true
           },
           {
             type: 'upload',
@@ -227,8 +315,8 @@ export default {
             model: 'image',
             visible: true,
             onChanged(model, schema, event) {
-              this.model.image = event.target.files[0]
-            },
+              this.model.image = event.target.files[0];
+            }
           },
           {
             type: 'input',
@@ -236,7 +324,7 @@ export default {
             label: 'Source',
             model: 'source',
             visible: true,
-            required: false,
+            required: false
           },
           {
             type: 'select',
@@ -246,113 +334,114 @@ export default {
             visible: true,
             selectOptions: {
               value: 'id',
-              name: 'title',
-            },
+              name: 'title'
+            }
           },
           {
             type: 'submit',
             buttonText: 'Save',
             inputType: 'submit',
             visible: true,
-            onSubmit: this.update,
-          },
-        ],
+            onSubmit: this.update
+          }
+        ]
       },
       formOptions: {
         validateAfterLoad: true,
-        validateAfterChanged: true,
+        validateAfterChanged: true
       },
       fieldsLoading: true,
-      combinatorsLoading: true,
-    }
+      combinatorsLoading: true
+    };
   },
   methods: {
     update(val) {
-      this.setFormData(val)
-      this.showAlert()
+      this.setFormData(val);
+      this.showAlert();
     },
     updateField(val) {
-      const temp = []
-      temp.fieldType = val.type
-      temp.id = val.id
-      temp.title = val.title
-      temp.type = 'DatasetFields'
-      temp.action = 'Update'
-      this.setFormData(temp)
+      const temp = [];
+      temp.fieldType = val.type;
+      temp.id = val.id;
+      temp.title = val.title;
+      temp.type = 'DatasetFields';
+      temp.action = 'Update';
+      this.setFormData(temp);
     },
     countDownChanged(dismissCountDown) {
-      this.dismissCountDown = dismissCountDown
+      this.dismissCountDown = dismissCountDown;
     },
     showAlert() {
-      this.dismissCountDown = this.dismissSecs
+      this.dismissCountDown = this.dismissSecs;
     },
     status(val) {
       if (val) {
-        return this[val]
+        return this[val];
       }
-      return 'secondary'
-    },
+      return 'secondary';
+    }
   },
   mixins: [collectionMixin],
   watch: {
     currentDataset(val) {
       if (val) {
-        this.model = val
-        if(this.model.category && this.model.category.id) {
-          let temp = this.model.category.id
-          this.model.category = temp
+        this.model = val;
+        if (this.model.category && this.model.category.id) {
+          let temp = this.model.category.id;
+          this.model.category = temp;
         }
-        this.model.type = 'Datasets'
-        this.model.action = 'Update'
-        this.fieldsLoading = this.loadingState(val.fields.length, 'Fields')
-        this.combinatorsLoading = this.loadingState(val.combinators.length, 'Combinators')
+        this.model.type = 'Datasets';
+        this.model.action = 'Update';
+        this.fieldsLoading = this.loadingState(val.fields.length, 'Fields');
+        this.combinatorsLoading = this.loadingState(
+          val.combinators.length,
+          'Combinators'
+        );
       }
     },
     categories(val) {
       if (val) {
-        this.schema.fields.filter((field) => {
+        this.schema.fields.filter(field => {
           if (field.model && field.model === 'category') {
-            field.values = val
+            field.values = val;
           }
-        })
+        });
       }
     }
   },
   mounted() {
-    this.currentId = this.$route.params.id
-    this.$apollo.queries.dataset.skip = false
-    this.$apollo.queries.allCategories.skip = false
-  },
-
-}
+    this.currentId = this.$route.params.id;
+    this.$apollo.queries.dataset.skip = false;
+    this.$apollo.queries.allCategories.skip = false;
+  }
+};
 </script>
 
 <style scoped>
 .panel {
-	margin-bottom: 20px;
-	background-color: #fff;
-	border: 1px solid transparent;
-	border-radius: 4px;
-	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-	border-color: #ddd;
+  margin-bottom: 20px;
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  border-color: #ddd;
 }
 
 .panel-heading {
-	color: #333;
-	background-color: #f5f5f5;
-	border-color: #ddd;
+  color: #333;
+  background-color: #f5f5f5;
+  border-color: #ddd;
 
-	padding: 10px 15px;
-	border-bottom: 1px solid transparent;
-	border-top-left-radius: 3px;
-	border-top-right-radius: 3px;
+  padding: 10px 15px;
+  border-bottom: 1px solid transparent;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
 }
 
 .panel-body {
-	padding: 15px;
+  padding: 15px;
 }
-
 </style>
 
 <style>
@@ -365,7 +454,8 @@ export default {
   padding-right: 0rem;
 }
 
-.btn-sm, .btn-group-sm > .btn{
+.btn-sm,
+.btn-group-sm > .btn {
   padding: 0.3rem;
 }
 </style>
