@@ -579,7 +579,7 @@ export default {
           this.$apollo.queries.combinator.refetch()
         }
       }
-      else if (this.$route.name === 'ConceptMap View') {
+      else if (this.$route.name === 'Update ConceptMap') {
         this.currentId = this.$route.params.id
         this.$apollo.queries.conceptMap.skip = false
         this.$apollo.queries.conceptMap.refetch()

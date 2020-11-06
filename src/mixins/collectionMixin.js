@@ -114,7 +114,7 @@ const apollo = {
             this.groupedConcepts = sorted
           }
         }
-        if (this.rows !== data.countConcepts) {
+        if (this.rows !== data.countConcepts && this.component !== 'ConceptMap View') {
           this.rows = data.countConcepts
         }
         if (this.concepts.length === this.rows) {
@@ -253,6 +253,51 @@ const apollo = {
       }
     },
   },
+  allConceptTopics: {
+    query: gql`
+      query conceptTopics($start: Int, $limit: Int) {
+        conceptTopics(start: $start, limit: $limit) {
+          id
+          title
+          concept {
+            id
+            title
+          }
+        }
+        countConceptTopics
+      }
+    `,
+    skip: true,
+    ssr: false,
+    variables() {
+      // Use vue reactive properties here
+      return {
+        limit: 100,
+        start: this && this.conceptTopics && this.conceptTopics.length === 0 && this.currentPage === 1 ? 0 : this.conceptTopics.length,
+      };
+    },
+    update(data) {
+      // The returned value will update
+      // the vue property 'datasets'
+      return data.allConceptTopics;
+    },
+    result({ data, loading, networkStatus }) {
+      if (data) {
+        if (this.conceptTopics.length === 0) {
+          this.conceptTopics = data.conceptTopics
+        }
+        else {
+          this.conceptTopics = _.unionWith(this.conceptTopics, data.conceptTopics, _.isEqual)
+        }
+        if (this.rows !== data.countConceptTopics) {
+          this.rows = data.countConceptTopics
+        }
+        if (this.conceptTopics.length === this.rows) {
+          this.$apollo.queries.allConceptTopics.skip = true
+        }
+      }
+    },
+  },
   allDatasets: {
     query: gql`
       query {
@@ -375,6 +420,7 @@ const apollo = {
           description
           citation
           url
+          source
         }
       }
     `,

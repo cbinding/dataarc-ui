@@ -256,7 +256,7 @@ const routes = [
         children: [
           {
             path: '',
-            name: 'ConceptMap View',
+            name: 'Update ConceptMap',
             component: () => import('@/views/Collections/CreateUpdateDelete.vue'),
             props: true,
           },
