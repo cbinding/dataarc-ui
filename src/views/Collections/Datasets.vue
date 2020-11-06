@@ -69,7 +69,7 @@
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group size="sm">
               <b-button size="sm" variant="primary" :disabled="row.item.processing || !row.item.source" v-text="'Process'" @click="process(row.item, component)"></b-button>
-              <b-button size="sm" :to="{name: 'Dataset View', params: {id: row.item.id} }"  variant="primary" v-text="'Edit'"></b-button>
+              <b-button size="sm" :to="{name: 'Dataset View', params: {id: row.item.id} }" :disabled="row.item.processing" variant="primary" v-text="'Edit'"></b-button>
               <b-button size="sm" variant="primary" :disabled="row.item.processing" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation></b-button>
             </b-button-group>
           </template>
