@@ -8,7 +8,7 @@ import {
   TemporalCoverages,
   ConceptMaps,
   ConceptTopics,
-  Concepts,
+  Concepts
 } from '../models';
 import TableViewLayout from '../views/Collections/templates/TableViewLayout.vue';
 
@@ -21,7 +21,7 @@ const Models = {
   TemporalCoverages,
   ConceptMaps,
   ConceptTopics,
-  Concepts,
+  Concepts
 };
 
 const apollo = {
@@ -49,8 +49,14 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
-        limit: this && this.combinators.length === 0 && this.currentPage === 1 ? 20 : 60,
-        start: this && this.combinators.length === 0 && this.currentPage === 1 ? 0 : this.combinators.length,
+        limit:
+          this && this.combinators.length === 0 && this.currentPage === 1
+            ? 20
+            : 60,
+        start:
+          this && this.combinators.length === 0 && this.currentPage === 1
+            ? 0
+            : this.combinators.length
       };
     },
     update(data) {
@@ -59,19 +65,22 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         if (this.combinators.length === 0) {
-          this.combinators = data.combinators
-        }
-        else {
-          this.combinators = _.unionWith(this.combinators, data.combinators, _.isEqual)
+          this.combinators = data.combinators;
+        } else {
+          this.combinators = _.unionWith(
+            this.combinators,
+            data.combinators,
+            _.isEqual
+          );
         }
         if (this.rows !== data.countCombinators) {
-          this.rows = data.countCombinators
+          this.rows = data.countCombinators;
         }
         if (this.combinators.length === this.rows) {
-          this.$apollo.queries.allCombinators.skip = true
+          this.$apollo.queries.allCombinators.skip = true;
         }
       }
-    },
+    }
   },
   allConcepts: {
     query: gql`
@@ -92,8 +101,20 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
-        limit: this && this.concepts && this.concepts.length === 0 && this.currentPage === 1 ? 20 : 100,
-        start: this && this.concepts && this.concepts.length === 0 && this.currentPage === 1 ? 0 : this.concepts.length,
+        limit:
+          this &&
+          this.concepts &&
+          this.concepts.length === 0 &&
+          this.currentPage === 1
+            ? 20
+            : 100,
+        start:
+          this &&
+          this.concepts &&
+          this.concepts.length === 0 &&
+          this.currentPage === 1
+            ? 0
+            : this.concepts.length
       };
     },
     update(data) {
@@ -102,28 +123,33 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         if (this.concepts.length === 0) {
-          this.concepts = data.concepts
-        }
-        else {
-          this.concepts = _.unionWith(this.concepts, data.concepts, _.isEqual)
-          this.groupedConcepts = _.groupBy(this.concepts, 'group')
-          let temp = []
-          for(var group in this.groupedConcepts) {
-            temp.push({'group': _.startCase(group), 'values': _.sortBy(this.groupedConcepts[group], 'title')})
+          this.concepts = data.concepts;
+        } else {
+          this.concepts = _.unionWith(this.concepts, data.concepts, _.isEqual);
+          this.groupedConcepts = _.groupBy(this.concepts, 'group');
+          let temp = [];
+          for (var group in this.groupedConcepts) {
+            temp.push({
+              group: _.startCase(group),
+              values: _.sortBy(this.groupedConcepts[group], 'title')
+            });
           }
           if (temp.length > 0) {
-            let sorted = _.sortBy(temp, 'group')
-            this.groupedConcepts = sorted
+            let sorted = _.sortBy(temp, 'group');
+            this.groupedConcepts = sorted;
           }
         }
-        if (this.rows !== data.countConcepts && this.component !== 'ConceptMap View') {
-          this.rows = data.countConcepts
+        if (
+          this.rows !== data.countConcepts &&
+          this.component !== 'ConceptMap View'
+        ) {
+          this.rows = data.countConcepts;
         }
         if (this.concepts.length === this.rows) {
-          this.$apollo.queries.allConcepts.skip = true
+          this.$apollo.queries.allConcepts.skip = true;
         }
       }
-    },
+    }
   },
   allTopics: {
     query: gql`
@@ -147,7 +173,13 @@ const apollo = {
       // Use vue reactive properties here
       return {
         limit: 100,
-        start: this && this.topics && this.topics.length === 0 && this.currentPage === 1 ? 0 : this.topics.length,
+        start:
+          this &&
+          this.topics &&
+          this.topics.length === 0 &&
+          this.currentPage === 1
+            ? 0
+            : this.topics.length
       };
     },
     update(data) {
@@ -156,19 +188,18 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         if (this.topics.length === 0) {
-          this.topics = data.topics
-        }
-        else {
-          this.topics = _.unionWith(this.topics, data.topics, _.isEqual)
+          this.topics = data.topics;
+        } else {
+          this.topics = _.unionWith(this.topics, data.topics, _.isEqual);
         }
         if (this.rows !== data.countTopics) {
-          this.rows = data.countTopics
+          this.rows = data.countTopics;
         }
         if (this.topics.length === this.rows) {
-          this.$apollo.queries.allTopics.skip = true
+          this.$apollo.queries.allTopics.skip = true;
         }
       }
-    },
+    }
   },
   allCategories: {
     query: gql`
@@ -193,9 +224,9 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         this.categories = data.categories;
-        this.rows = this.categories.length
+        this.rows = this.categories.length;
       }
-    },
+    }
   },
   allTemporalCoverages: {
     query: gql`
@@ -221,9 +252,9 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         this.temporalCoverages = data.temporalCoverages;
-        this.rows = this.temporalCoverages.length
+        this.rows = this.temporalCoverages.length;
       }
-    },
+    }
   },
   allConceptMaps: {
     query: gql`
@@ -251,9 +282,9 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         this.conceptMaps = data.conceptMaps;
-        this.rows = this.conceptMaps.length
+        this.rows = this.conceptMaps.length;
       }
-    },
+    }
   },
   allConceptTopics: {
     query: gql`
@@ -275,7 +306,13 @@ const apollo = {
       // Use vue reactive properties here
       return {
         limit: 100,
-        start: this && this.conceptTopics && this.conceptTopics.length === 0 && this.currentPage === 1 ? 0 : this.conceptTopics.length,
+        start:
+          this &&
+          this.conceptTopics &&
+          this.conceptTopics.length === 0 &&
+          this.currentPage === 1
+            ? 0
+            : this.conceptTopics.length
       };
     },
     update(data) {
@@ -286,19 +323,22 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         if (this.conceptTopics.length === 0) {
-          this.conceptTopics = data.conceptTopics
-        }
-        else {
-          this.conceptTopics = _.unionWith(this.conceptTopics, data.conceptTopics, _.isEqual)
+          this.conceptTopics = data.conceptTopics;
+        } else {
+          this.conceptTopics = _.unionWith(
+            this.conceptTopics,
+            data.conceptTopics,
+            _.isEqual
+          );
         }
         if (this.rows !== data.countConceptTopics) {
-          this.rows = data.countConceptTopics
+          this.rows = data.countConceptTopics;
         }
         if (this.conceptTopics.length === this.rows) {
-          this.$apollo.queries.allConceptTopics.skip = true
+          this.$apollo.queries.allConceptTopics.skip = true;
         }
       }
-    },
+    }
   },
   allDatasets: {
     query: gql`
@@ -327,7 +367,7 @@ const apollo = {
     },
     result({ data, loading, networkStatus }) {
       if (data) {
-        let stopQuery = data.datasets.filter((dataset) => {
+        let stopQuery = data.datasets.filter(dataset => {
           if (dataset.processed_at === null) {
             return dataset;
           }
@@ -338,14 +378,14 @@ const apollo = {
           this.$apollo.queries.allDatasets.startPolling(5000);
         }
         this.datasets = data.datasets;
-        this.rows = this.datasets.length
+        this.rows = this.datasets.length;
       }
-    },
+    }
   },
   dataset: {
     query: gql`
       query datasets($id: ID!) {
-        datasets(where: {id: $id}) {
+        datasets(where: { id: $id }) {
           id
           name
           title
@@ -388,7 +428,7 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
-        id: this.currentDatasetId ? this.currentDatasetId : this.currentId,
+        id: this.currentDatasetId ? this.currentDatasetId : this.currentId
       };
     },
     skip: true,
@@ -411,12 +451,12 @@ const apollo = {
     // Error handling
     error(error) {
       console.error("We've got an error!", error);
-    },
+    }
   },
   conceptMap: {
     query: gql`
       query conceptMaps($id: ID!) {
-        conceptMaps(where: {id: $id}) {
+        conceptMaps(where: { id: $id }) {
           id
           title
           description
@@ -430,7 +470,7 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
-        id: this.currentId,
+        id: this.currentId
       };
     },
     skip: true,
@@ -451,12 +491,12 @@ const apollo = {
     // Error handling
     error(error) {
       console.error("We've got an error!", error);
-    },
+    }
   },
   combinator: {
     query: gql`
       query combinators($id: ID!) {
-        combinators(where: {id: $id}) {
+        combinators(where: { id: $id }) {
           id
           name
           title
@@ -495,7 +535,7 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
-        id: this.currentId,
+        id: this.currentId
       };
     },
     skip: true,
@@ -511,25 +551,25 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data && data.combinators) {
         [this.currentCombinator] = data.combinators;
-        this.model = this.currentCombinator
+        this.model = this.currentCombinator;
         if (this.model.dataset && this.model.dataset.id) {
-          this.model.dataset = this.model.dataset.id
+          this.model.dataset = this.model.dataset.id;
         }
-        this.currentDatasetId = this.model.dataset
-        this.$apollo.queries.dataset.skip = false
-        this.model.type = this.collectionType
-        this.model.action = this.action
-        this.loading = false
+        this.currentDatasetId = this.model.dataset;
+        this.$apollo.queries.dataset.skip = false;
+        this.model.type = this.collectionType;
+        this.model.action = this.action;
+        this.loading = false;
       }
     },
     // Error handling
     error(error) {
       console.error("We've got an error!", error);
-    },
+    }
   },
   queryResults: {
     query: gql`
-      query combinatorResults($id: ID!){
+      query combinatorResults($id: ID!) {
         combinatorResults(id: $id) {
           combinator {
             id
@@ -548,7 +588,7 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
-        id: this.currentCombinator.id,
+        id: this.currentCombinator.id
       };
     },
     skip: true,
@@ -561,20 +601,20 @@ const apollo = {
     // Optional result hook
     result({ data, loading, networkStatus }) {
       if (data && data.combinatorResults) {
-        this.loading = false
+        this.loading = false;
         this.filteredFeatures = data.combinatorResults;
-        this.rows = this.filteredFeatures.matched_count
+        this.rows = this.filteredFeatures.matched_count;
       }
     },
     // Error handling
     error(error) {
       console.error("We've got an error!", error);
-    },
+    }
   },
   getRandomFeature: {
     query: gql`
-      query randomFeature($id: ID!){
-        randomFeature(where: {dataset: $id}) {
+      query randomFeature($id: ID!) {
+        randomFeature(where: { dataset: $id }) {
           id
           properties
         }
@@ -584,7 +624,7 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
-        id: this.currentDatasetId ? this.currentDatasetId : this.currentId,
+        id: this.currentDatasetId ? this.currentDatasetId : this.currentId
       };
     },
     skip: true,
@@ -603,18 +643,18 @@ const apollo = {
     // Error handling
     error(error) {
       console.error("We've got an error!", error);
-    },
+    }
   },
   getTopics: {
     query: gql`
-      query topics($id: ID!, $start: Int, $limit: Int){
-        topics(where: {concept_map: $id}, start: $start, limit: $limit) {
+      query topics($id: ID!, $start: Int, $limit: Int) {
+        topics(where: { concept_map: $id }, start: $start, limit: $limit) {
           id
           title
           description
           citation
         }
-        countTopics(where: {concept_map: $id})
+        countTopics(where: { concept_map: $id })
       }
     `,
     // Reactive parameters
@@ -622,8 +662,12 @@ const apollo = {
       // Use vue reactive properties here
       return {
         id: this.currentId,
-        limit: this && this.topics.length === 0 && this.currentPage === 1 ? 20 : 100,
-        start: this && this.topics.length === 0 && this.currentPage === 1 ? 0 : this.topics.length,
+        limit:
+          this && this.topics.length === 0 && this.currentPage === 1 ? 20 : 100,
+        start:
+          this && this.topics.length === 0 && this.currentPage === 1
+            ? 0
+            : this.topics.length
       };
     },
     skip: true,
@@ -637,32 +681,31 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data && data.topics) {
         if (this.topics.length === 0) {
-          this.topics = data.topics
-        }
-        else {
-          this.topics = _.unionWith(this.topics, data.topics, _.isEqual)
+          this.topics = data.topics;
+        } else {
+          this.topics = _.unionWith(this.topics, data.topics, _.isEqual);
         }
         if (this.rows !== data.countTopics) {
-          this.rows = data.countTopics
+          this.rows = data.countTopics;
         }
         if (this.topics.length === this.rows) {
-          this.$apollo.queries.getTopics.skip = true
+          this.$apollo.queries.getTopics.skip = true;
         }
       }
     },
     // Error handling
     error(error) {
       console.error("We've got an error!", error);
-    },
-  },
+    }
+  }
 };
 
 const methods = {
   async process(val, component) {
     this.currentId = val.id;
-    let url = component === 'Datasets' ? 'datasets' : 'concept-maps'
+    let url = component === 'Datasets' ? 'datasets' : 'concept-maps';
     val.processed_at = null;
-    const resp = await axios.get(`${this.$apiUrl}/${url}/${val.id}/process`);
+    const resp = await axios.get(`${this.$apiUrl}/${url}/process/${val.id}`);
     if (resp) {
       this.$apollo.queries[`all${component}`].refetch();
     }
@@ -678,19 +721,19 @@ const methods = {
   getSource(path, key) {
     return axios
       .get(`${this.$apiUrl}/${path}`)
-      .then((response) => {
+      .then(response => {
         if (key) {
           return response.data[key];
         }
         return response.data;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('error');
         console.log(error);
       });
   },
   setFormField(val, type) {
-    this.schema.fields.filter((field) => {
+    this.schema.fields.filter(field => {
       if (field.model && field.model === type) {
         field.values = val;
       }
@@ -699,15 +742,20 @@ const methods = {
   setFormData(val) {
     const dataModel = new Models[val.type](val);
     if (val.action === 'Create') {
-      dataModel._create().then((value) => {
+      dataModel._create().then(value => {
         this.$router.push(dataModel.routeUrl);
       });
     } else {
-      dataModel._update().then((value) => {
-        if (val.type === 'DatasetFields' || val.type === 'ConceptTopics' || (val.type === 'Users' && this.$route.name === 'View Users')) {
-          this.showAlert()
+      dataModel._update().then(value => {
+        if (
+          val.type === 'DatasetFields' ||
+          val.type === 'ConceptTopics' ||
+          (val.type === 'Users' && this.$route.name === 'View Users')
+        ) {
+          this.showAlert();
           return;
-        } if (val.type === 'Combinators') {
+        }
+        if (val.type === 'Combinators') {
           this.$router.push(dataModel.routeUrl);
         } else {
           this.$router.go(-1);
@@ -717,20 +765,26 @@ const methods = {
   },
   loadingState(length, component) {
     if (length === 0) {
-      return false
+      return false;
     }
     if (component) {
-      return ((this[`current${component}Page`] * this[`current${component}Limit`]) - (this[`current${component}Limit`] - 1)) > length
+      return (
+        this[`current${component}Page`] * this[`current${component}Limit`] -
+          (this[`current${component}Limit`] - 1) >
+        length
+      );
     }
-    return ((this.currentPage * this.perPage) - (this.perPage - 1)) > length
+    return this.currentPage * this.perPage - (this.perPage - 1) > length;
   },
   updatePage(val, component) {
     if (this.$route.name === 'Dataset View') {
       this[`current${component}Page`] = val;
     } else {
       this.currentPage = val;
-      let array = this.lcFirst(component)
-      this[`${array}Loading`] = (this.currentPage * this.perPage) - (this.perPage - 1) > this[array].length
+      let array = this.lcFirst(component);
+      this[`${array}Loading`] =
+        this.currentPage * this.perPage - (this.perPage - 1) >
+        this[array].length;
     }
   },
   updateLimit(val, component) {
@@ -741,20 +795,20 @@ const methods = {
     }
   },
   deleteItem(item, type) {
-    let array = this.lcFirst(type)
+    let array = this.lcFirst(type);
     if (this[array]) {
-      const test = _.remove(this[array], function (val) {
-        return val.id === item.id
-      })
+      const test = _.remove(this[array], function(val) {
+        return val.id === item.id;
+      });
       if (test.length > 0) {
-        this.rows -= 1
+        this.rows -= 1;
         if (this.$refs[array]) {
-          this.$refs[array].refresh()
+          this.$refs[array].refresh();
         }
       }
       this.$bvModal.hide('deleteConfirmation');
       const dataModel = new Models[item.type ? item.type : type](item);
-      dataModel._delete().then((value) => {
+      dataModel._delete().then(value => {
         if (dataModel.routeUrl === this.$router.history.current.path) {
           if (value === 'users') {
             this.showAlert();
@@ -784,88 +838,87 @@ const methods = {
     if (this.$route.name === 'Dataset View') {
       if (array[0].__typename === 'DatasetField') {
         this.fieldsCount = val;
-        this.currentFieldsPage = 1
+        this.currentFieldsPage = 1;
       } else {
         this.combinatorsCount = val;
-        this.currentCombinatorsPage = 1
+        this.currentCombinatorsPage = 1;
       }
+    } else {
+      this.currentPage = 1;
     }
-    else {
-      this.currentPage = 1
-    }
-    this.rows = val
+    this.rows = val;
   },
   _equals(string, val, type) {
     if (type === 'number') {
-      return string === Number(val)
+      return string === Number(val);
     }
     if (type === 'boolean') {
-      const isTrueSet = (val === 'true')
-      return string === isTrueSet
+      const isTrueSet = val === 'true';
+      return string === isTrueSet;
     }
-    return string === val
+    return string === val;
   },
   _not_equals(string, val, type) {
     if (type === 'number') {
-      return string !== Number(val)
+      return string !== Number(val);
     }
     if (type === 'boolean') {
-      const isTrueSet = (val === 'true')
-      return string !== isTrueSet
+      const isTrueSet = val === 'true';
+      return string !== isTrueSet;
     }
-    return string !== val
+    return string !== val;
   },
   _contains(string, val) {
-    return string.includes(val)
+    return string.includes(val);
   },
   _not_contains(string, val) {
-    return !string.includes(val)
+    return !string.includes(val);
   },
   _greater_than(int, val, type) {
     if (type === 'number') {
-      return int > Number(val)
+      return int > Number(val);
     }
-    return int > val
+    return int > val;
   },
   _less_than(int, val, type) {
     if (type === 'number') {
-      return int < Number(val)
+      return int < Number(val);
     }
-    return int < val
+    return int < val;
   },
   testQueries(val) {
-    this.loading = true
+    this.loading = true;
     const dataModel = new Models['Combinators'](val);
-  // If combinator doesn't already exist, create it, then get query results
+    // If combinator doesn't already exist, create it, then get query results
     if (!this.currentCombinator && this.model.action !== 'Update') {
-      dataModel._create().then((value) => {
-        this.currentCombinator = value.data
-        this.$router.push(`/contributor/combinators/update/${value.data.id}`)
-        this.action = 'Update'
-        this.model.action = 'Update'
-        this.$apollo.queries.queryResults.skip = false
+      dataModel._create().then(value => {
+        this.currentCombinator = value.data;
+        this.$router.push(`/contributor/combinators/update/${value.data.id}`);
+        this.action = 'Update';
+        this.model.action = 'Update';
+        this.$apollo.queries.queryResults.skip = false;
       });
     }
-  // If combinator exists, update it, then get query results
+    // If combinator exists, update it, then get query results
     else {
-      val.id = this.model.id
-      const newModel = new Models['Combinators'](val)
-      newModel._update().then((value) => {
-        this.currentCombinator = value.data
-        this.$apollo.queries.queryResults.skip = false
-        this.$apollo.queries.queryResults.refetch()
+      val.id = this.model.id;
+      const newModel = new Models['Combinators'](val);
+      newModel._update().then(value => {
+        this.currentCombinator = value.data;
+        this.$apollo.queries.queryResults.skip = false;
+        this.$apollo.queries.queryResults.refetch();
       });
     }
   },
   shorten(val) {
     if (val.length > 150) {
-      return val.substring(0, 150) + "..."
+      return val.substring(0, 150) + '...';
     }
-    return val
+    return val;
   },
   lcFirst(string) {
     return string.charAt(0).toLowerCase() + string.slice(1);
-  },
+  }
 };
 
 const asyncComputed = {
@@ -874,20 +927,18 @@ const asyncComputed = {
       if (this._roles && this._roles.length > 0) {
         return this._roles;
       }
-      return this.getSource('users-permissions/roles', 'roles').then(
-        (roles) => {
-          this._roles = roles;
-          return this._roles;
-        }
-      );
+      return this.getSource('users-permissions/roles', 'roles').then(roles => {
+        this._roles = roles;
+        return this._roles;
+      });
     },
     shouldUpdate() {
       return this.component === 'Users';
-    },
-  },
+    }
+  }
 };
 
-const data = function () {
+const data = function() {
   return {
     deleteModal: false,
     itemToDelete: [],
@@ -915,7 +966,7 @@ const data = function () {
     filteredFeatures: [],
     groupedConcepts: [],
     loading: true,
-    rows: 0,
+    rows: 0
   };
 };
 
@@ -925,6 +976,6 @@ export default {
   asyncComputed,
   data,
   components: {
-    TableViewLayout,
-  },
+    TableViewLayout
+  }
 };
