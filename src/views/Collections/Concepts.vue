@@ -3,6 +3,7 @@
     <router-view />
     <table-view-layout
       v-if="$route.name === 'Concepts'"
+      :fluid="true"
       :rows="rows"
       :component="component"
       :limits="limits"

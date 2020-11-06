@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid>
+  <b-container :fluid="fluid">
     <h3>{{component}}</h3>
     <small>{{rows ? rows : 0 }} entries found</small>
     <div class="d-flex justify-content-end">
@@ -62,7 +62,8 @@ export default {
     'currentPage',
     'perPage',
     'limits',
-    'component'
+    'component',
+    'fluid'
   ],
   data() {
     return {

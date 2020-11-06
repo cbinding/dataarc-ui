@@ -6,6 +6,7 @@
       </b-alert>
     </b-col>
     <table-view-layout
+      :fluid="true"
       :rows="rows"
       :component="component"
       :limits="limits"
