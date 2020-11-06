@@ -355,6 +355,7 @@ const apollo = {
           fields_count
           features_count
           combinators_count
+          processing
         }
       }
     `,
