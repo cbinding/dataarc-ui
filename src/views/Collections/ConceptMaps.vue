@@ -53,15 +53,6 @@
               {{ row.item.title }}
             </div>
           </template>
-          <template v-slot:cell(description)="row">
-            <div
-              v-if="row.item.description"
-              class="text-wrap"
-              style="width: 400px; max-width: 450px;"
-            >
-              {{ shorten(row.item.description) }}
-            </div>
-          </template>
           <template v-slot:head(topics_count)="row">
             <div class="text-center">
               # Topics
@@ -119,9 +110,6 @@ export default {
       displayFields: [
         { key: 'actions', sortable: false },
         { key: 'title', sortable: true },
-        { key: 'description', sortable: true },
-        { key: 'citation', sortable: true },
-        { key: 'url', sortable: true },
         { key: 'topics_count', sortable: true },
       ],
       conceptMapsLoading: true,

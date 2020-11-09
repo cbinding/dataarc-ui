@@ -49,11 +49,6 @@
               {{ row.item.title }}
             </div>
           </template>
-          <template v-slot:cell(description)="row" class="Description">
-            <div class="text-wrap" style="width: 400px; max-width: 450px;" v-if="row.item.description">
-              {{ shorten(row.item.description) }}
-            </div>
-          </template>
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group size="sm">
               <b-button :to="{name: 'Update TemporalCoverage', params: {id: row.item.id} }" variant="primary" v-text="'Edit'"></b-button>
@@ -76,9 +71,6 @@ export default {
       displayFields: [
         { key: 'actions', sortable: false },
         { key: 'title', sortable: true },
-        { key: 'description', sortable: true },
-        { key: 'citation', sortable: true },
-        { key: 'url', sortable: true },
         { key: 'begin', sortable: true },
         { key: 'end', sortable: true },
       ],

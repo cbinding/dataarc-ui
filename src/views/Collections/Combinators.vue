@@ -13,16 +13,6 @@
               <strong>Loading...</strong>
             </div>
           </template>
-          <template v-slot:cell(description)="row" class="Description">
-            <div class="text-wrap" style="width: 300px; max-width: 350px;" v-if="row.item.description">
-              {{ shorten(row.item.description) }}
-            </div>
-          </template>
-          <template v-slot:cell(citation)="row" class="citation">
-            <div class="text-wrap" style="width: 250px; max-width: 300px;" v-if="row.item.citation">
-              {{ shorten(row.item.citation) }}
-            </div>
-          </template>
           <template v-slot:cell(dataset)="row">
             <div class="text-wrap" style="width: 250px; max-width: 300px;" v-if="row.item.dataset">
               {{ row.item.dataset.title }}
@@ -55,8 +45,6 @@ export default {
       displayFields: [
         { key: 'actions', sortable: false },
         { key: 'title', sortable: true },
-        { key: 'description', sortable: true },
-        { key: 'citation', sortable: true },
         { key: 'dataset', sortable: true },
       ],
       combinatorsLoading: true,

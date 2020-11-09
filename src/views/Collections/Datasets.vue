@@ -31,11 +31,6 @@
               {{ row.item.title }}
             </div>
           </template>
-          <template v-slot:cell(description)="row" class="Description">
-            <div class="text-wrap" style="width: 300px; max-width: 350px;" v-if="row.item.description">
-              {{ shorten(row.item.description) }}
-            </div>
-          </template>
           <template v-slot:head(fields_count)="row" class="fieldsCount" >
             <span># Fields</span>
           </template>
@@ -89,8 +84,6 @@ export default {
       displayFields: [
         { key: 'actions', sortable: false },
         { key: 'title', sortable: true },
-        { key: 'description', sortable: true },
-        { key: 'citation', sortable: true },
         { key: 'fields_count', sortable: true },
         { key: 'features_count', sortable: true },
         { key: 'combinators_count', sortable: true },

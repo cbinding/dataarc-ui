@@ -85,7 +85,6 @@ export default {
       displayFields: [
         { key: 'actions', sortable: false },
         { key: 'title', sortable: true },
-        { key: 'description', sortable: true },
         { key: 'color', sortable: true },
         { key: 'datasets_count', sortable: true }
       ],

@@ -150,24 +150,6 @@
               {{ row.item.title }}
             </div>
           </template>
-          <template v-slot:cell(description)="row" class="Description">
-            <div
-              class="text-wrap"
-              style="width: 300px; max-width: 350px;"
-              v-if="row.item.description"
-            >
-              {{ shorten(row.item.description) }}
-            </div>
-          </template>
-          <template v-slot:cell(citation)="row" class="citation">
-            <div
-              class="text-wrap"
-              style="width: 300px; max-width: 350px;"
-              v-if="row.item.citation"
-            >
-              {{ shorten(row.item.citation) }}
-            </div>
-          </template>
           <template v-slot:cell(actions)="row" class="Actions">
             <router-link
               :to="{ name: 'Update Combinator', params: { id: row.item.id } }"
@@ -240,8 +222,6 @@ export default {
         { key: 'actions', sortable: false },
         { key: 'name', sortable: true },
         { key: 'title', sortable: true },
-        { key: 'description', sortable: true },
-        { key: 'citation', sortable: true }
       ],
       filterFields: '',
       filterCombinators: '',
