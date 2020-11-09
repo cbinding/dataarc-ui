@@ -15,7 +15,7 @@ export default {
   methods: {
     loadMap() {
       Plotly.d3.csv(
-        "http://localhost:1337/query/features",
+        `${this.$apiUrl}/query/features`,
         function(err, rows) {
           function unpack(rows, key) {
             return rows.map(function(row) {
@@ -40,7 +40,7 @@ export default {
           };
 
           Plotly.newPlot("plotly", data, layout).then(gd => {
-            gd.on('plotly_click', (eventData) => {
+            gd.on('plotly_selected', (eventData) => {
               console.log('clicked');
               console.log(eventData);
             })
