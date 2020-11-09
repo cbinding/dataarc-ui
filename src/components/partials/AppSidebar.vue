@@ -23,7 +23,7 @@
           class="nav-item"
         >
           <router-link
-            v-if="route.name !== 'Dataset View' && route.name !== 'blank' && route.name !== 'Profile'"
+            v-if="route.name && route.name !== 'Dataset View' && route.name !== 'blank' && route.name !== 'Profile'"
             class="nav-link"
             active-class="active"
             :to="route.path"
@@ -49,7 +49,7 @@
           >
 
             <router-link
-              v-if="route.name !== 'Dataset View' && route.name !== 'blank' && route.name !== 'Profile' && route.name !== 'ConceptMap View'"
+              v-if="route.name && route.name !== 'Dataset View' && route.name !== 'blank' && route.name !== 'Profile' && route.name !== 'ConceptMap View'"
               class="nav-link"
               active-class="active"
               :to="route.path"

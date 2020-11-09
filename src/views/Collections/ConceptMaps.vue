@@ -90,7 +90,7 @@
               />
               <b-button
                 :disabled="row.item.processing"
-                :to="{name: 'ConceptMap View', params: {id: row.item.id} }"
+                :to="{name: 'Update ConceptMap', params: {id: row.item.id} }"
                 variant="primary"
                 v-text="'Edit'"
               />
