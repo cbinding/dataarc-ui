@@ -12,6 +12,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "watch": "vue-cli-service build --watch",
+    "stage": "vue-cli-service build --mode stage",
     "test:unit": "vue-cli-service test:unit",
     "lint": "stylelint '**/*.vue' '**/*.scss' --fix scss"
   },
