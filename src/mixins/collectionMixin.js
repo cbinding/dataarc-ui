@@ -274,6 +274,7 @@ const apollo = {
         }
       }
     `,
+    polling: 5000,
     skip: true,
     ssr: false,
     update(data) {
@@ -283,6 +284,16 @@ const apollo = {
     },
     result({ data, loading, networkStatus }) {
       if (data) {
+        let stopQuery = data.conceptMaps.filter(conceptMap => {
+          if (conceptMap.processing) {
+            return conceptMap;
+          }
+        });
+        if (stopQuery.length === 0 || this.component !== 'ConceptMaps') {
+          this.$apollo.queries.allConceptMaps.stopPolling();
+        } else {
+          this.$apollo.queries.allConceptMaps.startPolling(5000);
+        }
         this.conceptMaps = data.conceptMaps;
         this.rows = this.conceptMaps.length;
       }
