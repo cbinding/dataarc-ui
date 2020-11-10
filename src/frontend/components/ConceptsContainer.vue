@@ -1,27 +1,23 @@
 <template>
-  <section
-    id="concept-section"
-    class="bg-white"
-  >
+  <section id="concept-section" class="bg-white">
     <div class="container call-to-action">
       <div class="row">
         <div class="col-lg-12 text-center">
           <h2 class="section-heading">
-            Concepts<sup><a
-              href="http://www.data-arc.org/conceptmapping/"
-              class="text-dark"
-              target="_blank"
-              data-toggle="tooltip"
-              title="How to use dataarc concepts in your search"
-            ><fa-icon icon="info-circle" /></a></sup>
+            Concepts<sup
+              ><a
+                href="http://www.data-arc.org/conceptmapping/"
+                class="text-dark"
+                target="_blank"
+                data-toggle="tooltip"
+                title="How to use dataarc concepts in your search"
+                ><fa-icon icon="info-circle"/></a
+            ></sup>
           </h2>
-          <hr class="primary">
+          <hr class="primary" />
         </div>
         <div class="col-lg-12">
-          <div
-            id="topicControls"
-            class="btn-toolbar justify-content-between"
-          >
+          <div id="topicControls" class="btn-toolbar justify-content-between">
             <div class="btn-group">
               <button
                 id="topicmapZoomIn"
@@ -67,10 +63,7 @@
                 <fa-icon icon="font" />
               </button>
             </div>
-            <div
-              id="topicSearch"
-              class="input-group"
-            >
+            <div id="topicSearch" class="input-group">
               <vue-bootstrap-typeahead
                 v-model="search"
                 :data="nodes"
@@ -80,15 +73,8 @@
               />
             </div>
           </div>
-          <div
-            id="conceptContainer"
-            ref="topicmap"
-            style="width: 100%"
-          >
-            <div
-              id="topicmap"
-              style="box-shadow: inset 0px 0px 10px rgba(0,0,0,0.9);padding:10px;"
-            >
+          <div id="conceptContainer" ref="topicmap" style="width: 100%">
+            <div id="topicmap" style="padding:10px;">
               <network
                 v-if="networkSizeSettings.width > 0"
                 :selectedNode="selectedNode"
@@ -110,21 +96,20 @@
 </template>
 
 <script>
+import gql from 'graphql-tag';
+import VueBootstrapTypeahead from 'vue-bootstrap-typeahead';
 
-import gql from 'graphql-tag'
-import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
-
-import Network from './concepts-components/Network.vue'
+import Network from './concepts-components/Network.vue';
 
 const conceptMapQuery = gql`
   query {
-    conceptMaps(where:{active:true}) {
+    conceptMaps(where: { active: true }) {
       name
       nodes
       edges
     }
   }
-`
+`;
 
 export default {
   components: {
@@ -140,51 +125,51 @@ export default {
       nodeTextBoolean: false,
       networkSizeSettings: {
         height: 600,
-        width: 0,
-      },
-    }
+        width: 0
+      }
+    };
   },
   mounted() {
-    this.getNodes()
+    this.getNodes();
     this.$nextTick(() => {
-      this.networkSizeSettings.width = this.$refs.topicmap.clientWidth - 20
-    })
+      this.networkSizeSettings.width = this.$refs.topicmap.clientWidth - 20;
+    });
   },
   methods: {
     getNodes() {
-      this.$apollo.query({
-        query: conceptMapQuery,
-      }).then(({ data }) => {
-        this.nodes = data.conceptMaps[0].nodes
-        this.links = data.conceptMaps[0].edges
-      })
+      this.$apollo
+        .query({
+          query: conceptMapQuery
+        })
+        .then(({ data }) => {
+          this.nodes = data.conceptMaps[0].nodes;
+          this.links = data.conceptMaps[0].edges;
+        });
     },
     nodeSelected({ node }) {
-      console.log(node)
+      console.log(node);
     },
     linkSelected({ link }) {
-      console.log(link)
+      console.log(link);
     },
     test(search) {
-      console.log(search)
+      console.log(search);
     },
     addNodeToFilter(node) {
-      this.$emit('filtered', 'conceptual', node)
-    },
-  },
-}
+      this.$emit('filtered', 'conceptual', node);
+    }
+  }
+};
 </script>
 
 <style lang="scss">
-
 .input-group {
-  min-width: 274px!important;
+  min-width: 274px !important;
 }
 
 .form-control {
-  min-width: 274px!important;
+  min-width: 274px !important;
 }
 
-@import "../scss/concepts";
-
+@import '../scss/concepts';
 </style>
