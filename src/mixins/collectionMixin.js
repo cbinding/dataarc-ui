@@ -301,8 +301,8 @@ const apollo = {
   },
   allConceptTopics: {
     query: gql`
-      query conceptTopics($start: Int, $limit: Int) {
-        conceptTopics(start: $start, limit: $limit) {
+      query conceptTopics($map: ID!, $start: Int, $limit: Int) {
+        conceptTopics(where: {map: $map  }, start: $start, limit: $limit) {
           id
           title
           concept {
@@ -310,7 +310,9 @@ const apollo = {
             title
           }
         }
-        countConceptTopics
+        conceptMaps(where: {id: $map}) {
+          topics_count
+        }
       }
     `,
     skip: true,
@@ -318,6 +320,7 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
+        map: this && this.currentId ? this.currentId : "5fa05f2ac8efcfd72451a752",
         limit: 100,
         start:
           this &&
@@ -344,8 +347,8 @@ const apollo = {
             _.isEqual
           );
         }
-        if (this.rows !== data.countConceptTopics) {
-          this.rows = data.countConceptTopics;
+        if (this.rows !== data.conceptMaps[0].topics_count) {
+          this.rows = data.conceptMaps[0].topics_count;
         }
         if (this.conceptTopics.length === this.rows) {
           this.$apollo.queries.allConceptTopics.skip = true;
@@ -479,6 +482,7 @@ const apollo = {
           citation
           url
           source
+          topics_count
         }
       }
     `,

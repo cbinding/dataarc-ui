@@ -26,16 +26,17 @@
           </template>
           <template v-slot:cell(concept)="row" class="Concept">
             <div style="max-width: 400px;">
-              <b-dropdown :text="row.item.concept ? row.item.concept.title : ''">
-                <b-dropdown-group v-for="concepts in groupedConcepts" :key="concepts.group">
-                  <h4><strong>{{concepts.group}}</strong></h4>
-                  <b-dropdown-divider></b-dropdown-divider>
-                  <b-dropdown-item-button v-for="concept in concepts.values" :key="concept.id" v-model="row.item.concept" @click="updateConceptTopic(row.item, concept); row.item.concept = concept">
-                    {{concept.title}}
-                  </b-dropdown-item-button>
-                  <br>
-                </b-dropdown-group>
-              </b-dropdown>
+              <div
+              id="topicSearch"
+              class="input-group"
+              >
+                <vue-bootstrap-typeahead
+                  :data="concepts"
+                  :serializer="s => s.title"
+                  :placeholder="row.item.concept ? row.item.concept.title : ''"
+                  @hit="updateConceptTopic(row.item, $event); row.item.concept = $event"
+                />
+              </div>
             </div>
           </template>
         </b-table>
@@ -46,7 +47,11 @@
 
 <script>
 import collectionMixin from '../../mixins/collectionMixin'
+import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 export default {
+  components: {
+    VueBootstrapTypeahead
+  },
   data() {
     return {
       component: 'ConceptMap View',
