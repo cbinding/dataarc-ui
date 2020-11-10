@@ -71,6 +71,44 @@ const actions = {
       },
     )
   },
+  forgotPassword({ dispatch, commit }, email) {
+    commit('forgotPasswordRequest', email)
+
+    userService.forgotPassword(email)
+    .then(
+      (email) => {
+        commit('forgotPasswordSuccess', email)
+        router.push('/auth/notice')
+        setTimeout(() => {
+          // display success message after route change completes
+          dispatch('alert/success', 'Password reset successful', { root: true })
+        })
+      },
+      (error) => {
+        commit('forgotPasswordFailure', error)
+        dispatch('alert/error', error, { root: true })
+      },
+    )
+  },
+  resetPassword({ dispatch, commit }, email) {
+    commit('resetPasswordRequest', email)
+
+    userService.resetPassword(email)
+    .then(
+      (email) => {
+        commit('resetPasswordSuccess', email)
+        router.push('/auth/notice')
+        setTimeout(() => {
+          // display success message after route change completes
+          dispatch('alert/success', 'Password reset successful', { root: true })
+        })
+      },
+      (error) => {
+        commit('resetPasswordFailure', error)
+        dispatch('alert/error', error, { root: true })
+      },
+    )
+  },
 }
 
 const mutations = {
@@ -117,6 +155,33 @@ const mutations = {
   },
   addNewUserFailure(state, error) {
     state.status = {}
+  },
+  forgotPasswordRequest(state, email) {
+    state.email = email
+  },
+  forgotPasswordSuccess(state, response) {
+    state.user = response.user
+  },
+  forgotPasswordFailure(state, err) {
+    if (err.message === 'Request failed with status code 400') {
+      err.message = "That email does not exist"
+    }
+    state.status = { loggedIn: false, error: err }
+    state.user = null
+    state.role = null
+    state.jwt = null
+  },
+  resetPasswordRequest(state, code) {
+    state.code = code
+  },
+  resetPasswordSuccess(state, response) {
+    state.user = response.user
+  },
+  resetPasswordFailure(state, err) {
+    state.status = { loggedIn: false, error: err }
+    state.user = null
+    state.role = null
+    state.jwt = null
   },
 }
 

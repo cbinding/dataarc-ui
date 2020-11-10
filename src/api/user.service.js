@@ -5,6 +5,8 @@ export default {
   login,
   logout,
   register,
+  forgotPassword,
+  resetPassword,
   getAll,
   getById,
   delete: _delete,
@@ -50,6 +52,30 @@ function register(user) {
     `${process.env.VUE_APP_API_URL}/auth/local/register`,
     requestOptions
   ).then(handleResponse);
+}
+function forgotPassword(email) {
+  return axios
+    .post(`${process.env.VUE_APP_API_URL}/auth/forgot-password`, {
+      email
+    })
+    .then((response) => {
+      // Handle success.
+      console.log('Your user received an email');
+      console.log(response);
+    });
+}
+function resetPassword(code, password, passwordConfirmation) {
+  return axios
+    .post(`${process.env.VUE_APP_API_URL}/auth/reset-password`, {
+      code,
+      password,
+      passwordConfirmation,
+    })
+    .then((response) => {
+      // Handle success.
+      console.log('Your password has been reset.');
+      console.log(response);
+    });
 }
 
 function getAll() {

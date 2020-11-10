@@ -1,10 +1,10 @@
 <template>
   <div>
     <form
-      class="login"
+      class="forgotPassword"
       @submit.prevent="handleSubmit()"
     >
-      <h3>Sign In</h3>
+      <h3>Forgot Password</h3>
 
       <div class="form-group">
         <label>Email address</label>
@@ -15,22 +15,11 @@
           class="form-control form-control-lg"
         >
       </div>
-
-      <div class="form-group">
-        <label>Password</label>
-        <input
-          v-model="password"
-          required
-          type="password"
-          class="form-control form-control-lg"
-        >
-      </div>
-
       <button
         type="submit"
         class="btn btn-dark btn-lg btn-block"
       >
-        Sign In
+        Request Password Reset
       </button>
     </form>
     <div
@@ -41,18 +30,6 @@
       >
       {{ status.error.message }}
     </div>
-    <router-link
-      to="/auth/register"
-      class="btn btn-dark btn-lg btn-block mt-2"
-    >
-      Register
-    </router-link>
-    <router-link
-      to="/auth/forgot-password"
-      class="btn btn-dark btn-lg btn-block mt-2"
-    >
-      Forgot Password
-    </router-link>
     <debug>
       Status: {{ status }}
     </debug>
@@ -67,7 +44,6 @@ export default {
   data() {
     return {
       email: '',
-      password: '',
       submitted: false,
     }
   },
@@ -76,17 +52,15 @@ export default {
   },
   created() {
     // reset the login status when you reach the login page
-    this.logout()
   },
   methods: {
-    ...mapActions('account', ['login', 'logout']),
+    ...mapActions('account', ['forgotPassword']),
 
     handleSubmit() {
       this.submitted = true
-      const { email, password } = this
-      if (email && password) {
-        const identifier = email
-        this.login({ identifier, password })
+      const { email} = this
+      if (email) {
+        this.forgotPassword( email )
       }
     },
   },

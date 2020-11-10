@@ -1,21 +1,18 @@
 <template>
   <div>
     <form
-      class="login"
+      class="resetPassword"
       @submit.prevent="handleSubmit()"
     >
-      <h3>Sign In</h3>
+      <h3>Reset Password</h3>
 
       <div class="form-group">
-        <label>Email address</label>
         <input
-          v-model="email"
-          required
-          type="email"
-          class="form-control form-control-lg"
+          v-model="code"
+          hidden
         >
+        </input>
       </div>
-
       <div class="form-group">
         <label>Password</label>
         <input
@@ -25,12 +22,20 @@
           class="form-control form-control-lg"
         >
       </div>
-
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input
+          v-model="passwordConfirmation"
+          required
+          type="password"
+          class="form-control form-control-lg"
+        >
+      </div>
       <button
         type="submit"
         class="btn btn-dark btn-lg btn-block"
       >
-        Sign In
+        Reset Password
       </button>
     </form>
     <div
@@ -41,18 +46,6 @@
       >
       {{ status.error.message }}
     </div>
-    <router-link
-      to="/auth/register"
-      class="btn btn-dark btn-lg btn-block mt-2"
-    >
-      Register
-    </router-link>
-    <router-link
-      to="/auth/forgot-password"
-      class="btn btn-dark btn-lg btn-block mt-2"
-    >
-      Forgot Password
-    </router-link>
     <debug>
       Status: {{ status }}
     </debug>
@@ -66,8 +59,10 @@ import { mapState, mapActions } from 'vuex'
 export default {
   data() {
     return {
+      code: '',
       email: '',
       password: '',
+      passwordConfirmation: '',
       submitted: false,
     }
   },
@@ -76,17 +71,15 @@ export default {
   },
   created() {
     // reset the login status when you reach the login page
-    this.logout()
   },
   methods: {
-    ...mapActions('account', ['login', 'logout']),
+    ...mapActions('account', ['resetPassword']),
 
     handleSubmit() {
       this.submitted = true
-      const { email, password } = this
-      if (email && password) {
-        const identifier = email
-        this.login({ identifier, password })
+      const { code, password, passwordConfirmation } = this
+      if (code && password && passwordConfirmation) {
+        this.resetPassword( code, password, passwordConfirmation )
       }
     },
   },

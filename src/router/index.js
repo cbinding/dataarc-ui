@@ -56,6 +56,16 @@ const routes = [
         component: () => import('@/views/Pages/Register.vue'),
       },
       {
+        path: 'forgot-password',
+        name: 'forgot-password',
+        component: () => import('@/views/Pages/ForgotPassword.vue'),
+      },
+      {
+        path: 'reset-password',
+        name: 'reset-password',
+        component: () => import('@/views/Pages/ResetPassword.vue'),
+      },
+      {
         path: 'unauthorized',
         name: 'Unauthorized',
         component: () => import('@/views/Pages/Error401.vue'),
