@@ -58,6 +58,7 @@ export default {
   },
   methods: {
     processFilter(type, filter) {
+      console.log({ type, filter });
       this.filters[type].push(filter);
       this.totalFilters += 1;
     },

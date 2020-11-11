@@ -69,7 +69,7 @@
               v-for="(filter, index) in filters.conceptual"
               :key="index"
             >
-              {{ filter.title }}
+              {{ filter.label }}
               <button
                 type="button"
                 class="close text-light filters-remove"

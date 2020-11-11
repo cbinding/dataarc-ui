@@ -43,6 +43,7 @@
     "vue-async-computed": "^3.8.2",
     "vue-bootstrap-typeahead": "^0.2.6",
     "vue-chartjs": "^3.5.1",
+    "vue-cytoscape": "^1.0.8",
     "vue-form-generator": "^2.3.4",
     "vue-jwt-decode": "^0.1.0",
     "vue-multiselect": "^2.1.6",

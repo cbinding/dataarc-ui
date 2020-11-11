@@ -90,6 +90,7 @@
               <cytoscape-network
                 :topicmap="conceptMap"
                 :svg-size="networkSizeSettings"
+                @concept-filter="handleConceptFilter"
               />
             </div>
           </div>
@@ -144,13 +145,16 @@ export default {
     });
   },
   methods: {
+    handleConceptFilter(concept) {
+      this.$emit('filtered', 'conceptual', concept);
+    },
     getNodes() {
       this.$apollo
         .query({
           query: conceptMapQuery
         })
         .then(({ data }) => {
-          this.conceptMap = data.conceptMaps[0]
+          this.conceptMap = data.conceptMaps[0];
           this.nodes = data.conceptMaps[0].nodes;
           this.links = data.conceptMaps[0].edges;
         });
