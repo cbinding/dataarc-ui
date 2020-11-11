@@ -75,7 +75,7 @@
           </div>
           <div id="conceptContainer" ref="topicmap" style="width: 100%">
             <div id="topicmap" style="padding:10px;">
-              <!-- <network
+              <network
                 v-if="networkSizeSettings.width > 0"
                 :selectedNode="selectedNode"
                 :node-list="nodes"
@@ -86,10 +86,6 @@
                 @clickNode="nodeSelected"
                 @clickLink="linkSelected"
                 @nodeAdded="addNodeToFilter"
-              /> -->
-              <cytoscape-network
-                :topicmap="conceptMap"
-                :svg-size="networkSizeSettings"
               />
             </div>
           </div>
@@ -103,20 +99,7 @@
 import gql from 'graphql-tag';
 import VueBootstrapTypeahead from 'vue-bootstrap-typeahead';
 
-<<<<<<< 230bddffdecee648a7377b0b5ffc6d2607994321:src/frontend/components/ConceptContainer.vue
-import Network from './concept-components/Network.vue';
-=======
-<<<<<<< Updated upstream:src/frontend/components/ConceptsContainer.vue
 import Network from './concepts-components/Network.vue';
-=======
-<<<<<<< Updated upstream:src/frontend/components/ConceptContainer.vue
-import Network from './concept-components/Network.vue';
-=======
-import Network from './concepts-components/Network.vue';
-import CytoscapeNetwork from './concepts-components/Cytoscape.vue';
->>>>>>> Stashed changes:src/frontend/components/ConceptsContainer.vue
->>>>>>> Stashed changes:src/frontend/components/ConceptContainer.vue
->>>>>>> WIP - Cytoscape integration:src/frontend/components/ConceptsContainer.vue
 
 const conceptMapQuery = gql`
   query {
@@ -131,15 +114,13 @@ const conceptMapQuery = gql`
 export default {
   components: {
     Network,
-    VueBootstrapTypeahead,
-    CytoscapeNetwork
+    VueBootstrapTypeahead
   },
   data() {
     return {
       search: '',
       selectedNode: {},
       nodes: [],
-      conceptMap: {},
       links: [],
       nodeTextBoolean: false,
       networkSizeSettings: {
@@ -161,7 +142,6 @@ export default {
           query: conceptMapQuery
         })
         .then(({ data }) => {
-          this.conceptMap = data.conceptMaps[0]
           this.nodes = data.conceptMaps[0].nodes;
           this.links = data.conceptMaps[0].edges;
         });
