@@ -21,26 +21,36 @@ export default {
         var data = [
           {
             type: 'scattermapbox',
-            // text: unpack(rows, 'id'),
+            text: unpack(rows, 'title'),
             lon: unpack(rows, 'lon'),
             lat: unpack(rows, 'lat'),
-            marker: { color: unpack(rows, 'color'), size: 5 }
+            marker: { color: unpack(rows, 'color'), size: 5 },
+            hovertemplate: '%{text}<extra></extra>'
           }
         ];
 
         var layout = {
           dragmode: 'zoom',
           height: 700,
-          displayModeBar: false,
           mapbox: {
             style: 'open-street-map',
             center: { lat: 62, lon: -18 },
             zoom: 2
           },
-          margin: { r: 0, t: 0, b: 0, l: 0 }
+          margin: { r: 0, t: 0, b: 0, l: 0 },
+          hoverlabel: {
+            font: {
+              color: 'white'
+            },
+            bordercolor: 'white'
+          }
         };
 
-        Plotly.newPlot('plotly', data, layout).then(gd => {
+        var config = {
+          // displayModeBar: false
+        };
+
+        Plotly.newPlot('plotly', data, layout, config).then(gd => {
           gd.on('plotly_selected', eventData => {
             console.log('clicked');
             console.log(eventData);
