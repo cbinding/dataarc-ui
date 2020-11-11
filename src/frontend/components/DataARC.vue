@@ -12,10 +12,10 @@
         >
       </b-button-group>
     </div>
-    <keyword-section id="keyword-section" :filters="filters" />
     <timeline-section id="temporal-section" @filtered="processFilter" />
     <map-section id="spatial-section" @filtered="processFilter" />
     <concept-section id="concept-section" @filtered="processFilter" />
+    <keyword-section id="keyword-section" :filters="filters" />
     <filter-section
       id="filter-section"
       :filters="filters"
