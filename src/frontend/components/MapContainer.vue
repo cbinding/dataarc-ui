@@ -1,45 +1,44 @@
 <template>
-  <section
-    id="spatial-section"
-    class="bg-light"
-  >
+  <section id="spatial-section" class="bg-light">
     <div class="container call-to-action">
       <div class="row">
         <div class="col-lg-12 text-center">
           <h2 class="section-heading">
-            Map<sup><a
-              href="http://www.data-arc.org/space/"
-              class="text-dark"
-              target="_blank"
-              data-toggle="tooltip"
-              title="How dataarc thinks about space and place"
-            ><fa-icon icon="info-circle" /></a></sup>
+            Map<sup
+              ><a
+                href="http://www.data-arc.org/space/"
+                class="text-dark"
+                target="_blank"
+                data-toggle="tooltip"
+                title="How dataarc thinks about space and place"
+                ><fa-icon icon="info-circle"/></a
+            ></sup>
           </h2>
-          <hr class="primary">
+          <hr class="primary" />
           <div class="legend justify-content-md-center">
             <ul class="list-inline">
               <li class="list-inline-item">
                 <img
-                  src="img/icons/archaeological.png"
+                  src="../assets/img/icons/archaeological.png"
                   class="mx-auto"
                   alt="Archaeological Source Icon"
-                >
+                />
                 <mark class="typetip">Archaeological</mark> Sources
               </li>
               <li class="list-inline-item">
                 <img
-                  src="img/icons/textual.png"
+                  src="../assets/img/icons/textual.png"
                   class="mx-auto"
                   alt="Textual Source Icon"
-                >
+                />
                 <mark class="typetip">Textual</mark> Sources
               </li>
               <li class="list-inline-item">
                 <img
-                  src="img/icons/environmental.png"
+                  src="../assets/img/icons/environmental.png"
                   class="mx-auto"
                   alt="Environmental Source Icon"
-                >
+                />
                 <mark class="typetip">Environmental</mark> Sources
               </li>
             </ul>
@@ -52,32 +51,32 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import gql from 'graphql-tag'
-import BatchLoader from '@/workers/apollo-batch-loader.worker.js'
-import Plotly from './map-components/PlotlyContainer.vue'
-import VuePapaParse from 'vue-papa-parse'
-Vue.use(VuePapaParse)
+import Vue from 'vue';
+import gql from 'graphql-tag';
+import BatchLoader from '@/workers/apollo-batch-loader.worker.js';
+import Plotly from './map-components/PlotlyContainer.vue';
+import VuePapaParse from 'vue-papa-parse';
+Vue.use(VuePapaParse);
 const featuresQuery = gql`
-  query featureCollection ($limit: Int!, $start: Int!) {
-    features (limit: $limit, start: $start) {
+  query featureCollection($limit: Int!, $start: Int!) {
+    features(limit: $limit, start: $start) {
       id
       latitude
       longitude
     }
   }
-`
+`;
 
 const featuresCountQuery = gql`
   query {
     countFeatures
   }
-`
+`;
 
 export default {
   name: 'MapContainer',
   components: {
-    Plotly,
+    Plotly
   },
   data() {
     return {
@@ -86,24 +85,24 @@ export default {
       features: [],
       featuresCount: 0,
       getPromises: [],
-      step: 5000,
-    }
+      step: 5000
+    };
   },
   mounted() {
-    this.$apollo.query({
-      query: featuresCountQuery,
-    }).then(({ data }) => {
-      this.featuresCount = data.countFeatures
-      this.loadFeatures()
-    })
+    this.$apollo
+      .query({
+        query: featuresCountQuery
+      })
+      .then(({ data }) => {
+        this.featuresCount = data.countFeatures;
+        this.loadFeatures();
+      });
   },
   methods: {
     loadFeatures() {
       // window.axios.get(`${this.$apiUrl}/query/features`).then(({ data }) => {
       //   this.features = this.$papa.parse(data, {header: true}).data
-
       // })
-
       // if (this.start >= this.featuresCount) return
       // while (this.start <= this.featuresCount) {
       //   this.getPromises.push(
@@ -116,7 +115,6 @@ export default {
       //   )
       //   this.start += this.step
       // }
-
       // this.$apollo.query({
       //   query: featuresQuery,
       //   variables: {
@@ -128,11 +126,9 @@ export default {
       //   this.start += 100
       //   this.loadFeatures()
       // })
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
-<style>
-
-</style>
+<style></style>
