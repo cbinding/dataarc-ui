@@ -7,20 +7,21 @@
           <h1 id="homeHeading">
             dataARC Search Tool
           </h1>
-          <hr class="light">
+          <hr class="light" />
           <h3>
-            Find contextualized data from ecological, archaeological, and historical sources for the North Atlantic.
+            Find contextualized data from ecological, archaeological, and
+            historical sources for the North Atlantic.
           </h3>
           <p>
-            You can search and filter by any combination of keyword, time, space and concept. Combine filters to narrow
-            your search.
+            You can search and filter by any combination of keyword, time, space
+            and concept. Combine filters to narrow your search.
           </p>
           <h6>
-            <a
-              href="/help"
-              class="btn btn-sm btn-outline-light"
-            >Not sure where to start?</a>
+            <a href="/help" class="btn btn-sm btn-outline-light"
+              >Not sure where to start?</a
+            >
           </h6>
+          <br /><br />
           <div class="row">
             <div class="col-lg-4 col-md-6 text-center">
               <div class="service-box">
@@ -37,49 +38,42 @@
                 <a
                   class="btn btn-sm btn-light js-scroll-trigger"
                   href="#temporal-example"
-                >Run Example</a>
+                  >Run Example</a
+                >
                 <p>This example uses our timeline to filter the result data.</p>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 text-center">
               <div class="service-box">
-                <a
-                  class="js-scroll-trigger text-light"
-                  href="#spatial-section"
-                >
-                  <fa-icon
-                    icon="compass"
-                    class="fa-4x text-danger sr-icons"
-                  />
+                <a class="js-scroll-trigger text-light" href="#spatial-section">
+                  <fa-icon icon="compass" class="fa-4x text-danger sr-icons" />
                   <h4>Spatial</h4>
                 </a>
                 <a
                   class="btn btn-sm btn-light js-scroll-trigger"
                   href="#spatial-example"
-                >Run Example</a>
+                  >Run Example</a
+                >
                 <p>Want to see results only with a specific bounding box?</p>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 text-center">
               <div class="service-box">
-                <a
-                  class="js-scroll-trigger text-light"
-                  href="#concept-section"
-                >
-                  <fa-icon
-                    icon="sitemap"
-                    class="fa-4x text-warning sr-icons"
-                  />
+                <a class="js-scroll-trigger text-light" href="#concept-section">
+                  <fa-icon icon="sitemap" class="fa-4x text-warning sr-icons" />
                   <h4>Concept</h4>
                 </a>
                 <a
                   class="btn btn-sm btn-light js-scroll-trigger"
                   href="#concept-example"
-                >Run Example</a>
+                  >Run Example</a
+                >
                 <p>
-                  Looking for a way to view results that only relate to specific concepts? Filter results based on the
-                  concept map. Learn about
-                  <a href="//www.data-arc.org/conceptmapping/">dataARC&apos;s concept map</a>.
+                  Looking for a way to view results that only relate to specific
+                  concepts? Filter results based on the concept map. Learn about
+                  <a href="//www.data-arc.org/conceptmapping/"
+                    >dataARC&apos;s concept map</a
+                  >.
                 </p>
               </div>
             </div>
@@ -92,21 +86,19 @@
 </template>
 
 <script>
-import DataarcNav from './Nav.vue'
+import DataarcNav from './Nav.vue';
 // import CallToAction from './CallToAction.vue'
 export default {
   name: 'FrontendHeader',
   components: {
-    DataarcNav,
+    DataarcNav
     // CallToAction,
-  },
-}
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-
 header.masthead {
-    min-height: 80vh;
+  min-height: 80vh;
 }
-
 </style>
