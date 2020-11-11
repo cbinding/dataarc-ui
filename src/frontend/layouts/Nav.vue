@@ -27,11 +27,6 @@
             <a class="nav-link js-scroll-trigger" href="#page-top">Start</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#keyword-section"
-              >Keyword</a
-            >
-          </li>
-          <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#temporal-section"
               >Timeline</a
             >
@@ -44,6 +39,11 @@
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#concept-section"
               >Concepts</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#keyword-section"
+              >Keyword</a
             >
           </li>
           <li class="nav-item">
