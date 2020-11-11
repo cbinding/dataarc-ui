@@ -5,7 +5,7 @@
       <div class="header-content">
         <div class="header-content-inner">
           <h1 id="homeHeading">
-            dataARC Search Tool
+            DataARC Search Tool
           </h1>
           <hr class="light" />
           <h3>

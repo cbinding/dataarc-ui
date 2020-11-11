@@ -1,13 +1,16 @@
 <template>
   <div>
     <div class="sticky-top">
-      <b-button href="#Results" class="float-right" variant="primary"
-        >Results <b-badge variant="danger">0</b-badge></b-button
-      >
-      <b-button href="#Filters" class="float-right" variant="primary"
-        >Filters
-        <b-badge variant="success">{{ totalFilters }}</b-badge></b-button
-      >
+      <b-button-group class="float-right">
+        <b-button href="#result-section" variant="dark">
+          Results
+          <b-badge variant="danger">0</b-badge></b-button
+        >
+        <b-button href="#filter-section" variant="dark">
+          Filters
+          <b-badge variant="success">{{ totalFilters }}</b-badge></b-button
+        >
+      </b-button-group>
     </div>
     <keyword-section id="keyword-section" :filters="filters" />
     <timeline-section id="temporal-section" @filtered="processFilter" />
