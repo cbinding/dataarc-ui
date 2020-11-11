@@ -1,77 +1,69 @@
 <template>
   <div>
     <div class="sticky-top">
-      <b-button href="#Results" class="float-right" variant="primary">Results <b-badge variant="danger">0</b-badge></b-button>
-      <b-button href="#Filters" class="float-right" variant="primary">Filters <b-badge variant="success">{{ totalFilters }}</b-badge></b-button>
+      <b-button href="#Results" class="float-right" variant="primary"
+        >Results <b-badge variant="danger">0</b-badge></b-button
+      >
+      <b-button href="#Filters" class="float-right" variant="primary"
+        >Filters
+        <b-badge variant="success">{{ totalFilters }}</b-badge></b-button
+      >
     </div>
-    <timeline
-      @filtered="processFilter"
-    />
-    <map-section
-      @filtered="processFilter"
-    />
-    <concepts
-      id="concept-section"
-      @filtered="processFilter"
-    />
-    <filters
-      id="Filters"
+    <keyword-section id="keyword-section" :filters="filters" />
+    <timeline-section id="temporal-section" @filtered="processFilter" />
+    <map-section id="spatial-section" @filtered="processFilter" />
+    <concept-section id="concept-section" @filtered="processFilter" />
+    <filter-section
+      id="filter-section"
       :filters="filters"
       @removed="removeFilter"
     />
-    <results
-      id="Results"
-      :filters="filters"
-    />
-    <why
-      id="why-section"
-      :filters="filters"
-    />
+    <result-section id="result-section" :filters="filters" />
+    <why-section id="why-section" :filters="filters" />
   </div>
 </template>
 
 <script>
-
-import Timeline from './TimelineContainer.vue'
-import MapSection from './MapContainer.vue'
-import Concepts from './ConceptsContainer.vue'
-import Results from './ResultsContainer.vue'
-import Why from './WhyContainer.vue'
-import Filters from './FiltersContainer.vue'
+import KeywordSection from './KeywordContainer.vue';
+import TimelineSection from './TimelineContainer.vue';
+import MapSection from './MapContainer.vue';
+import ConceptSection from './ConceptContainer.vue';
+import FilterSection from './FilterContainer.vue';
+import ResultSection from './ResultContainer.vue';
+import WhySection from './WhyContainer.vue';
 
 export default {
   name: 'DataARC',
   components: {
-    Timeline,
+    KeywordSection,
+    TimelineSection,
     MapSection,
-    Concepts,
-    Results,
-    Why,
-    Filters,
+    ConceptSection,
+    FilterSection,
+    ResultSection,
+    WhySection
   },
   data() {
     return {
       filters: {
         spatial: [],
         temporal: [],
-        conceptual: [],
+        conceptual: []
       },
-      totalFilters: 0,
-    }
+      totalFilters: 0
+    };
   },
   methods: {
     processFilter(type, filter) {
-      this.filters[type].push(filter)
-      this.totalFilters += 1
+      this.filters[type].push(filter);
+      this.totalFilters += 1;
     },
     removeFilter(type, index) {
-      this.filters[type].splice(index, 1)
-      this.totalFilters -= 1
-    },
-  },
-}
+      this.filters[type].splice(index, 1);
+      this.totalFilters -= 1;
+    }
+  }
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

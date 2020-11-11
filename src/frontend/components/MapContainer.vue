@@ -15,30 +15,19 @@
             ></sup>
           </h2>
           <hr class="primary" />
+          <p>Use the map to examine how data is distributed spatially.</p>
           <div class="legend justify-content-md-center">
             <ul class="list-inline">
               <li class="list-inline-item">
-                <img
-                  src="../assets/img/icons/archaeological.png"
-                  class="mx-auto"
-                  alt="Archaeological Source Icon"
-                />
+                <span class="legend-item legend-item-one">&nbsp;&nbsp;</span>
                 <mark class="typetip">Archaeological</mark> Sources
               </li>
               <li class="list-inline-item">
-                <img
-                  src="../assets/img/icons/textual.png"
-                  class="mx-auto"
-                  alt="Textual Source Icon"
-                />
+                <span class="legend-item legend-item-two">&nbsp;&nbsp;</span>
                 <mark class="typetip">Textual</mark> Sources
               </li>
               <li class="list-inline-item">
-                <img
-                  src="../assets/img/icons/environmental.png"
-                  class="mx-auto"
-                  alt="Environmental Source Icon"
-                />
+                <span class="legend-item legend-item-three">&nbsp;&nbsp;</span>
                 <mark class="typetip">Environmental</mark> Sources
               </li>
             </ul>
