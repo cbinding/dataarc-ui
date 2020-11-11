@@ -103,20 +103,9 @@
 import gql from 'graphql-tag';
 import VueBootstrapTypeahead from 'vue-bootstrap-typeahead';
 
-<<<<<<< 230bddffdecee648a7377b0b5ffc6d2607994321:src/frontend/components/ConceptContainer.vue
 import Network from './concept-components/Network.vue';
-=======
-<<<<<<< Updated upstream:src/frontend/components/ConceptsContainer.vue
-import Network from './concepts-components/Network.vue';
-=======
-<<<<<<< Updated upstream:src/frontend/components/ConceptContainer.vue
-import Network from './concept-components/Network.vue';
-=======
-import Network from './concepts-components/Network.vue';
-import CytoscapeNetwork from './concepts-components/Cytoscape.vue';
->>>>>>> Stashed changes:src/frontend/components/ConceptsContainer.vue
->>>>>>> Stashed changes:src/frontend/components/ConceptContainer.vue
->>>>>>> WIP - Cytoscape integration:src/frontend/components/ConceptsContainer.vue
+
+import CytoscapeNetwork from './concept-components/Cytoscape.vue';
 
 const conceptMapQuery = gql`
   query {
