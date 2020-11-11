@@ -99,7 +99,7 @@
 import gql from 'graphql-tag';
 import VueBootstrapTypeahead from 'vue-bootstrap-typeahead';
 
-import Network from './concepts-components/Network.vue';
+import Network from './concept-components/Network.vue';
 
 const conceptMapQuery = gql`
   query {
