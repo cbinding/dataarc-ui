@@ -33,7 +33,7 @@ export default {
           dragmode: 'zoom',
           height: 700,
           mapbox: {
-            style: 'open-street-map',
+            style: 'carto-positron',
             center: { lat: 62, lon: -18 },
             zoom: 2
           },
