@@ -32,7 +32,9 @@
               </li>
             </ul>
           </div>
-          <plotly />
+          <div class="card shadow">
+            <plotly />
+          </div>
         </div>
       </div>
     </div>
