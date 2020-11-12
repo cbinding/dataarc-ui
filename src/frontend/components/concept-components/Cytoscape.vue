@@ -153,7 +153,11 @@ export default {
       ],
 
       layout: {
-        name: 'cola'
+        name: 'cola',
+        animate: true,
+        refresh: 2,
+        convergenceThreshold: 0.01,
+        maxSimulationTime: 8000
       },
 
       config: {
