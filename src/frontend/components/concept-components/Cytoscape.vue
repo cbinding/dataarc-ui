@@ -1,11 +1,11 @@
 <template>
-  <div :style="{ width: svgSize.width + 'px', height: svgSize.height + 'px' }">
+  <div :style="{ width: svgSize.width + 'px' }">
     <b-card no-body class="shadow">
       <!--concept selector-->
       <b-input-group class="px-2 pt-2">
         <b-input-group-prepend>
           <label class="input-group-text" for="conceptSelect"
-            ><b-icon-tag class="mr-1" />Concept</label
+            ><b-icon-tag class="mr-1" /> Concept</label
           >
         </b-input-group-prepend>
         <b-form-select
@@ -13,8 +13,8 @@
           v-model="currentNodeID"
           class="form-control"
         >
-          <option value="all" title="Show all concepts" selected="true"
-            >Show all concepts</option
+          <option value="all" title="Show All Concepts" selected="true"
+            >All Concepts</option
           >
           <option
             v-for="(node, index) in nodesByLabel"
@@ -25,36 +25,29 @@
             <span>{{ node.label }}</span>
           </option>
         </b-form-select>
-      </b-input-group>
-
-      <div class="position-relative">
-        <div
-          id="legend"
-          class="card text-secondary p-0 mx-2 mt-2 position-absolute shadow-sm"
-          style="{ top: 0; left: 0; z-index: 100; }"
-        >
-          <button
-            class="btn btn-sm btn-secondary"
+        <b-input-group-append>
+          <b-button
             @click.prevent="currentNodeID = 'all'"
-          >
-            Show All Concepts
-          </button>
-          <button
-            class="btn btn-sm btn-secondary"
             v-show="currentNodeID !== 'all'"
-            @click.prevent="addNodeToFilter"
+            variant="outline-dark"
+            ><b-icon-arrow-left-circle-fill class="mr-2" /> Show All
+            Concepts</b-button
           >
-            Add Concept to Filter
-          </button>
-        </div>
-      </div>
+          <b-button
+            @click.prevent="addNodeToFilter"
+            v-show="currentNodeID !== 'all'"
+            variant="success"
+            ><b-icon-plus-circle-fill class="mr-2" /> Add Filter</b-button
+          >
+        </b-input-group-append>
+      </b-input-group>
 
       <!--collapsible graph legend-->
       <div class="position-relative">
         <div
           id="legend"
           class="card text-secondary p-0 mx-2 mt-2 position-absolute shadow-sm"
-          style="{ top: 0; right: 0; z-index: 100; }"
+          style="{ top: 0; left: 0; z-index: 100; }"
         >
           <div v-b-toggle.legendItems class="card-header px-3 py-1">
             <b-icon-key class="mr-2" />Key
@@ -157,9 +150,9 @@ export default {
       currentNode: null,
       currentElements: {},
       legendItems: [
-        { label: 'Selected concept', fill: 'red' },
-        { label: '1 step away', fill: 'steelblue' },
-        { label: '2 steps away', fill: 'yellow' }
+        { label: 'Selected', fill: '#5cb85c' },
+        { label: 'Related', fill: '#f0ad4e' },
+        { label: 'Contextual', fill: '#d9534f' }
       ],
 
       layout: {
@@ -173,45 +166,48 @@ export default {
             style: {
               width: '15px',
               height: '15px',
-              'background-color': 'yellow',
-              'border-color': 'black',
+              'background-color': '#d9534f',
+              'border-color': '#292b2c',
               'border-width': '1px',
               label: 'data(label)',
               'font-size': '0.8em',
               'text-valign': 'top',
-              'text-halign': 'center'
+              'text-halign': 'center',
+              shape: 'ellipse'
             }
           },
           {
             selector: `node.level1`,
             style: {
-              'background-color': 'steelblue',
+              'background-color': '#f0ad4e',
               width: '20px',
-              height: '20px'
+              height: '20px',
+              shape: 'triangle'
             }
           },
           {
             selector: `node.level0`,
             style: {
-              'background-color': 'red',
+              'background-color': '#5cb85c',
               'font-weight': 'bold',
               width: '25px',
-              height: '25px'
+              height: '25px',
+              shape: 'star'
             }
           },
           {
             selector: 'edge',
             style: {
               width: 1,
-              'line-color': 'lightsteelblue',
-              'target-arrow-color': 'lightsteelblue',
+              'line-color': '#bbc3c7',
+              'target-arrow-color': '#bbc3c7',
               'target-arrow-shape': 'triangle',
               'curve-style': 'haystack',
               label: 'data(label)',
-              'font-size': '0.6em',
-              color: 'steelblue',
+              'font-size': '0.5em',
+              color: '#292b2c',
               'text-rotation': 'autorotate',
-              'text-background-opacity': 0.8,
+              'text-background-opacity': 0.5,
               'text-background-color': 'white'
             }
           }
