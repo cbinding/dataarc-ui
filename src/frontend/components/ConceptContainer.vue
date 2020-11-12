@@ -16,7 +16,7 @@
           </h2>
           <hr class="primary" />
         </div>
-        <div class="col-lg-12">
+        <!-- <div class="col-lg-12">
           <div id="topicControls" class="btn-toolbar justify-content-between">
             <div class="btn-group">
               <button
@@ -72,7 +72,7 @@
                 @hit="selectedNode = $event"
               />
             </div>
-          </div>
+          </div> -->
           <div id="conceptContainer" ref="topicmap" style="width: 100%">
             <div id="topicmap" style="padding:10px;">
               <!-- <network
