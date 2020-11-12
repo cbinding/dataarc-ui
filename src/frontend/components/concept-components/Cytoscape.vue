@@ -42,7 +42,6 @@
         </b-input-group-append>
       </b-input-group>
 
-      <!--collapsible graph legend-->
       <div class="position-relative">
         <div
           id="legend"
@@ -76,6 +75,22 @@
         </div>
       </div>
 
+      <div class="position-relative">
+        <div
+          class="p-0 mx-2 position-absolute"
+          style="{ top: 0; right: 0; z-index: 100; }"
+        >
+          <div class="text-right">
+            <b-badge variant="secondary"
+              >{{ totalCurrentNodes }} of {{ totalNodes }} nodes</b-badge
+            >&nbsp;
+            <b-badge variant="secondary"
+              >{{ totalCurrentEdges }} of {{ totalEdges }} edges</b-badge
+            >
+          </div>
+        </div>
+      </div>
+
       <!--cytoscape graph-->
       <cytoscape
         ref="cy"
@@ -83,24 +98,6 @@
         :preConfig="preConfig"
         class="bg-white"
       />
-
-      <!--footer-->
-      <template #footer>
-        <div class="d-inline-block float-left">{{ title }}</div>
-        <!--<div>Current concept ID: {{ currentConceptID }}</div>-->
-        <div class="d-inline-block float-right">
-          <span
-            >nodes:<b-badge variant="info" class="mx-1" pill
-              >{{ totalCurrentNodes }} of {{ totalNodes }}</b-badge
-            ></span
-          >
-          <span
-            >edges:<b-badge variant="info" class="mx-1" pill
-              >{{ totalCurrentEdges }} of {{ totalEdges }}</b-badge
-            ></span
-          >
-        </div>
-      </template>
     </b-card>
   </div>
 </template>
@@ -387,31 +384,9 @@ export default {
     },
 
     resetNetwork() {
-      console.log('Resetting network...');
-
       // reset cytoscape elements
       this.cyInstace.elements().remove();
       this.cyInstace.add(this.elements);
-
-      // get expansion for current concept
-      // let node = this.cyInstace.$id(this.currentNodeID); // root node
-      // let eles1 = node.neighborhood(); // 1 step away
-      // let eles2 = eles1.neighborhood(); // 2 steps away
-
-      // todo - prune edges pointing back if we already have them?
-      // (don't want to display bidirectional links?)
-      // issue hidden for now using haystack lines...
-
-      // add classes for level styling
-      // node.addClass('level0');
-      // eles1.map(e => e.addClass('level1'));
-      // eles2.map(e => e.addClass('level2'));
-
-      // display the expanded elements
-      // this.cyInstace.elements().remove();
-      // this.cyInstace.add(node);
-      // this.cyInstace.add(eles1);
-      // this.cyInstace.add(eles2);
       this.cyInstace.layout(this.layout).run();
       this.currentElements = this.cyInstace.json().elements;
     },
