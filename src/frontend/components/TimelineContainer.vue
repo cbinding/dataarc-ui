@@ -1,54 +1,40 @@
 <template>
-  <section
-    id="temporal-section"
-    class="bg-white"
-  >
-    <div class="container call-to-action">
-      <div class="row">
-        <div
-          ref="timelineContainer"
-          class="col-lg-12 text-center"
-        >
-          <h2 class="section-heading">
-            Timeline<sup><a
-              href="http://www.data-arc.org/time/"
-              class="text-dark"
-              target="_blank"
-              data-toggle="tooltip"
-              title="How dataarc thinks about time"
-            ><fa-icon icon="info-circle" /></a></sup>
+  <section id="timeline-section" class="bg-white">
+    <b-container class="text-center pt-5 pb-5">
+      <b-row>
+        <b-col>
+          <h2>
+            Timeline
+            <sup><a href="http://www.data-arc.org/time/" title="How dataarc thinks about time" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
           </h2>
           <hr class="primary">
           <p>Use the timeline to examine how data is distributed temporally.</p>
-          <div class="legend justify-content-md-center">
-            <ul class="list-inline">
-              <li class="list-inline-item">
-                <span class="legend-item legend-item-one">&nbsp;&nbsp;</span>
-                <mark class="typetip">Archaeological</mark> Sources
-              </li>
-              <li class="list-inline-item">
-                <span class="legend-item legend-item-two">&nbsp;&nbsp;</span>
-                <mark class="typetip">Textual</mark> Sources
-              </li>
-              <li class="list-inline-item">
-                <span class="legend-item legend-item-three">&nbsp;&nbsp;</span>
-                <mark class="typetip">Environmental</mark> Sources
-              </li>
-            </ul>
-          </div>
-
+        </b-col>
+      </b-row>
+      <b-row class="justify-content-md-center">
+        <b-col align-self="center" md="auto">
+          <b-icon-circle-fill class="text-archaeological"/>
+          <mark class="typetip">Archaeological</mark> Sources
+        </b-col>
+        <b-col align-self="center" md="auto">
+          <b-icon-circle-fill class="text-textual"/>
+          <mark class="typetip">Textual</mark> Sources
+        </b-col>
+        <b-col align-self="center" md="auto">
+          <b-icon-circle-fill class="text-environmental"/>
+          <mark class="typetip">Environmental</mark> Sources
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col class="mt-3 mb-3">
           <timeline :width="timelineWidth" />
-
-          <button
-            class="btn btn-primary"
-            data-toggle="modal"
-            v-b-modal.timeline-filter
-          >
-            <fa-icon icon="filter"/> Temporal Filter
+          <button class="btn btn-primary" data-toggle="modal" v-b-modal.timeline-filter>
+            <fa-icon-filter /> Temporal Filter
           </button>
-        </div>
-      </div>
-    </div>
+        </b-col>
+      </b-row>
+    </b-container>
+
     <b-modal
       id="timeline-filter"
       class="modal-dialog"
@@ -109,7 +95,7 @@
         <button
           type="button"
           class="btn btn-secondary"
-          data-dismiss="modal"
+          @click="$bvModal.hide('timeline-filter')"
         >
           Cancel
         </button>

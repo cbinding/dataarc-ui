@@ -1,54 +1,49 @@
 <template>
   <section id="concept-section" class="bg-white">
-    <div class="container call-to-action">
-      <div class="row">
-        <div class="col-lg-12 text-center">
-          <h2 class="section-heading">
-            Concepts<sup
-              ><a
-                href="http://www.data-arc.org/conceptmapping/"
-                class="text-dark"
-                target="_blank"
-                data-toggle="tooltip"
-                title="How to use dataarc concepts in your search"
-                ><fa-icon icon="info-circle"/></a
-            ></sup>
+    <b-container class="text-center pt-5 pb-5">
+      <b-row>
+        <b-col>
+          <h2>
+            Concepts
+            <sup><a href="http://www.data-arc.org/conceptmapping/" title="How to use dataarc concepts in your search" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
           </h2>
-          <hr class="primary" />
-        </div>
-        <div id="conceptContainer" ref="topicmap" style="width: 100%">
-          <div id="topicmap" style="padding:10px;">
-            <!-- <network
-              v-if="networkSizeSettings.width > 0"
-              :selectedNode="selectedNode"
-              :node-list="nodes"
-              :link-list="links"
-              :svg-size="networkSizeSettings"
-              svg-theme="light"
-              :show-node-text="nodeTextBoolean"
-              @clickNode="nodeSelected"
-              @clickLink="linkSelected"
-              @nodeAdded="addNodeToFilter"
-            /> -->
-            <cytoscape-network
+          <hr class="primary">
+          <p>Use the graph to examine how concepts are related to each other.</p>
+        </b-col>
+      </b-row>
+      <b-row class="justify-content-md-center">
+        <b-col align-self="center" md="auto">
+          <b-icon-star-fill variant="success"/>
+          <mark class="typetip">Selected</mark> Concept
+        </b-col>
+        <b-col align-self="center" md="auto">
+          <b-icon-triangle-fill variant="warning"/>
+          <mark class="typetip">Related</mark> Concepts
+        </b-col>
+        <b-col align-self="center" md="auto">
+          <b-icon-circle-fill variant="danger"/>
+          <mark class="typetip">Contextual</mark> Concepts
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col class="mt-3 mb-3">
+          <b-card no-body class="shadow">
+            <b-aspect aspect="16:9">
+              <network
               :topicmap="conceptMap"
-              :svg-size="networkSizeSettings"
               @concept-filter="handleConceptFilter"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+              />
+            </b-aspect>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
   </section>
 </template>
 
 <script>
 import gql from 'graphql-tag';
-import VueBootstrapTypeahead from 'vue-bootstrap-typeahead';
-
-import Network from './concept-components/Network.vue';
-
-import CytoscapeNetwork from './concept-components/Cytoscape.vue';
+import Network from './concept-components/Cytoscape.vue';
 
 const conceptMapQuery = gql`
   query {
@@ -62,9 +57,7 @@ const conceptMapQuery = gql`
 
 export default {
   components: {
-    Network,
-    VueBootstrapTypeahead,
-    CytoscapeNetwork
+    Network
   },
   data() {
     return {
@@ -73,18 +66,11 @@ export default {
       nodes: [],
       conceptMap: {},
       links: [],
-      nodeTextBoolean: false,
-      networkSizeSettings: {
-        height: 700,
-        width: 0
-      }
+      nodeTextBoolean: false
     };
   },
   mounted() {
     this.getNodes();
-    this.$nextTick(() => {
-      this.networkSizeSettings.width = this.$refs.topicmap.clientWidth - 20;
-    });
   },
   methods: {
     handleConceptFilter(concept) {
@@ -117,14 +103,5 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.input-group {
-  min-width: 274px !important;
-}
-
-.form-control {
-  min-width: 274px !important;
-}
-
-@import '../scss/concepts';
+<style>
 </style>
