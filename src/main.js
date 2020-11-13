@@ -1,4 +1,5 @@
 // Import scss styles
+import 'vue-select/src/scss/vue-select.scss';
 import '@/scss/style.scss';
 
 // Base Vue Imports
@@ -24,6 +25,7 @@ import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
+import vSelect from 'vue-select';
 
 // GraphQL Imports
 import VueApollo from 'vue-apollo';
@@ -74,6 +76,7 @@ Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(VueApollo);
 Vue.component('multiselect', Multiselect);
+Vue.component('v-select', vSelect);
 Vue.use(AsyncComputed);
 Vue.component('Debug', Debug);
 Vue.component('fieldQuery', fieldQuery);
