@@ -3,9 +3,9 @@
     <div class="position-relative">
       <div class="position-absolute w-100" style="z-index:100;">
         <b-row no-gutters>
-          <b-col cols="auto" class="p-0 mr-auto ">
+          <b-col cols="auto" class="p-2 mr-auto">
             <b-button-toolbar>
-              <b-button-group>
+              <b-button-group class="border-0">
                 <b-button
                   title="Zoom In"
                   variant="dark"
@@ -49,29 +49,14 @@
               </b-button-group>
             </b-button-toolbar>
           </b-col>
-          <b-col cols="4" class="p-0 m-0">
+          <b-col cols="4" class="p-2 m-0">
             <v-select
               v-model="currentNodeID"
               :options="nodesByLabel"
               :reduce="concept => concept.id"
               @input="onNodeSelected"
-              class="w-100"
+              class="w-100 bg-light"
             ></v-select>
-          </b-col>
-        </b-row>
-        <b-row no-gutters>
-          <b-col cols="auto" class="p-0 mr-auto">
-
-          </b-col>
-          <b-col cols="auto" class="p-0 m-0">
-            <div class="text-right">
-              <b-badge variant="info"
-                >{{ totalCurrentNodes }} of {{ totalNodes }} nodes</b-badge
-              >&nbsp;
-              <b-badge variant="info"
-                >{{ totalCurrentEdges }} of {{ totalEdges }} edges</b-badge
-              >
-            </div>
           </b-col>
         </b-row>
       </div>
@@ -83,6 +68,10 @@
       class="bg-light position-absolute w-100 h-100"
       style=""
     />
+    <div class="position-absolute w-100 p-2 text-right" style="bottom:0;">
+      <b-badge variant="dark">{{ totalCurrentNodes }} of {{ totalNodes }} nodes</b-badge>&nbsp;
+      <b-badge variant="dark">{{ totalCurrentEdges }} of {{ totalEdges }} edges</b-badge>
+    </div>
   </div>
 </template>
 
