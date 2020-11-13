@@ -6,6 +6,7 @@
       :filters="filters"
       :result-type="result"
       :result-types="resultTypes"
+      @resultsCount="setResultsCount"
     />
   </section>
 </template>
@@ -28,7 +29,12 @@ export default {
     return {
       resultTypes: ['matched', 'related', 'contextual']
     };
-  }
+  },
+  methods: {
+    setResultsCount(val) {
+      this.$emit('resultsCount', val)
+    }
+  },
 };
 </script>
 

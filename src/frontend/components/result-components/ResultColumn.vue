@@ -6,13 +6,13 @@
       </h3>
       <hr>
       <p class="card-text">
-        {{ result.totalCount }}
+        {{ result.total }}
       </p>
       <!-- <h5>Sources</h5>
       <hr> -->
       <ul class="list-group">
         <li
-          v-for="(source, index) in result.counts"
+          v-for="(source, index) in result.datasets"
           :key="index"
           class="list-group-item d-flex justify-content-between align-items-center text-left results-source"
         >

@@ -17,7 +17,7 @@
 <!-- Concepts View -->
     <table-view-layout :fluid="false" :rows="rows" component="ConceptTopics" :limits="limits" :currentPage="currentPage" @inputChanged="updateFilter" :perPage="perPage" @change="updatePage" @limitUpdated="updateLimit">
       <template v-slot:table>
-        <b-table v-if="conceptTopics" :filter="filter" :busy="conceptTopicsLoading" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="conceptTopics" :fields="fields" @filtered="updatePagination">
+        <b-table v-if="conceptTopics" :filter="filter" :sort-compare="customSort" :busy="conceptTopicsLoading" :per-page="perPage" :current-page="currentPage" responsive table-variant="light" head-variant="light" :items="conceptTopics" :fields="fields" @filtered="updatePagination">
           <template v-slot:table-busy>
             <div class="text-center my-2">
               <b-spinner class="align-middle"></b-spinner>
@@ -80,6 +80,24 @@ export default {
     this.$apollo.queries.allConcepts.skip = false
   },
   methods: {
+    customSort(a, b, key) {
+      if(key === 'concept') {
+        if(!a.concept) {
+          return -1
+        }
+        else if(!b.concept) {
+          return 1
+        }
+        else if(a.concept.title === b.concept.title) {
+          return 0;
+        }
+        else if (a.concept.title > b.concept.title) {
+          return 1;
+        }
+        return -1;
+      }
+
+    },
     updateConceptTopic(val, concept) {
       const temp = val
       temp.concept = concept.id

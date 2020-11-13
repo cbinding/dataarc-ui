@@ -51,69 +51,41 @@ export default {
     return {
       selectedResult: false,
       results: [],
-      sampleResult: [
-        {
-          category: 'Archaeological',
-          category_id: 1,
-          totalCount: 500,
-          counts: [
-            {
-              dataset: 'Test 1',
-              dataset_id: 1,
-              count: 3,
-              description: 'Test 1 description',
-            },
-            {
-              dataset: 'Test 2',
-              dataset_id: 2,
-              count: 5,
-              description: 'Test 2 description',
-            },
-          ],
-        },
-        {
-          category: 'Environmental',
-          category_id: 2,
-          totalCount: 35000,
-          counts: [
-            {
-              dataset: 'Strategic Environmental Archaeology Database (SEAD) [Insects]',
-              dataset_id: 1,
-              count: 3,
-              description: 'The Strategic Environmental Archaeology Database (SEAD) is a research infrastructure for storing, manipulating and analyzing proxy data from archaeological and palaeoenvironmental investigations. The primary objectives of SEAD are to make environmental archaeology data available to the international research community and to provide online tools to assist in the analysis of these data.',
-            },
-            {
-              dataset: 'Test 2',
-              dataset_id: 2,
-              count: 5,
-              description: 'Test 2 description',
-            },
-          ],
-        },
-        {
-          category: 'Textual',
-          category_id: 3,
-          totalCount: 35000,
-          counts: [
-            {
-              dataset: 'Test 1',
-              dataset_id: 1,
-              count: 3,
-              description: 'Test 1 description',
-            },
-            {
-              dataset: 'Test 2',
-              dataset_id: 2,
-              count: 5,
-              description: 'Test 2 description',
-            },
-          ],
-        },
-      ],
+      resultsCount: 0,
     }
   },
+  watch: {
+    filters(val) {
+      if (val) {
+        axios.post(`${this.$apiUrl}/query/results`, this.filters, this.resultType).then((data) => {
+          this.results = data.data
+          this.resultsCount = 0
+          this.results.forEach((result) => {
+            this.resultsCount += result.total
+          })
+        })
+      }
+    },
+    resultsCount(val) {
+      this.$emit('resultsCount', val)
+    },
+  },
   mounted() {
-    this.results = this.sampleResult
+    axios.post(`${this.$apiUrl}/query/results`, this.filters, this.resultType).then((data) => {
+      this.results = data.data
+      if (this.resultType === 'matched') {
+        this.resultsCount = 0
+        this.results.forEach((result) => {
+          this.resultsCount += result.total
+        })
+        this.$emit('resultsCount', this.resultsCount)
+      }
+    })
+    // axios.post(`${this.$apiUrl}/query/results`, this.filters, 'matched').then((data) => {
+    //   console.log(data);
+    //   this.results = data
+    // })
+    // this.results = this.sampleResult
   },
   methods: {
     setResultView(source, result) {

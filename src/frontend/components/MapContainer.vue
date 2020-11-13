@@ -33,7 +33,7 @@
             </ul>
           </div>
           <div class="card shadow">
-            <plotly />
+            <plotly @filtered="addToFilter"/>
           </div>
         </div>
       </div>
@@ -117,6 +117,11 @@ export default {
       //   this.start += 100
       //   this.loadFeatures()
       // })
+    },
+    addToFilter(type, payload) {
+      // console.log(type);
+      // console.log(payload);
+      this.$emit('filtered', type, payload)
     }
   }
 };
