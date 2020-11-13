@@ -1,5 +1,5 @@
 <template>
-  <div id="plotly" ref="plotly"></div>
+  <div id="plotly" ref="plotly" class="d-flex w-100 h-100"></div>
 </template>
 
 <script>
@@ -30,8 +30,8 @@ export default {
         ];
 
         var layout = {
+          autosize: true,
           dragmode: 'zoom',
-          height: 700,
           mapbox: {
             style: 'carto-positron',
             center: { lat: 62, lon: -18 },
@@ -42,6 +42,7 @@ export default {
             font: {
               color: 'white'
             },
+            padding: 2,
             bordercolor: 'white'
           }
         };

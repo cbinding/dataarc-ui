@@ -1,43 +1,40 @@
 <template>
-  <section id="spatial-section" class="bg-light">
-    <div class="container call-to-action">
-      <div class="row">
-        <div class="col-lg-12 text-center">
-          <h2 class="section-heading">
-            Map<sup
-              ><a
-                href="http://www.data-arc.org/space/"
-                class="text-dark"
-                target="_blank"
-                data-toggle="tooltip"
-                title="How dataarc thinks about space and place"
-                ><fa-icon icon="info-circle"/></a
-            ></sup>
+  <section id="map-section" class="bg-light">
+    <b-container class="text-center pt-5 pb-5">
+      <b-row>
+        <b-col>
+          <h2>
+            Map
+            <sup><a href="http://www.data-arc.org/space/" title="How dataarc thinks about space and place" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
           </h2>
-          <hr class="primary" />
+          <hr class="primary">
           <p>Use the map to examine how data is distributed spatially.</p>
-          <div class="legend justify-content-md-center">
-            <ul class="list-inline">
-              <li class="list-inline-item">
-                <span class="legend-item legend-item-one">&nbsp;&nbsp;</span>
-                <mark class="typetip">Archaeological</mark> Sources
-              </li>
-              <li class="list-inline-item">
-                <span class="legend-item legend-item-two">&nbsp;&nbsp;</span>
-                <mark class="typetip">Textual</mark> Sources
-              </li>
-              <li class="list-inline-item">
-                <span class="legend-item legend-item-three">&nbsp;&nbsp;</span>
-                <mark class="typetip">Environmental</mark> Sources
-              </li>
-            </ul>
-          </div>
-          <div class="card shadow">
-            <plotly />
-          </div>
-        </div>
-      </div>
-    </div>
+        </b-col>
+      </b-row>
+      <b-row class="justify-content-md-center">
+        <b-col align-self="center" md="auto">
+          <b-icon-circle-fill class="text-archaeological"/>
+          <mark class="typetip">Archaeological</mark> Sources
+        </b-col>
+        <b-col align-self="center" md="auto">
+          <b-icon-circle-fill class="text-textual"/>
+          <mark class="typetip">Textual</mark> Sources
+        </b-col>
+        <b-col align-self="center" md="auto">
+          <b-icon-circle-fill class="text-environmental"/>
+          <mark class="typetip">Environmental</mark> Sources
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col class="mt-3 mb-3">
+          <b-card no-body class="shadow">
+            <b-aspect aspect="16:9">
+              <plotly />
+            </b-aspect>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
   </section>
 </template>
 

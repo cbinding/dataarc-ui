@@ -1,6 +1,6 @@
 <template>
   <section id="concept-section" class="bg-white">
-    <b-container class="text-center mt-5 mb-5">
+    <b-container class="text-center pt-5 pb-5">
       <b-row>
         <b-col>
           <h2>
