@@ -344,6 +344,24 @@ export default {
             },
           },
           {
+            type: 'input',
+            inputType: 'number',
+            label: 'Begin',
+            model: 'begin',
+            visible(model) {
+              return model.type === 'TemporalCoverages'
+            },
+          },
+          {
+            type: 'input',
+            inputType: 'number',
+            label: 'End',
+            model: 'end',
+            visible(model) {
+              return model.type === 'TemporalCoverages'
+            },
+          },
+          {
             type: 'select',
             values: [
               { type: 'Activities', value: 'activities' },

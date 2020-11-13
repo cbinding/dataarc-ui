@@ -5,6 +5,8 @@ class TemporalCoverages {
     this.description = data.description;
     this.citation = data.citation;
     this.url = data.url;
+    this.begin = data.begin;
+    this.end = data.end;
     this.createUrl = `${process.env.VUE_APP_API_URL}/temporal-coverages`;
     this.editUrl = `${process.env.VUE_APP_API_URL}/temporal-coverages/${this.id}`;
     this.routeUrl = '/admin/temporal-coverages';
