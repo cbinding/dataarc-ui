@@ -2,6 +2,9 @@ class DatasetFields {
   constructor(data) {
     this.id = data.id;
     this.title = data.title;
+    this.description = data.description;
+    this.citation = data.citation;
+    this.url = data.url;
     this.type = data.fieldType;
     this.editUrl = `${process.env.VUE_APP_API_URL}/dataset-fields/${this.id}`;
     this.routeUrl = '';

@@ -100,14 +100,48 @@
               {{ getDate(row.item.processed_at) }}
             </div>
           </template>
-          <template v-slot:cell(save)="row" class="Save">
-            <b-button variant="primary" @click="updateField(row.item)"
-              >Save</b-button
+          <template v-slot:cell(actions)="row" class="Actions">
+            <b-button
+              variant="primary"
+              @click="updateField(row.item)"
             >
+              Save
+            </b-button>
+            <b-button
+              variant="primary"
+              @click="currentField = row.item"
+              v-b-modal.editMetadata
+            >
+              Edit Metadata
+            </b-button>
           </template>
         </b-table>
       </template>
     </table-view-layout>
+    <b-modal hide-backdrop content-class="shadow" centered id="editMetadata">
+      <template v-slot:modal-title>
+        Edit Metadata
+      </template>
+      <b-form>
+        <b-form-group label="Description">
+          <b-form-textarea v-model="currentField.description" rows="4" size="lg" no-auto-shrink></b-form-textarea>
+        </b-form-group>
+        <b-form-group label="Citation">
+          <b-form-textarea v-model="currentField.citation" rows="4" size="lg" no-auto-shrink></b-form-textarea>
+        </b-form-group>
+        <b-form-group label="Url">
+          <b-form-input v-model="currentField.url" rows="4" size="lg" no-auto-shrink></b-form-input>
+        </b-form-group>
+      </b-form>
+      <template v-slot:modal-footer="{ ok, cancel }">
+        <b-button size="sm" @click="cancel()">
+          Cancel
+        </b-button>
+        <b-button size="sm" variant="primary" @click="updateField(currentField)">
+          Save
+        </b-button>
+      </template>
+    </b-modal>
     <br />
     <!-- Combinators View -->
     <table-view-layout
@@ -198,6 +232,7 @@ import collectionMixin from '../../mixins/collectionMixin';
 export default {
   data() {
     return {
+      currentField: {},
       component: 'Dataset View',
       action: 'Update',
       sortList: ['Path', 'Type'],
@@ -211,7 +246,7 @@ export default {
         'end'
       ],
       fieldsList: [
-        { key: 'save', sortable: false },
+        { key: 'actions', sortable: false },
         { key: 'name', sortable: true },
         { key: 'source', sortable: true },
         { key: 'title', sortable: true },
@@ -342,9 +377,13 @@ export default {
       temp.fieldType = val.type;
       temp.id = val.id;
       temp.title = val.title;
+      temp.description = val.description;
+      temp.citation = val.citation;
+      temp.url = val.url;
       temp.type = 'DatasetFields';
       temp.action = 'Update';
       this.setFormData(temp);
+      this.$bvModal.hide('editMetadata');
     },
     countDownChanged(dismissCountDown) {
       this.dismissCountDown = dismissCountDown;

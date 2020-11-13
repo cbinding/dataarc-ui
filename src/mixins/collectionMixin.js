@@ -432,6 +432,9 @@ const apollo = {
             title
             type
             source
+            description
+            citation
+            url
           }
           combinators {
             id
