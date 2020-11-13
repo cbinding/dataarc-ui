@@ -95,7 +95,7 @@
         <button
           type="button"
           class="btn btn-secondary"
-          data-dismiss="modal"
+          @click="$bvModal.hide('timeline-filter')"
         >
           Cancel
         </button>
