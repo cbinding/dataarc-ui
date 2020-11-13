@@ -72,7 +72,7 @@
           </template>
           <template v-slot:cell(title)="row" class="Title">
             <div style="max-width: 400px;" v-if="row.item.title">
-              <b-input v-model="row.item.title"></b-input>
+              <b-input v-model="row.item.title" @blur="updateField(row.item)"></b-input>
             </div>
           </template>
           <template v-slot:cell(type)="row" class="Type">
@@ -84,7 +84,7 @@
                 <div v-for="type in fieldTypes" :key="type">
                   <b-dropdown-item
                     v-model="row.item.type"
-                    @click="row.item.type = type"
+                    @click="row.item.type = type; updateField(row.item)"
                   >
                     {{ type }}
                   </b-dropdown-item>
@@ -101,12 +101,6 @@
             </div>
           </template>
           <template v-slot:cell(actions)="row" class="Actions">
-            <b-button
-              variant="primary"
-              @click="updateField(row.item)"
-            >
-              Save
-            </b-button>
             <b-button
               variant="primary"
               @click="currentField = row.item"
