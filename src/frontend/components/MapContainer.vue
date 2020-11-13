@@ -42,7 +42,7 @@
 import Vue from 'vue';
 import gql from 'graphql-tag';
 import BatchLoader from '@/workers/apollo-batch-loader.worker.js';
-import Plotly from './map-components/PlotlyContainer.vue';
+import Plotly from './map-components/Plotly.vue';
 import VuePapaParse from 'vue-papa-parse';
 Vue.use(VuePapaParse);
 const featuresQuery = gql`
