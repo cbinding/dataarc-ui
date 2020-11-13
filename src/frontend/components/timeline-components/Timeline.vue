@@ -93,7 +93,6 @@ export default {
   data() {
     return {
       centuries: [],
-      decades: [],
       millennia: [],
       activePeriod: 'millennia',
       loaded: false,

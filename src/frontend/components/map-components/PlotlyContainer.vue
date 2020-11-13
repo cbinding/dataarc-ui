@@ -11,6 +11,7 @@ export default {
   },
   methods: {
     loadMap() {
+      const vm = this
       Plotly.d3.csv(`${this.$apiUrl}/query/features`, function(err, rows) {
         function unpack(rows, key) {
           return rows.map(function(row) {
@@ -52,12 +53,28 @@ export default {
 
         Plotly.newPlot('plotly', data, layout, config).then(gd => {
           gd.on('plotly_selected', eventData => {
-            console.log('clicked');
-            console.log(eventData);
+            if (eventData) {
+              vm.addSelectionToFilter(eventData)
+            }
           });
         });
       });
-    }
+    },
+    addSelectionToFilter(eventData) {
+      var type = eventData.range ? 'box' : 'polygon'
+      var array = []
+      if (type === 'box') {
+        array.push(eventData.range.mapbox[0])
+        array.push(eventData.range.mapbox[1])
+      }
+      else {
+        eventData.lassoPoints.mapbox.forEach((point) => {
+          console.log(point);
+          array.push(point)
+        })
+      }
+      this.$emit('filtered', type, array);
+    },
   }
 };
 </script>

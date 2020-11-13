@@ -2,38 +2,68 @@
   <div>
     <div class="sticky-top">
       <b-button-group class="float-right">
-        <b-button href="#result-section" variant="dark">
+        <b-button
+          href="#result-section"
+          variant="dark"
+        >
           Results
-          <b-badge variant="danger">0</b-badge></b-button
+          <b-badge variant="danger">
+            {{ resultsCount }}
+          </b-badge>
+        </b-button>
+        <b-button
+          href="#filter-section"
+          variant="dark"
         >
-        <b-button href="#filter-section" variant="dark">
           Filters
-          <b-badge variant="success">{{ totalFilters }}</b-badge></b-button
-        >
+          <b-badge variant="success">
+            {{ totalFilters }}
+          </b-badge>
+        </b-button>
       </b-button-group>
     </div>
-    <timeline-section id="temporal-section" @filtered="processFilter" />
-    <map-section id="spatial-section" @filtered="processFilter" />
-    <concept-section id="concept-section" @filtered="processFilter" />
-    <keyword-section id="keyword-section" :filters="filters" />
+    <timeline-section
+      id="temporal-section"
+      @filtered="processFilter"
+    />
+    <map-section
+      id="spatial-section"
+      @filtered="processFilter"
+    />
+    <concept-section
+      id="concept-section"
+      @filtered="processFilter"
+    />
+    <keyword-section
+      id="keyword-section"
+      v-model="keywordFilters"
+    />
     <filter-section
       id="filter-section"
       :filters="filters"
       @removed="removeFilter"
+      @filters-loaded="loadFilters"
     />
-    <result-section id="result-section" :filters="filters" />
-    <why-section id="why-section" :filters="filters" />
+    <result-section
+      id="result-section"
+      :filters="compiledFilters"
+      @resultsCount="setCount"
+    />
+    <why-section
+      id="why-section"
+      :filters="filters"
+    />
   </div>
 </template>
 
 <script>
-import KeywordSection from './KeywordContainer.vue';
-import TimelineSection from './TimelineContainer.vue';
-import MapSection from './MapContainer.vue';
-import ConceptSection from './ConceptContainer.vue';
-import FilterSection from './FilterContainer.vue';
-import ResultSection from './ResultContainer.vue';
-import WhySection from './WhyContainer.vue';
+import KeywordSection from './KeywordContainer.vue'
+import TimelineSection from './TimelineContainer.vue'
+import MapSection from './MapContainer.vue'
+import ConceptSection from './ConceptContainer.vue'
+import FilterSection from './FilterContainer.vue'
+import ResultSection from './ResultContainer.vue'
+import WhySection from './WhyContainer.vue'
 
 export default {
   name: 'DataARC',
@@ -44,30 +74,88 @@ export default {
     ConceptSection,
     FilterSection,
     ResultSection,
-    WhySection
+    WhySection,
   },
   data() {
     return {
-      filters: {
-        spatial: [],
-        temporal: [],
-        conceptual: []
-      },
-      totalFilters: 0
-    };
+      filters: {},
+      totalFilters: 0,
+      keywordFilters: [],
+      resultsCount: 0,
+    }
+  },
+  computed: {
+    compiledFilters() {
+      return this.collectFilters()
+    },
+  },
+  watch: {
+    keywordFilters() {
+      if (this.keywordFilters.length > 0) {
+        this.processFilter('keywords', this.keywordFilters)
+      } else {
+        this.removeFilter('keywords', -1)
+      }
+    },
   },
   methods: {
+    loadFilters(newFilters) {
+      const keys = Object.keys(newFilters)
+
+      keys.forEach((key, index) => {
+        if (key === 'keywords') {
+          this.keywordFilters = newFilters[key]
+        } else {
+          this.processFilter(key, newFilters[key])
+        }
+      })
+    },
     processFilter(type, filter) {
-      console.log({ type, filter });
-      this.filters[type].push(filter);
-      this.totalFilters += 1;
+      if (!this.filters[type]) {
+        this.totalFilters += 1
+      }
+      this.$set(this.filters, type, filter)
+      // this.filters[type] = filter
+      this.getResults()
     },
     removeFilter(type, index) {
-      this.filters[type].splice(index, 1);
-      this.totalFilters -= 1;
-    }
-  }
-};
+      if (type === 'keywords' && index > -1) {
+        this.keywordFilters.splice(index, 1)
+        this.filters[type] = this.keywordFilters
+        return
+      }
+      // if (type === 'keywords') {
+      //   this.filters[type] = ''
+      // }
+      // else {
+      //   this.filters[type] = []
+      // }
+      this.$delete(this.filters, type)
+      this.totalFilters -= 1
+    },
+    collectFilters() {
+      const filters = { ...this.filters}
+      if ('keywords' in filters && filters.keywords.length > 0) {
+        filters.keywords = filters.keywords.join(' ')
+      }
+      return filters
+    },
+    getResults() {
+      const filters = this.compiledFilters
+      return axios
+      .post(
+        `${this.$apiUrl}/query/results`,
+        filters,
+        'matched',
+      ).then((data) => {
+        console.log(data)
+      })
+    },
+    setCount(val) {
+      this.resultsCount = val
+    },
+  },
+}
 </script>
 
 <style></style>
