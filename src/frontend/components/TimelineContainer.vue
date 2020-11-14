@@ -26,10 +26,13 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col class="mt-3 mb-3">
-          <timeline :width="timelineWidth" />
+        <b-col ref="timelineContainer" class="mt-3 mb-3">
+          <timeline :width="timelineWidth" v-model="currentSelectedRange" />
+          <button v-show="currentSelectedRange" @click.prevent="setSelectedRange" class="btn btn-primary">
+            <b-icon-filter /> Add Selected Range To Filter
+          </button>
           <button class="btn btn-primary" data-toggle="modal" v-b-modal.timeline-filter>
-            <fa-icon-filter /> Temporal Filter
+            <b-icon-filter /> Temporal Filter
           </button>
         </b-col>
       </b-row>
@@ -56,23 +59,24 @@
               <select
                 id="timeline-period"
                 class="custom-select mr-sm-2"
-                v-model="timelineFilter.period"
+                @change="setTimelineFilterPeriod"
+                v-model="selectedFilterIndex"
               >
-                <option selected>
-                  Custom
+                <option v-for="(coverage, index) in temporalCoverages" :key="index" :value="index">
+                  {{ coverage.title }}
                 </option>
               </select>
             </div>
           </div>
           <div class="form-row">
             <div class="col mb-3">
-              <label for="timeline-startdate">Start Date *</label>
+              <label for="timeline-startdate">Begin Date *</label>
               <input
-                id="timeline-startdate"
+                id="timeline-begindate"
                 type="text"
                 class="form-control"
-                placeholder="start"
-                v-model="timelineFilter.start"
+                placeholder="begin"
+                v-model="selectedFilter.start"
               >
             </div>
             <div class="col mb-3">
@@ -82,7 +86,7 @@
                 type="text"
                 class="form-control"
                 placeholder="end"
-                v-model="timelineFilter.end"
+                v-model="selectedFilter.end"
               >
             </div>
           </div>
@@ -120,23 +124,48 @@ export default {
   },
   data() {
     return {
-      timelineFilter: {
-        period: '',
-        start: 0,
-        end: 0,
+      timelineFilter: [],
+      selectedFilterIndex: null,
+      selectedFilter: {
+        start: null,
+        end: null
       },
       timelineWidth: 1160,
+      temporalCoverages: [],
+      timelineSelected: null,
+      currentSelectedRange: null
     }
   },
   mounted() {
     this.timelineWidth = this.$refs.timelineContainer.clientWidth
+    this.getTemporalCoverages()
   },
   methods: {
+    setTimelineFilterPeriod() {
+      const time = this.temporalCoverages[this.selectedFilterIndex]
+      this.selectedFilter.start = time.begin
+      this.selectedFilter.end = time.end
+    },
     applyFilter(evt) {
       evt.preventDefault()
-      this.$emit('filtered', 'temporal', this.timelineFilter)
+      this.timelineFilter.push({ ...this.selectedFilter })
+
+      this.emitFilter()
       // console.log(val);
       this.$bvModal.hide('timeline-filter')
+    },
+    setSelectedRange() {
+      this.timelineFilter.push({ ...this.currentSelectedRange })
+      this.emitFilter()
+    },
+    emitFilter() {
+      this.$emit('input', this.timelineFilter)
+    },
+    getTemporalCoverages() {
+      return axios.get(`${this.$apiUrl}/temporal-coverages`)
+        .then(({data}) => {
+          this.temporalCoverages = data
+        })
     }
   },
 }
