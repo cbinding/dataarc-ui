@@ -1,11 +1,5 @@
 <template>
-  <div id="timeline" ref="timeline" class="timeline-container">
-    <div
-      v-show="!loaded"
-      class="loader h-100 justify-content-center align-items-center"
-    >
-      <h1><span class="fa fa-cog fa-spin fa-2x" /></h1>
-    </div>
+  <b-card no-body id="timeline" ref="timeline" class="mt-2 mb-5 shadow text-center bg-light timeline-container">
     <transition name="fade">
       <timeline-svg
         v-if="loaded"
@@ -39,7 +33,7 @@
         @range-selected="setTimeline"
       />
     </transition>
-  </div>
+  </b-card>
 </template>
 
 <script>
@@ -199,7 +193,6 @@ export default {
   methods: {
     setTimeline(rangeData) {
       this.getTimelineDataByPeriod(rangeData.period, rangeData.startDate);
-      console.log(rangeData.period)
       let multiplier = 10
       let period = rangeData.period
       if (rangeData.period === 'none') {
@@ -245,17 +238,13 @@ export default {
 </script>
 
 <style>
-#timeline {
+/* #timeline {
   display: inline-block;
   position: relative;
   width: 100%;
   vertical-align: top;
   overflow: hidden;
-}
-
-#timeline svg {
-  padding-bottom: 2em;
-}
+} */
 
 #timeline .label {
   height: 50px;

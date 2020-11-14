@@ -3,7 +3,7 @@
     ref="svg"
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    class="timeline-content"
+    class="timeline-content pt-2"
     preserveAspectRatio="xMinYMin meet"
     :viewBox="'0 0 1000 ' + height"
   >
