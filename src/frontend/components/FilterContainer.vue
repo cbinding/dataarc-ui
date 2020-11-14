@@ -21,7 +21,7 @@
                 <b-list-group-item
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
-                  {{ filters.box }}
+                  Bounding Box {{ filters.box }}
                   <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'box')" />
                 </b-list-group-item>
               </b-list-group>
@@ -29,7 +29,7 @@
                 <b-list-group-item
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
-                  <small>{{ filters.polygon }}</small>
+                  Polygon <small>{{ filters.polygon }}</small>
                   <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'polygon')" />
                 </b-list-group-item>
               </b-list-group>
@@ -52,15 +52,15 @@
             <!-- /Temporal -->
 
             <!-- Concepts -->
-            <b-card header="Concepts" v-if="filters.conceptual && filters.conceptual.length" bg-variant="dark" text-variant="white" no-body>
+            <b-card header="Concepts" v-if="filters.concept && filters.concept.length" bg-variant="dark" text-variant="white" no-body>
               <b-list-group data-type="concepts" flush>
                 <b-list-group-item
                   :key="index"
-                  v-for="(filter, index) in filters.conceptual"
+                  v-for="(filter, index) in filters.concept"
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
                   {{ filters.label }}
-                  <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'conceptual', index)" />
+                  <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'concept', index)" />
                 </b-list-group-item>
               </b-list-group>
             </b-card>

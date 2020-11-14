@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     handleConceptFilter(concept) {
-      this.$emit('filtered', 'conceptual', concept);
+      this.$emit('filtered', 'concept', concept);
     },
     getNodes() {
       this.$apollo
@@ -97,7 +97,7 @@ export default {
       console.log(search);
     },
     addNodeToFilter(node) {
-      this.$emit('filtered', 'conceptual', node);
+      this.$emit('filtered', 'concept', node);
     }
   }
 };
