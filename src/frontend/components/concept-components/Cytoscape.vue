@@ -136,13 +136,12 @@ export default {
             }
           },
           {
-            selector: `node.matched`,
+            selector: `node.contextual`,
             style: {
-              'background-color': '#5cb85c',
-              'font-weight': 'bold',
-              'width': '25px',
-              'height': '25px',
-              'shape': 'star'
+              'background-color': '#d9534f',
+              'width': '20px',
+              'height': '20px',
+              'shape': 'ellipse'
             }
           },
           {
@@ -155,12 +154,13 @@ export default {
             }
           },
           {
-            selector: `node.contextual`,
+            selector: `node.matched`,
             style: {
-              'background-color': '#d9534f',
-              'width': '20px',
-              'height': '20px',
-              'shape': 'ellipse'
+              'background-color': '#5cb85c',
+              'font-weight': 'bold',
+              'width': '25px',
+              'height': '25px',
+              'shape': 'star'
             }
           },
           {
