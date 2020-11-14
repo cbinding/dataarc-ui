@@ -93,16 +93,15 @@ export default {
   watch: {
     keywordFilters(newVal, oldVal) {
       if (newVal.length > 0 && newVal.length > oldVal.length) {
-        this.processFilter('keywords', newVal)
-      } else if (this.filters.keywords && newVal.length !== this.filters.keywords.length) {
-        this.removeFilter('keywords', -1)
+        this.processFilter('keyword', newVal)
+      } else if (this.filters.keyword && newVal.length !== this.filters.keyword.length) {
+        this.removeFilter('keyword', -1)
       }
-
     },
-    temporalFilters() {
-      if (this.temporalFilters.length > 0) {
+    temporalFilters(newVal, oldVal) {
+      if (this.temporalFilters && this.temporalFilters.length > 0) {
         this.processFilter('temporal', this.temporalFilters)
-      } else {
+      } else if (this.filters.temporal && newVal.length !== this.filters.temporal.length) {
         this.removeFilter('temporal', -1)
       }
     }
@@ -112,7 +111,7 @@ export default {
       const keys = Object.keys(newFilters)
 
       keys.forEach((key, index) => {
-        if (key === 'keywords') {
+        if (key === 'keyword') {
           this.keywordFilters = newFilters[key]
         } else if (key === 'temporal') {
           this.temporalFilters = newFilters[key]
@@ -122,50 +121,55 @@ export default {
       })
     },
     processFilter(type, filter) {
-      if (!this.filters[type]) {
-        this.totalFilters += 1
-      }
-      if (type === 'keywords' && this.filters[type]) {
-        this.totalFilters += 1
-      }
       this.$set(this.filters, type, filter)
       this.getResults()
     },
     removeFilter(type, index) {
-      console.log(index);
-      if ((type === 'keywords' || type === 'temporal') && index > -1) {
+      if (type === 'box' || type === 'polygon') {
+        this.$delete(this.filters, type)
+        return
+      }
+      if ((type === 'keyword' || type === 'temporal') && index > -1) {
         const references = {
-          keywords: this.keywordFilters,
+          keyword: this.keywordFilters,
           temporal: this.temporalFilters
         }
-
         references[type].splice(index, 1)
         this.filters[type] = references[type]
-        this.totalFilters -= 1
         if (this.filters[type].length === 0) {
           this.$delete(this.filters, type)
         }
         return
       }
-      if (this.filters[type].length === 1 && this.totalFilters > 0) {
-        this.$delete(this.filters, type)
-        this.totalFilters -= 1
-      }
-      else if (type === 'keywords' && index === -1) {
+      if (index === -1 && type === 'keyword') {
         this.totalFilters -= this.filters[type].length
-        this.filters[type] = this.keywordFilters
+        this.filters[type] = this[`${type}Filters`]
         this.totalFilters += this.filters[type].length
+        if (this.totalFilters <= 0) {
+          this.filters = {}
+          this.totalFilters = 0
+        }
+        return
+      }
+      if (this.filters[type] && this.filters[type].length > 0) {
+        this.filters[type].splice(index, 1);
       }
       else {
-        this.filters[type].splice(index, 1);
-        this.totalFilters -= 1;
+        this.$delete(this.filters, type)
       }
     },
     collectFilters() {
       const filters = { ...this.filters}
-      if ('keywords' in filters && filters.keywords.length > 0) {
-        filters.keywords = filters.keywords.join(' ')
+      this.totalFilters = 0
+      const array = Object.values(filters)
+      array.forEach((filter) => {
+        this.totalFilters += filter.length
+      })
+
+      if ('keyword' in filters && filters.keyword.length > 0) {
+        filters.keyword = filters.keyword.join(' ')
       }
+
       return filters
     },
     getResults() {

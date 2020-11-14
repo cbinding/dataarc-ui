@@ -21,7 +21,7 @@
                 <b-list-group-item
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
-                  Bounding Box {{ filters.box }}
+                  <small>Bounding Box {{ filters.box }}</small>
                   <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'box')" />
                 </b-list-group-item>
               </b-list-group>
@@ -29,7 +29,7 @@
                 <b-list-group-item
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
-                  Polygon <small>{{ filters.polygon }}</small>
+                  <small>Polygon {{ shorten(filters.polygon) }} ...</small>
                   <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'polygon')" />
                 </b-list-group-item>
               </b-list-group>
@@ -67,15 +67,15 @@
             <!-- /Concepts -->
 
             <!-- Keywords -->
-            <b-card header="Keywords" v-if="filters.keywords" bg-variant="dark" text-variant="white" no-body>
-              <b-list-group data-type="keywords" flush>
+            <b-card header="Keywords" v-if="filters.keyword" bg-variant="dark" text-variant="white" no-body>
+              <b-list-group data-type="keyword" flush>
                 <b-list-group-item
                   :key="index"
-                  v-for="(filter, index) in filters.keywords"
+                  v-for="(filter, index) in filters.keyword"
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
                   {{ filter }}
-                  <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'keywords', index)" />
+                  <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'keyword', index)" />
                 </b-list-group-item>
               </b-list-group>
             </b-card>
@@ -156,6 +156,9 @@ export default {
     },
     startFileUpload() {
       this.$refs.fileUpload.click()
+    },
+    shorten(val) {
+      return val.slice(0, 3)
     },
     saveSearchFilters() {
       this.filterDownloadData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.filters))
