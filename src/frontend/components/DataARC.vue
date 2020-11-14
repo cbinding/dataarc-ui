@@ -24,7 +24,7 @@
     </div>
     <timeline-section
       id="temporal-section"
-      @filtered="processFilter"
+      v-model="temporalFilters"
     />
     <map-section
       id="spatial-section"
@@ -81,6 +81,7 @@ export default {
       filters: {},
       totalFilters: 0,
       keywordFilters: [],
+      temporalFilters: [],
       resultsCount: 0,
     }
   },
@@ -97,6 +98,13 @@ export default {
         this.removeFilter('keywords', -1)
       }
     },
+    temporalFilters() {
+      if (this.temporalFilters.length > 0) {
+        this.processFilter('temporal', this.temporalFilters)
+      } else {
+        this.removeFilter('temporal', -1)
+      }
+    }
   },
   methods: {
     loadFilters(newFilters) {
@@ -105,6 +113,8 @@ export default {
       keys.forEach((key, index) => {
         if (key === 'keywords') {
           this.keywordFilters = newFilters[key]
+        } else if (key === 'temporal') {
+          this.temporalFilters = newFilters[key]
         } else {
           this.processFilter(key, newFilters[key])
         }
@@ -114,14 +124,21 @@ export default {
       if (!this.filters[type]) {
         this.totalFilters += 1
       }
+
       this.$set(this.filters, type, filter)
       // this.filters[type] = filter
       this.getResults()
     },
     removeFilter(type, index) {
-      if (type === 'keywords' && index > -1) {
-        this.keywordFilters.splice(index, 1)
-        this.filters[type] = this.keywordFilters
+      if (type === 'keywords' || type === 'temporal' && index > -1) {
+        const references = {
+          keywords: this.keywordFilters,
+          temporal: this.temporalFilters
+        }
+
+        references[type].splice(index, 1)
+        this.filters[type] = references[type]
+        this.totalFilters -= 1
         return
       }
       // if (type === 'keywords') {

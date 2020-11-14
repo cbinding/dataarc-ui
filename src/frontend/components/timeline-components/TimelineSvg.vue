@@ -44,7 +44,15 @@
       :x="`${activeRect * rectWidth + 0.25}%`"
       :y="`${labelHeight + 1}%`"
       :width="`${rectWidth - 0.5}%`"
-      :height="`${rectHeight * 3 - 2}%`"
+      :height="`${rectHeight * Object.keys(data).length - 2}%`"
+      class="highlighted"
+    />
+    <rect
+      v-show="selectedRect > -1"
+      :x="`${selectedRect * rectWidth + 0.25}%`"
+      :y="`${labelHeight + 1}%`"
+      :width="`${rectWidth - 0.5}%`"
+      :height="`${rectHeight * Object.keys(data).length - 2}%`"
       class="highlighted"
     />
   </svg>
@@ -110,12 +118,16 @@ export default {
   data() {
     return {
       activeRect: -1,
+      selectedRect: -1,
       opacityBins: 5,
       opacitySteps: [0.25, 0.5, 0.75, 1.0],
       opacityByQuantileGenerator: null
     };
   },
   watch: {
+    data() {
+      this.selectedRect = -1
+    },
     collapsed() {
       if (this.collapsed) {
         this.collapseContainer();
@@ -176,6 +188,7 @@ export default {
       this.activeRect = -1;
     },
     rectClick(e) {
+      this.selectedRect = this.activeRect
       this.$emit('range-selected', {
         startDate: this.data[e.target.dataset.category].periods[
           e.target.dataset.period
@@ -183,7 +196,7 @@ export default {
         period: this.periodName
       });
 
-      this.collapseContainer();
+      // this.collapseContainer();
 
       // this.shrink(d)
     },

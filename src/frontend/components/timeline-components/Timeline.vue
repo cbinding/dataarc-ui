@@ -13,7 +13,7 @@
         :data="millennia"
         :rect-height="realRectHeight(millennia)"
         :period-name="'centuries'"
-        :collapsed="activePeriod !== 'millennia'"
+        :collapsed="false"
         @range-selected="setTimeline"
       />
     </transition>
@@ -24,7 +24,7 @@
         :data="centuries"
         :rect-height="realRectHeight(centuries)"
         :period-name="'decades'"
-        :collapsed="activePeriod === 'decades'"
+        :collapsed="false"
         @range-selected="setTimeline"
       />
     </transition>
@@ -34,7 +34,8 @@
         :labels="decades[0].periods"
         :data="decades"
         :rect-height="realRectHeight(decades)"
-        :period-name="'decades'"
+        :period-name="'none'"
+        :collapsed="false"
         @range-selected="setTimeline"
       />
     </transition>
@@ -72,12 +73,12 @@ export default {
     }
   },
   computed: {
-    decades() {
-      if ('decades' in this.timelineData) {
-        return this.timelineDatadecades;
-      }
-      return false;
-    }
+    // decades() {
+    //   if ('decades' in this.timelineData) {
+    //     return this.timelineDatadecades;
+    //   }
+    //   return false;
+    // }
   },
   watch: {
     'timelineData.centuries'() {
@@ -94,6 +95,7 @@ export default {
     return {
       centuries: [],
       millennia: [],
+      decades: [],
       activePeriod: 'millennia',
       loaded: false,
       initialPeriod: 'millennia',
@@ -197,12 +199,24 @@ export default {
   methods: {
     setTimeline(rangeData) {
       this.getTimelineDataByPeriod(rangeData.period, rangeData.startDate);
+      console.log(rangeData.period)
+      let multiplier = 10
+      let period = rangeData.period
+      if (rangeData.period === 'none') {
+        multiplier = 1
+        period = 'decades'
+      }
+      this.$emit('input', {
+        start: rangeData.startDate,
+        end: rangeData.startDate + this.ranges[period] * multiplier
+      })
     },
     realRectHeight(timelineDataValue) {
       return 90 / timelineDataValue.length;
     },
     getTimelineDataByPeriod(period, startDate) {
       let url = `${this.$apiUrl}/query/timeline`;
+      if (period === 'none') return
       return axios
         .post(url, {
           // filter: {},

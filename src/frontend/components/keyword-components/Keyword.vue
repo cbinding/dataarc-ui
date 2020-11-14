@@ -15,6 +15,7 @@
           <!-- Always bind the id to the input so that it can be focused when needed -->
           <b-form-input
             v-model="newTag"
+            v-on:keyup.enter="addTag(newTag)"
             :id="inputId"
             :placeholder="placeholder"
             :disabled="disabled"

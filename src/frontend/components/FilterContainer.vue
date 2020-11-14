@@ -55,10 +55,7 @@
               v-for="(filter, index) in filters.temporal"
               :key="index"
             >
-              <span v-if="filter.period !== 'Custom'">
-                {{ filter.period }}
-              </span>
-              <span v-else> {{ filter.start }} - {{ filter.end }} </span>
+              <span>Range: {{ filter.start }} - {{ filter.end }} </span>
               <button
                 type="button"
                 class="close text-light filters-remove"
