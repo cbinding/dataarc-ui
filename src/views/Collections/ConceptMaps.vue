@@ -92,6 +92,12 @@
                 @click="itemToDelete = row.item"
                 v-text="'Delete'"
               />
+              <b-button
+                variant="primary"
+                :disabled="row.item.processing || !row.item.source || row.item.active"
+                @click="activate(row.item)"
+                v-text="'Activate'"
+              />
             </b-button-group>
           </template>
         </b-table>
@@ -134,6 +140,21 @@ export default {
   },
   created() {
     this.$apollo.queries.allConceptMaps.skip = false
+  },
+  methods: {
+    activate(val) {
+      this.currentId = val.id;
+      let url = 'concept-maps';
+      val.active = true;
+      this.conceptMaps.forEach((conceptMap) => {
+        if (conceptMap.id !== val.id) {
+          conceptMap.active = false
+        }
+      })
+      axios.get(`${this.$apiUrl}/${url}/activate/${val.id}`).then((data) => {
+        console.log('success');
+      })
+    },
   },
 }
 </script>

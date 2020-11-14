@@ -308,18 +308,6 @@ export default {
           },
           {
             type: 'wrap',
-            label: 'Metadata',
-            model: 'metadata',
-            id: 'metadata',
-            featured: true,
-            visible(model) {
-              return model.type === 'Datasets'
-            },
-            required: false,
-            autocomplete: 'off',
-          },
-          {
-            type: 'wrap',
             label: 'Citation',
             model: 'citation',
             visible(model) {
@@ -333,6 +321,17 @@ export default {
           },
           {
             type: 'input',
+            inputType: 'text',
+            label: 'Metadata',
+            model: 'metadata',
+            visible(model) {
+              return model.type === 'Datasets'
+            },
+            required: false,
+            autocomplete: 'off',
+          },
+          {
+            type: 'input',
             inputType: 'url',
             label: 'Url',
             model: 'url',
@@ -341,6 +340,24 @@ export default {
               || model.type === 'TemporalCoverages'
               || model.type === 'ConceptMaps'
               || model.type === 'Concepts'
+            },
+          },
+          {
+            type: 'input',
+            inputType: 'number',
+            label: 'Begin',
+            model: 'begin',
+            visible(model) {
+              return model.type === 'TemporalCoverages'
+            },
+          },
+          {
+            type: 'input',
+            inputType: 'number',
+            label: 'End',
+            model: 'end',
+            visible(model) {
+              return model.type === 'TemporalCoverages'
             },
           },
           {
