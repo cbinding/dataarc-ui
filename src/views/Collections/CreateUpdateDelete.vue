@@ -308,18 +308,6 @@ export default {
           },
           {
             type: 'wrap',
-            label: 'Metadata',
-            model: 'metadata',
-            id: 'metadata',
-            featured: true,
-            visible(model) {
-              return model.type === 'Datasets'
-            },
-            required: false,
-            autocomplete: 'off',
-          },
-          {
-            type: 'wrap',
             label: 'Citation',
             model: 'citation',
             visible(model) {
@@ -329,6 +317,17 @@ export default {
               || model.type === 'ConceptMaps'
               || model.type === 'Concepts'
             },
+            autocomplete: 'off',
+          },
+          {
+            type: 'input',
+            inputType: 'text',
+            label: 'Metadata',
+            model: 'metadata',
+            visible(model) {
+              return model.type === 'Datasets'
+            },
+            required: false,
             autocomplete: 'off',
           },
           {

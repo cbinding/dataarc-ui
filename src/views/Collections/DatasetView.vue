@@ -296,20 +296,18 @@ export default {
           },
           {
             type: 'wrap',
-            label: 'Metadata',
-            model: 'metadata',
-            id: 'metadata',
-            featured: true,
-            visible: true,
-            required: false,
-            autocomplete: 'off'
-          },
-          {
-            type: 'wrap',
             label: 'Citation',
             model: 'citation',
             visible: true,
             autocomplete: 'off'
+          },
+          {
+            type: 'input',
+            inputType: 'text',
+            label: 'Metadata',
+            model: 'metadata',
+            visible: true,
+            required: false,
           },
           {
             type: 'input',
