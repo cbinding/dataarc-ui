@@ -1,5 +1,5 @@
 <template>
-  <b-card no-body id="timeline" ref="timeline" class="mt-2 mb-5 shadow text-center bg-light timeline-container">
+  <b-card no-body id="timeline" ref="timeline" class="mt-2 mb-5 shadow text-center bg-white timeline-container">
     <transition name="fade">
       <timeline-svg
         v-if="loaded"

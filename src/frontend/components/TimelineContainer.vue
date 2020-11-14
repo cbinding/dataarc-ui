@@ -26,14 +26,31 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col ref="timelineContainer" class="mt-3 mb-3">
+        <b-col ref="timelineContainer" class="mt-3 mb-3 text-center">
           <timeline :width="timelineWidth" v-model="currentSelectedRange" />
-          <button v-show="currentSelectedRange" @click.prevent="setSelectedRange" class="btn btn-primary">
-            <b-icon-filter /> Add Selected Range To Filter
-          </button>
-          <button class="btn btn-primary" data-toggle="modal" v-b-modal.timeline-filter>
-            <b-icon-filter /> Temporal Filter
-          </button>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col align-self="center">
+
+            <b-button-group>
+              <b-button
+                title="View Temporal Filter Options"
+                variant="primary"
+                data-toggle="modal"
+                v-b-modal.timeline-filter
+              >
+                <b-icon-filter aria-hidden="true" /> View Temporal Filter Options
+              </b-button>
+              <b-button
+                title="Add Selected Range To Filter"
+                variant="success"
+                v-show="currentSelectedRange"
+                @click.prevent="setSelectedRange"
+              >
+                <b-icon-plus aria-hidden="true" /> Add Selected Range To Filter
+              </b-button>
+            </b-button-group>
         </b-col>
       </b-row>
     </b-container>
@@ -51,7 +68,7 @@
         Temporal Filter
       </template>
       <template #default>
-        <p>Select a pre-defined time period from the list or select "Custom" and enter your values below.</p>
+        <p>Select a pre-defined time period from the list or set a custom begin and end date below.</p>
         <form>
           <div class="form-row">
             <div class="col mb-3">
@@ -105,7 +122,7 @@
         </button>
         <button
           type="button"
-          class="btn btn-primary"
+          class="btn btn-success"
           @click="applyFilter"
         >
           Apply Filter

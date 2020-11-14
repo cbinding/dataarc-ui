@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="sticky-top">
-      <b-button-group class="float-right">
+      <b-button-group class="float-right border-0">
         <b-button
           href="#result-section"
           variant="dark"
