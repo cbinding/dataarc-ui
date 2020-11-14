@@ -1,11 +1,7 @@
 <template>
-  <div class="container result-type-container text-center">
-    <h2>
-      <span class="result-type-title">
-        {{ resultType }} Results
-      </span>
-    </h2>
-    <div class="card-deck results-container">
+  <b-card no-body class="mt-5 mb-5 shadow text-center bg-light">
+    <h2>{{ resultType }} Results</h2>
+    <div class="card-deck">
       <result-column
         v-for="result in results"
         :key="result.category_id"
@@ -20,7 +16,7 @@
       :filters="filters"
       :resultType="resultType"
     />
-  </div>
+  </b-card>
 </template>
 
 <script>
