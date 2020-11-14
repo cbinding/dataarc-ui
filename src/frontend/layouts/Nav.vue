@@ -52,6 +52,9 @@
           <li v-if="!status.loggedIn" class="nav-item">
             <a class="nav-link js-scroll-trigger" href="/auth/login">Login</a>
           </li>
+          <li v-if="!status.loggedIn" class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="/auth/register">Signup</a>
+          </li>
           <b-nav-item-dropdown v-if="status.loggedIn" text="Manage" right>
             <b-dropdown-item :to="{ name: 'Profile' }">Profile</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'authenticated' }"
