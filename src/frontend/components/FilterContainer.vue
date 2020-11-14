@@ -59,7 +59,7 @@
                   v-for="(filter, index) in filters.concept"
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
-                  {{ filters.label }}
+                  {{ filter }}
                   <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'concept', index)" />
                 </b-list-group-item>
               </b-list-group>

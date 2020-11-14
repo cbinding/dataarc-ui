@@ -83,6 +83,7 @@ export default {
       keywordFilters: [],
       temporalFilters: [],
       resultsCount: 0,
+      conceptFilters: [],
     }
   },
   computed: {
@@ -121,7 +122,13 @@ export default {
       })
     },
     processFilter(type, filter) {
-      this.$set(this.filters, type, filter)
+      if (type === 'concept') {
+        this.conceptFilters.push(filter.id)
+        this.$set(this.filters, type, this.conceptFilters)
+      }
+      else {
+        this.$set(this.filters, type, filter)
+      }
       this.getResults()
     },
     removeFilter(type, index) {
@@ -153,6 +160,9 @@ export default {
       }
       if (this.filters[type] && this.filters[type].length > 0) {
         this.filters[type].splice(index, 1);
+        if (this.filters[type].length === 0) {
+          this.$delete(this.filters, type)
+        }
       }
       else {
         this.$delete(this.filters, type)
