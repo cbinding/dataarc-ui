@@ -91,12 +91,13 @@ export default {
     },
   },
   watch: {
-    keywordFilters() {
-      if (this.keywordFilters.length > 0) {
-        this.processFilter('keywords', this.keywordFilters)
-      } else {
+    keywordFilters(newVal, oldVal) {
+      if (newVal.length > 0 && newVal.length > oldVal.length) {
+        this.processFilter('keywords', newVal)
+      } else if (this.filters.keywords && newVal.length !== this.filters.keywords.length) {
         this.removeFilter('keywords', -1)
       }
+
     },
     temporalFilters() {
       if (this.temporalFilters.length > 0) {
@@ -124,13 +125,15 @@ export default {
       if (!this.filters[type]) {
         this.totalFilters += 1
       }
-
+      if (type === 'keywords' && this.filters[type]) {
+        this.totalFilters += 1
+      }
       this.$set(this.filters, type, filter)
-      // this.filters[type] = filter
       this.getResults()
     },
     removeFilter(type, index) {
-      if (type === 'keywords' || type === 'temporal' && index > -1) {
+      console.log(index);
+      if ((type === 'keywords' || type === 'temporal') && index > -1) {
         const references = {
           keywords: this.keywordFilters,
           temporal: this.temporalFilters
@@ -139,16 +142,24 @@ export default {
         references[type].splice(index, 1)
         this.filters[type] = references[type]
         this.totalFilters -= 1
+        if (this.filters[type].length === 0) {
+          this.$delete(this.filters, type)
+        }
         return
       }
-      // if (type === 'keywords') {
-      //   this.filters[type] = ''
-      // }
-      // else {
-      //   this.filters[type] = []
-      // }
-      this.$delete(this.filters, type)
-      this.totalFilters -= 1
+      if (this.filters[type].length === 1 && this.totalFilters > 0) {
+        this.$delete(this.filters, type)
+        this.totalFilters -= 1
+      }
+      else if (type === 'keywords' && index === -1) {
+        this.totalFilters -= this.filters[type].length
+        this.filters[type] = this.keywordFilters
+        this.totalFilters += this.filters[type].length
+      }
+      else {
+        this.filters[type].splice(index, 1);
+        this.totalFilters -= 1;
+      }
     },
     collectFilters() {
       const filters = { ...this.filters}

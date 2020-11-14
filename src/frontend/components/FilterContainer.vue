@@ -75,7 +75,7 @@
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
                   {{ filter }}
-                  <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'kewords', index)" />
+                  <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'keywords', index)" />
                 </b-list-group-item>
               </b-list-group>
             </b-card>
