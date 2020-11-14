@@ -32,25 +32,24 @@
       </b-row>
       <b-row>
         <b-col align-self="center">
-
-            <b-button-group>
-              <b-button
-                title="View Temporal Filter Options"
-                variant="primary"
-                data-toggle="modal"
-                v-b-modal.timeline-filter
-              >
-                <b-icon-filter aria-hidden="true" /> View Temporal Filter Options
-              </b-button>
-              <b-button
-                title="Add Selected Range To Filter"
-                variant="success"
-                v-show="currentSelectedRange"
-                @click.prevent="setSelectedRange"
-              >
-                <b-icon-plus aria-hidden="true" /> Add Selected Range To Filter
-              </b-button>
-            </b-button-group>
+          <b-button-group>
+            <b-button
+              title="View Temporal Filter Options"
+              variant="primary"
+              data-toggle="modal"
+              v-b-modal.timeline-filter
+            >
+              <b-icon-filter aria-hidden="true" /> View Temporal Filter Options
+            </b-button>
+            <b-button
+              title="Add Selected Range To Filter"
+              variant="success"
+              v-show="currentSelectedRange"
+              @click.prevent="setSelectedRange"
+            >
+              <b-icon-plus aria-hidden="true" /> Add Selected Range To Filter
+            </b-button>
+          </b-button-group>
         </b-col>
       </b-row>
     </b-container>

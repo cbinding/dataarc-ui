@@ -1,135 +1,123 @@
 <template>
-  <section id="filter-section" class="bg-secondary text-white">
-    <div class="call-to-action">
-      <div class="container text-center">
-        <h2 class="section-heading">Filters</h2>
-        <hr />
-        <div id="filters" class="row" v-if="filters">
-          &nbsp;
-          <div
-            class="col-sm filters-container"
-            id="filters-spatial"
-            v-if="filters.box || filters.polygon"
-          >
-            <h3>Spatial</h3>
-            <div
-              class="p-3 mb-2 filter-spatial text-white"
-              data-type="spatial"
-              v-if="filters.box"
+  <section id="filter-section" class="bg-secondary text-light">
+    <b-container class="text-center pt-5 pb-5">
+      <b-row>
+        <b-col>
+          <h2>
+            Filters
+            <sup><a href="http://www.data-arc.org/filters/" title="How dataarc thinks about filters" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
+          </h2>
+          <hr class="primary">
+          <p>Filters will appear here as you select them from the sections above.</p>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col class="mt-3 mb-3">
+          <b-card-group deck id="filters" v-if="filters">
+
+            <!-- Spatial -->
+            <b-card header="Spatial" v-if="filters.box || filters.polygon" bg-variant="dark" text-variant="white" no-body>
+              <b-list-group data-type="spatial" v-if="filters.box" flush>
+                <b-list-group-item
+                  class="d-flex justify-content-between align-items-center text-left bg-transparent"
+                >
+                  {{ filters.box }}
+                  <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'box')" />
+                </b-list-group-item>
+              </b-list-group>
+              <b-list-group data-type="spatial" v-if="filters.polygon" flush>
+                <b-list-group-item
+                  class="d-flex justify-content-between align-items-center text-left bg-transparent"
+                >
+                  <small>{{ filters.polygon }}</small>
+                  <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'polygon')" />
+                </b-list-group-item>
+              </b-list-group>
+            </b-card>
+            <!-- /Spatial -->
+
+            <!-- Temporal -->
+            <b-card header="Temporal" v-if="filters.temporal && filters.temporal.length" bg-variant="dark" text-variant="white" no-body>
+              <b-list-group data-type="temporal" flush>
+                <b-list-group-item
+                  :key="index"
+                  v-for="(filter,  index) in filters.temporal"
+                  class="d-flex justify-content-between align-items-center text-left bg-transparent"
+                >
+                  Range: {{ filter.start }} - {{ filter.end }}
+                  <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'temporal', index)" />
+                </b-list-group-item>
+              </b-list-group>
+            </b-card>
+            <!-- /Temporal -->
+
+            <!-- Concepts -->
+            <b-card header="Concepts" v-if="filters.conceptual && filters.conceptual.length" bg-variant="dark" text-variant="white" no-body>
+              <b-list-group data-type="concepts" flush>
+                <b-list-group-item
+                  :key="index"
+                  v-for="(filter, index) in filters.conceptual"
+                  class="d-flex justify-content-between align-items-center text-left bg-transparent"
+                >
+                  {{ filters.label }}
+                  <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'conceptual', index)" />
+                </b-list-group-item>
+              </b-list-group>
+            </b-card>
+            <!-- /Concepts -->
+
+            <!-- Keywords -->
+            <b-card header="Keywords" v-if="filters.keywords" bg-variant="dark" text-variant="white" no-body>
+              <b-list-group data-type="keywords" flush>
+                <b-list-group-item
+                  :key="index"
+                  v-for="(filter, index) in filters.keywords"
+                  class="d-flex justify-content-between align-items-center text-left bg-transparent"
+                >
+                  {{ filter }}
+                  <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'kewords', index)" />
+                </b-list-group-item>
+              </b-list-group>
+            </b-card>
+            <!-- /Keywords -->
+
+          </b-card-group>
+
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col align-self="center">
+          <b-button-group class="border-0">
+            <b-button
+              title="Upload Filters"
+              variant="danger"
+              @click="startFileUpload"
             >
-              {{ filters.box }}
-              <button
-                type="button"
-                class="close text-light filters-remove"
-                @click="$emit('removed', 'box')"
-                aria-label="Remove"
-              >
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div
-              class="p-3 mb-2 filter-spatial text-white"
-              data-type="spatial"
-              v-if="filters.polygon"
+              <b-icon-upload aria-hidden="true" /> Upload Filters
+            </b-button>
+            <input type="file"
+              @change="readFile"
+              style="display:none"
+              ref="fileUpload"
             >
-              {{ filters.polygon }}
-              <button
-                type="button"
-                class="close text-light filters-remove"
-                @click="$emit('removed', 'polygon')"
-                aria-label="Remove"
-              >
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-          </div>
-          <div
-            class="col-sm filters-container"
-            id="filters-temporal"
-            v-if="filters.temporal && filters.temporal.length > 0"
-          >
-            <h3>Temporal</h3>
-            <div
-              class="p-3 mb-2 filter-temporal text-white"
-              data-type="temporal"
-              v-for="(filter, index) in filters.temporal"
-              :key="index"
+            <a ref="downloadAnchor" :href="filterDownloadData" :download="downloadName" style="display:none"></a>
+            <b-button
+              title="Download Filters"
+              variant="success"
+              @click="saveSearchFilters"
             >
-              <span>Range: {{ filter.start }} - {{ filter.end }} </span>
-              <button
-                type="button"
-                class="close text-light filters-remove"
-                @click="$emit('removed', 'temporal', index)"
-                aria-label="Remove"
-              >
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-          </div>
-          <div
-            class="col-sm filters-container"
-            id="filters-concepts"
-            v-if="filters.conceptual && filters.conceptual.length"
-          >
-            <h3>Concepts</h3>
-            <div
-              class="p-3 mb-2 filter-concepts text-white"
-              data-type="concepts"
-              v-for="(filter, index) in filters.conceptual"
-              :key="index"
+              <b-icon-download aria-hidden="true" /> Download Filters
+            </b-button>
+            <b-button
+              title="Share Search"
+              variant="primary"
             >
-              {{ filter.label }}
-              <button
-                type="button"
-                class="close text-light filters-remove"
-                @click="$emit('removed', 'conceptual', index)"
-                aria-label="Remove"
-              >
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-          </div>
-          <div
-            class="col-sm filters-container"
-            id="filters-keywords"
-            v-if="filters.keywords"
-          >
-            <h3>Keywords</h3>
-            <div
-              v-for="(filter, index) in filters.keywords"
-              :key="index"
-              class="p-3 mb-2 filter-concepts text-white"
-              data-type="concepts"
-            >
-              {{ filter }}
-              <button
-                type="button"
-                class="close text-light filters-remove"
-                aria-label="Remove"
-                @click="$emit('removed', 'keywords', index)"
-              >
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-          </div>
-        </div>
-        <a ref="downloadAnchor" :href="filterDownloadData" :download="downloadName" style="display:none"></a>
-        <button id="filter-save" @click="saveSearchFilters" class="btn btn-primary">
-          <i class="fa fa-bookmark sr-icons" /> Save Search
-        </button>
-        <button id="filter-share" class="btn btn-primary">
-          <i class="fa fa-print sr-icons" /> Share Search
-        </button>
-        <input type="file"
-          @change="readFile"
-          style="display:none"
-          ref="fileUpload"
-        >
-        <button id="filter-save" @click="startFileUpload" class="btn btn-primary">
-          <i class="fa fa-bookmark sr-icons" /> Load Search From File
-        </button>
-      </div>
-    </div>
+              <b-icon-share aria-hidden="true" /> Share Search
+            </b-button>
+          </b-button-group>
+        </b-col>
+      </b-row>
+    </b-container>
   </section>
 </template>
 
@@ -180,27 +168,5 @@ export default {
 };
 </script>
 
-<style lang="scss">
-#filters {
-  margin-bottom: 40px;
-  text-transform: capitalize;
-}
-
-#filters h3:first-letter {
-  text-transform: capitalize;
-}
-
-/* filter type colors */
-.filter-keywords {
-  background-color: #777;
-}
-.filter-temporal {
-  background-color: #555;
-}
-.filter-spatial {
-  background-color: #444;
-}
-.filter-concepts {
-  background-color: #666;
-}
+<style>
 </style>

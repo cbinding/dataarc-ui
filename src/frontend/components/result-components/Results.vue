@@ -1,22 +1,36 @@
 <template>
-  <b-card no-body class="mt-5 mb-5 shadow text-center bg-light">
-    <h2>{{ resultType }} Results</h2>
-    <div class="card-deck">
-      <result-column
-        v-for="result in results"
-        :key="result.category_id"
-        :result="result"
-        @result-data-view="setResultView"
-      />
-    </div>
-    <result-view
-      v-if="selectedResult"
-      :key="resultType"
-      :source="selectedResult"
-      :filters="filters"
-      :resultType="resultType"
-    />
-  </b-card>
+  <section :class="'bg-'+resultType">
+    <b-container class="text-center pt-5 pb-5">
+      <b-row>
+        <b-col>
+          <h2 class="text-capitalize">
+            {{ resultType }} Results
+          </h2>
+          <hr class="bg-light">
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col class="mt-3 mb-3">
+          <b-card-group deck>
+            <result-column
+              v-for="result in results"
+              :class="'bg-'+resultType"
+              :key="result.category_id"
+              :result="result"
+              @result-data-view="setResultView"
+            />
+          </b-card-group>
+          <result-view
+            v-if="selectedResult"
+            :key="resultType"
+            :source="selectedResult"
+            :filters="filters"
+            :resultType="resultType"
+          />
+        </b-col>
+      </b-row>
+    </b-container>
+  </section>
 </template>
 
 <script>

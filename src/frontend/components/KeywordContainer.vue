@@ -1,32 +1,24 @@
 <template>
-  <section
-    id="keyword-section"
-    class="bg-light"
-  >
-    <div class="call-to-action">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 mx-auto text-center">
-            <h2 class="section-heading">
-              Keyword<sup>
-                <a
-                  href="http://www.data-arc.org/keywords/"
-                  class="text-dark"
-                  target="_blank"
-                  data-toggle="tooltip"
-                  title="How dataarc thinks about keywords"
-                >
-                  <fa-icon icon="info-circle" />
-                </a>
-              </sup>
-            </h2>
-            <hr class="primary" />
-            <p>Use the keyword box to add keyword filters to the results.</p>
+  <section id="keyword-section" class="bg-light">
+    <b-container class="text-center pt-5 pb-5">
+      <b-row>
+        <b-col>
+          <h2>
+            Keyword
+            <sup><a href="http://www.data-arc.org/keywords/" title="How dataarc thinks about keywords" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
+          </h2>
+          <hr class="primary">
+          <p>Use the keyword box to add keyword filters to the results.</p>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col class="mt-3 mb-3">
+          <b-card no-body class="shadow">
             <keyword v-model="keywords" />
-          </div>
-        </div>
-      </div>
-    </div>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
   </section>
 </template>
 
