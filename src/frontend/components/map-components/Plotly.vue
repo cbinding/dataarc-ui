@@ -44,6 +44,12 @@ export default {
       this.colorBins = []
       for (let i = 0; i < this.featureCount; i++) this.colorBins.push(this.mutedColor)
     },
+    clearFilteredFeatures() {
+      Object.values(this.plotlyData).forEach((value, index) => {
+        this.colorBins[value[0]] = value[1]
+      })
+      Plotly.restyle(this.plotlyInstance, 'marker.color', [this.colorBins], [0])
+    },
     setFilteredFeatures() {
       this.collectColorBins()
 
