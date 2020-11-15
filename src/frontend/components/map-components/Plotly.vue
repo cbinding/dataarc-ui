@@ -1,70 +1,148 @@
 <template>
-  <div id="plotly" ref="plotly" class="d-flex w-100 h-100"></div>
+  <div
+    id="plotly"
+    ref="plotly"
+    class="d-flex w-100 h-100"
+  />
 </template>
 
 <script>
-import Plotly from 'plotly.js-mapbox-dist';
+import Plotly, { feature } from 'plotly.js-mapbox-dist'
 
 export default {
+  props: {
+    filteredFeatures: {
+      type: [Array, Boolean],
+      default: false,
+    },
+  },
+  data() {
+    return {
+      featureCount: 0,
+      mutedColor: 'rgba(180, 180, 180, 0.2)',
+      mainPlotlyReference: 'plotly',
+      plotlyInstance: null,
+      plotlyData: null,
+      colorBins: [],
+    }
+  },
+  watch: {
+    filteredFeatures(newValue, oldValue) {
+      if (newValue) {
+        this.setFilteredFeatures()
+      } else {
+        this.clearFilteredFeatures()
+      }
+    },
+  },
   mounted() {
-    this.loadMap();
+    this.collectColorBins()
+    this.loadMap()
   },
   methods: {
+    collectColorBins() {
+      this.colorBins = []
+      for (let i = 0; i < this.featureCount; i++) this.colorBins.push(this.mutedColor)
+    },
+    clearFilteredFeatures() {
+      Object.values(this.plotlyData).forEach((value, index) => {
+        this.colorBins[value[0]] = value[1]
+      })
+      Plotly.restyle(this.plotlyInstance, 'marker.color', [this.colorBins], [0])
+    },
+    setFilteredFeatures() {
+      this.collectColorBins()
+
+      const data = this.plotlyData
+
+      this.filteredFeatures.forEach((value, index) => {
+        const pointLocation = data[value][0]
+        const pointColor = data[value][1]
+        this.colorBins[pointLocation] = pointColor
+      })
+
+      Plotly.restyle(this.plotlyInstance, 'marker.color', [this.colorBins], [0])
+    },
     loadMap() {
-      const vm = this;
-      Plotly.d3.csv(`${this.$apiUrl}/query/features`, function(err, rows) {
-        function unpack(rows, key) {
-          return rows.map(function(row) {
-            return row[key];
-          });
+      const vm = this
+      Plotly.d3.csv(`${this.$apiUrl}/query/features`, (err, parsedRows) => {
+        const rows = parsedRows.sort((a, b) => {
+          const idA = a.id
+          const idB = b.id
+          if (idA < idB) return -1
+          if (idA > idB) return 1
+          return 0
+        })
+        vm.featureCount = rows.length
+        vm.collectColorBins()
+
+        function unpack(items, key) {
+          return items.map((row) => {
+            return row[key]
+          })
         }
 
-        var data = [
+        const data = [
           {
             type: 'scattermapbox',
             ids: unpack(rows, 'id'),
             text: unpack(rows, 'text'),
             lon: unpack(rows, 'lon'),
             lat: unpack(rows, 'lat'),
+            color: unpack(rows, 'color'),
             marker: {
               color: unpack(rows, 'color'),
               opacity: Array(rows.length).fill(0.6),
               size: Array(rows.length).fill(8),
-              allowoverlap: true
+              allowoverlap: true,
             },
-            hovertemplate: '%{text}<extra></extra>'
-          }
-        ];
+            hovertemplate: '%{text}<extra></extra>',
+          },
+        ]
 
-        var layout = {
+        const layout = {
           autosize: true,
           dragmode: 'zoom',
           mapbox: {
             style: 'carto-positron',
             center: { lat: 62, lon: -18 },
-            zoom: 2
+            zoom: 2,
           },
-          margin: { r: 0, t: 0, b: 0, l: 0 },
+          margin: {
+            r: 0, t: 0, b: 0, l: 0,
+          },
           hoverlabel: {
             font: {
-              color: 'white'
+              color: 'white',
             },
             padding: 2,
-            bordercolor: 'white'
-          }
-        };
+            bordercolor: 'white',
+          },
+        }
 
-        var config = {
+        const config = {
           // displayModeBar: false
-        };
+        }
 
-        Plotly.newPlot('plotly', data, layout, config).then(gd => {
-          gd.on('plotly_selected', eventData => {
+        Plotly.newPlot(vm.mainPlotlyReference, data, layout, config).then((gd) => {
+          vm.plotlyInstance = gd
+          vm.plotlyData = {}
+          data[0].ids.forEach((value, index) => {
+            vm.plotlyData[value] = [index, data[0].color[index]]
+          })
+
+          gd.on('plotly_selected', (eventData) => {
             if (eventData) {
-              vm.addSelectionToFilter(eventData);
+              vm.addSelectionToFilter(eventData)
+
+              // eventData.points.forEach((pt) => {
+              //   vm.colorBins[pt.pointNumber] = data[0].color[pt.pointNumber]
+              // })
+
+              // Plotly.restyle(gd, 'marker.color', [vm.colorBins], [0])
             }
-          });
-          gd.on('plotly_click', eventData => {
+          })
+          gd.on('plotly_click', (eventData) => {
             if (eventData) {
               // console.log(data);
               // WORKING EXAMPLE BELOW ON HOW TO COLORIZE CHART POINTS
@@ -180,26 +258,26 @@ export default {
               // }
               // Plotly.newPlot('plotly', data, layout, config);
             }
-          });
-        });
-      });
+          })
+        })
+      })
     },
     addSelectionToFilter(eventData) {
-      var type = eventData.range ? 'box' : 'polygon';
-      var array = [];
+      const type = eventData.range ? 'box' : 'polygon'
+      const array = []
       if (type === 'box') {
-        array.push(eventData.range.mapbox[0]);
-        array.push(eventData.range.mapbox[1]);
+        array.push(eventData.range.mapbox[0])
+        array.push(eventData.range.mapbox[1])
       } else {
-        eventData.lassoPoints.mapbox.forEach(point => {
-          console.log(point);
-          array.push(point);
-        });
+        eventData.lassoPoints.mapbox.forEach((point) => {
+          console.log(point)
+          array.push(point)
+        })
       }
-      this.$emit('filtered', type, array);
-    }
-  }
-};
+      this.$emit('filtered', type, array)
+    },
+  },
+}
 </script>
 
 <style></style>
