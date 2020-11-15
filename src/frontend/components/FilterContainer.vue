@@ -177,9 +177,6 @@ export default {
     saveSearchFilters() {
       console.log("Save search filters")
       this.$refs.downloadAnchor.click()
-      // dlAnchorElem.setAttribute("href", dataStr);
-      // dlAnchorElem.setAttribute("download", "fitlers.json");
-      // dlAnchorElem.click();
     },
   }
 };

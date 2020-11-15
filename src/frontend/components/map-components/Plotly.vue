@@ -266,15 +266,21 @@ export default {
       const type = eventData.range ? 'box' : 'polygon'
       const array = []
       if (type === 'box') {
-        array.push(eventData.range.mapbox[0])
-        array.push(eventData.range.mapbox[1])
+        const corner1X = eventData.range.mapbox[0][0]
+        const corner1Y = eventData.range.mapbox[0][1]
+        const corner2X = eventData.range.mapbox[1][0]
+        const corner2Y = eventData.range.mapbox[1][1]
+        array.push([corner1X, corner1Y])
+        array.push([corner2X, corner1Y])
+        array.push([corner2X, corner2Y])
+        array.push([corner1X, corner2Y])
       } else {
         eventData.lassoPoints.mapbox.forEach((point) => {
           console.log(point)
           array.push(point)
         })
       }
-      this.$emit('filtered', type, array)
+      this.$emit('filtered', array)
     },
   },
 }

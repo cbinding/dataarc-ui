@@ -65,16 +65,19 @@ export default {
     }
   },
   watch: {
-    filters(val) {
-      if (val) {
-        axios.post(`${this.$apiUrl}/query/results`, this.filters, this.resultType).then((data) => {
-          this.results = data.data
-          this.resultsCount = 0
-          this.results.forEach((result) => {
-            this.resultsCount += result.total
+    filters: {
+      handler(newVal, oldVal) {
+        if (newVal) {
+          axios.post(`${this.$apiUrl}/query/results`, this.filters, this.resultType).then((data) => {
+            this.results = data.data
+            this.resultsCount = 0
+            this.results.forEach((result) => {
+              this.resultsCount += result.total
+            })
           })
-        })
-      }
+        }
+      },
+      deep: true,
     },
     resultsCount(val) {
       this.$emit('resultsCount', val)
