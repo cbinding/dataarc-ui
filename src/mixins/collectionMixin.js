@@ -775,7 +775,7 @@ const methods = {
           val.type === 'ConceptTopics' ||
           (val.type === 'Users' && this.$route.name === 'View Users')
         ) {
-          this.showAlert();
+          this.makeToast('success');
           return;
         }
         if (val.type === 'Combinators') {
@@ -785,6 +785,12 @@ const methods = {
         }
       });
     }
+  },
+  makeToast(variant) {
+    this.$bvToast.toast('Saved!', {
+      variant,
+      solid: true,
+    })
   },
   loadingState(length, component) {
     if (length === 0) {
@@ -834,7 +840,7 @@ const methods = {
       dataModel._delete().then(value => {
         if (dataModel.routeUrl === this.$router.history.current.path) {
           if (value === 'users') {
-            this.showAlert();
+            this.makeToast('success');
             this.getAllUsers();
           }
         } else {

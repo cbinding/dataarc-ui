@@ -3,17 +3,6 @@
 <!-- Update Concept Map -->
     <router-view/>
     <br>
-    <b-col sm="2">
-      <b-alert
-        variant="success"
-        dismissible
-        fade
-        :show="dismissCountDown"
-        @dismiss-count-down="countDownChanged"
-      >
-        Saved
-      </b-alert>
-    </b-col>
 <!-- Concepts View -->
     <table-view-layout :fluid="false" :rows="rows" component="ConceptTopics" :limits="limits" :currentPage="currentPage" @inputChanged="updateFilter" :perPage="perPage" @change="updatePage" @limitUpdated="updateLimit">
       <template v-slot:table>
@@ -34,7 +23,7 @@
                   :data="concepts"
                   :serializer="s => s.title"
                   :placeholder="row.item.concept ? row.item.concept.title : ''"
-                  @hit="updateConceptTopic(row.item, $event); row.item.concept = $event"
+                  @hit="updateConceptTopic(row.item, $event); row.item.concept = $event; makeToast('success')"
                 />
               </div>
             </div>
@@ -57,8 +46,6 @@ export default {
       component: 'ConceptMap View',
       action: 'Update',
       conceptTopics: [],
-      dismissSecs: 3,
-      dismissCountDown: 0,
       fields: [
         { key: 'title', sortable: true },
         { key: 'concept', sortable: true },
@@ -104,12 +91,6 @@ export default {
       temp.type = 'ConceptTopics'
       temp.action = 'Update'
       this.setFormData(temp)
-    },
-    countDownChanged(dismissCountDown) {
-      this.dismissCountDown = dismissCountDown
-    },
-    showAlert() {
-      this.dismissCountDown = this.dismissSecs
     },
   }
 

@@ -1,10 +1,5 @@
 <template>
   <b-container fluid>
-    <b-col sm="2">
-      <b-alert variant="success" dismissible fade :show="dismissCountDown" @dismiss-count-down="countDownChanged">
-        Success
-      </b-alert>
-    </b-col>
     <table-view-layout
       :fluid="true"
       :rows="rows"
@@ -58,7 +53,7 @@
           <template v-slot:cell(actions)="row" class="actions">
             <b-button-group size="sm">
               <b-button variant="primary" v-text="'Delete'" @click="itemToDelete = row.item" v-b-modal.deleteConfirmation />
-              <b-button variant="primary" v-text="'Save'" @click="updateUser(row.item)"></b-button>
+              <b-button variant="primary" v-text="'Save'" @click="updateUser(row.item); makeToast('success')"></b-button>
             </b-button-group>
           </template>
         </b-table>
@@ -84,8 +79,6 @@ export default {
         { key: 'role', sortable: true },
       ],
       total: '',
-      dismissSecs: 3,
-      dismissCountDown: 0,
       usersLoading: true,
     }
   },
@@ -125,12 +118,6 @@ export default {
       temp.type = 'Users'
       temp.action = 'Update'
       this.setFormData(temp)
-    },
-    countDownChanged(dismissCountDown) {
-      this.dismissCountDown = dismissCountDown
-    },
-    showAlert() {
-      this.dismissCountDown = this.dismissSecs
     },
   },
 }

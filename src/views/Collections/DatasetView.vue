@@ -20,18 +20,6 @@
       </div>
     </div>
     <br />
-    <b-col sm="2">
-      <b-alert
-        variant="success"
-        dismissible
-        fade
-        :show="dismissCountDown"
-        @dismiss-count-down="countDownChanged"
-      >
-        Success
-      </b-alert>
-    </b-col>
-
     <!-- Fields View -->
     <table-view-layout
       :fluid="true"
@@ -72,7 +60,7 @@
           </template>
           <template v-slot:cell(title)="row" class="Title">
             <div style="max-width: 400px;" v-if="row.item.title">
-              <b-input v-model="row.item.title" @blur="updateField(row.item)"></b-input>
+              <b-input v-model="row.item.title" @blur="updateField(row.item); makeToast('success')"></b-input>
             </div>
           </template>
           <template v-slot:cell(type)="row" class="Type">
@@ -84,7 +72,7 @@
                 <div v-for="type in fieldTypes" :key="type">
                   <b-dropdown-item
                     v-model="row.item.type"
-                    @click="row.item.type = type; updateField(row.item)"
+                    @click="row.item.type = type; updateField(row.item); makeToast('success')"
                   >
                     {{ type }}
                   </b-dropdown-item>
@@ -131,7 +119,7 @@
         <b-button size="sm" @click="cancel()">
           Cancel
         </b-button>
-        <b-button size="sm" variant="primary" @click="updateField(currentField)">
+        <b-button size="sm" variant="primary" @click="updateField(currentField); makeToast('success')">
           Save
         </b-button>
       </template>
@@ -264,11 +252,9 @@ export default {
       filterCombinators: '',
       fieldsCount: 0,
       combinatorsCount: 0,
-      dismissSecs: 3,
       pending: 'warning',
       missing: 'danger',
       done: 'success',
-      dismissCountDown: 0,
       model: {
         type: '',
         action: '',
@@ -370,7 +356,7 @@ export default {
   methods: {
     update(val) {
       this.setFormData(val);
-      this.showAlert();
+      this.makeToast('success');
     },
     updateField(val) {
       const temp = [];
@@ -385,18 +371,12 @@ export default {
       this.setFormData(temp);
       this.$bvModal.hide('editMetadata');
     },
-    countDownChanged(dismissCountDown) {
-      this.dismissCountDown = dismissCountDown;
-    },
-    showAlert() {
-      this.dismissCountDown = this.dismissSecs;
-    },
     status(val) {
       if (val) {
         return this[val];
       }
       return 'secondary';
-    }
+    },
   },
   mixins: [collectionMixin],
   watch: {
