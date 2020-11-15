@@ -17,7 +17,7 @@
         >
           Filters
           <b-badge variant="success">
-            {{ totalFilters }}
+            {{ filterCount }}
           </b-badge>
         </b-button>
       </b-button-group>
@@ -28,8 +28,8 @@
     />
     <map-section
       id="spatial-section"
+      v-model="spatialFilter"
       :filters="compiledFilters"
-      @filtered="processFilter"
     />
     <concept-section
       id="concept-section"
@@ -86,12 +86,27 @@ export default {
       temporalFilters: [],
       resultsCount: 0,
       conceptFilters: [],
+      spatialFilter: false,
+      references: {
+        keywords: this.keywordFilters,
+        temporal: this.temporalFilters,
+        concept: this.conceptFilters,
+        spatial: this.spatialFilter,
+      },
     }
   },
   computed: {
     compiledFilters() {
       return this.collectFilters()
     },
+    filterCount() {
+      return [
+        this.keywordFilters.length,
+        this.temporalFilters.length,
+        this.conceptFilters.length,
+        this.spatialFilter ? 1 : 0,
+      ].reduce((a, b) => a + b, 0)
+    }
   },
   watch: {
     keywordFilters(newVal, oldVal) {
@@ -106,6 +121,13 @@ export default {
         this.processFilter('temporal', this.temporalFilters)
       } else if (this.filters.temporal && newVal.length !== this.filters.temporal.length) {
         this.removeFilter('temporal', -1)
+      }
+    },
+    spatialFilter(newVal, oldVal) {
+      if (newVal && newVal.length > 0) {
+        this.processFilter('polygon', this.spatialFilter)
+      } else {
+        this.removeFilter('polygon', -1)
       }
     },
   },
@@ -137,7 +159,10 @@ export default {
       this.getResults()
     },
     removeFilter(type, index) {
-      if (type === 'box' || type === 'polygon') {
+      if (type === 'polygon') {
+        if (this.spatialFilter) {
+          this.spatialFilter = false
+        }
         this.$delete(this.filters, type)
         return
       }
@@ -183,11 +208,6 @@ export default {
     },
     collectFilters() {
       const filters = { ...this.filters }
-      this.totalFilters = 0
-      const array = Object.values(filters)
-      array.forEach((filter) => {
-        this.totalFilters += filter.length
-      })
 
       if ('keyword' in filters && filters.keyword.length > 0) {
         filters.keyword = filters.keyword.join(' ')
