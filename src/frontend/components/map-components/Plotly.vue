@@ -11,7 +11,7 @@ export default {
   },
   methods: {
     loadMap() {
-      const vm = this
+      const vm = this;
       Plotly.d3.csv(`${this.$apiUrl}/query/features`, function(err, rows) {
         function unpack(rows, key) {
           return rows.map(function(row) {
@@ -22,10 +22,16 @@ export default {
         var data = [
           {
             type: 'scattermapbox',
-            text: unpack(rows, 'title'),
+            ids: unpack(rows, 'id'),
+            text: unpack(rows, 'text'),
             lon: unpack(rows, 'lon'),
             lat: unpack(rows, 'lat'),
-            marker: { color: unpack(rows, 'color'), size: 5 },
+            marker: {
+              color: unpack(rows, 'color'),
+              opacity: Array(rows.length).fill(0.6),
+              size: Array(rows.length).fill(8),
+              allowoverlap: true
+            },
             hovertemplate: '%{text}<extra></extra>'
           }
         ];
@@ -55,27 +61,143 @@ export default {
         Plotly.newPlot('plotly', data, layout, config).then(gd => {
           gd.on('plotly_selected', eventData => {
             if (eventData) {
-              vm.addSelectionToFilter(eventData)
+              vm.addSelectionToFilter(eventData);
+            }
+          });
+          gd.on('plotly_click', eventData => {
+            if (eventData) {
+              // console.log(data);
+              // WORKING EXAMPLE BELOW ON HOW TO COLORIZE CHART POINTS
+              // var active = [
+              //   '5fb05de59966e02a444509dd',
+              //   '5faaf29809924644bc92778c',
+              //   '5fb05de59966e02a444508dc',
+              //   '5faaf29809924644bc927caa',
+              //   '5faaf29809924644bc928899',
+              //   '5faaf29809924644bc9275b9',
+              //   '5faaf29809924644bc9278d8',
+              //   '5faaf29809924644bc92830b',
+              //   '5faaf29809924644bc9288ba',
+              //   '5faac9a794c20d2de0de5c8d',
+              //   '5faaf29909924644bc929218',
+              //   '5faaf29909924644bc9295d1',
+              //   '5faac9a794c20d2de0de5b08',
+              //   '5faaf29809924644bc92882b',
+              //   '5fb05826d8d8cf26ca190f20',
+              //   '5faaf29809924644bc927590',
+              //   '5faac9a794c20d2de0de5860',
+              //   '5faaf29809924644bc927584',
+              //   '5faaf29809924644bc92811f',
+              //   '5faaf29809924644bc92844b',
+              //   '5faaf29809924644bc927c8f',
+              //   '5faaf29809924644bc928c69',
+              //   '5faac9a794c20d2de0de6592',
+              //   '5faaf29809924644bc927e7f',
+              //   '5fb05826d8d8cf26ca190eba',
+              //   '5fb05826d8d8cf26ca191152',
+              //   '5faac9a794c20d2de0de5af0',
+              //   '5fb05826d8d8cf26ca19168f',
+              //   '5faac9a794c20d2de0de5fbe',
+              //   '5faaf29809924644bc928c31',
+              //   '5fb05826d8d8cf26ca1917db',
+              //   '5fb05826d8d8cf26ca1917fb',
+              //   '5fb05de59966e02a4444fd98',
+              //   '5faac9a794c20d2de0de530a',
+              //   '5faac9a794c20d2de0de7059',
+              //   '5faac9a794c20d2de0de5e6b',
+              //   '5faaf29809924644bc927701',
+              //   '5faac9a794c20d2de0de6d6e',
+              //   '5faac9a794c20d2de0de5da2',
+              //   '5faaf29809924644bc927f7f',
+              //   '5faaf29809924644bc9286d9',
+              //   '5faaf29809924644bc928811',
+              //   '5faaf29909924644bc92956d',
+              //   '5faac9a894c20d2de0de72e1',
+              //   '5fb05826d8d8cf26ca190ebc',
+              //   '5fb05de59966e02a4444fef9',
+              //   '5faac9a794c20d2de0de55ae',
+              //   '5fb05de59966e02a4445009c',
+              //   '5fb05de59966e02a44450119',
+              //   '5faaf29809924644bc927b2b',
+              //   '5faac9a794c20d2de0de54b5',
+              //   '5faac9a794c20d2de0de6ff1',
+              //   '5faaf29809924644bc928a2b',
+              //   '5faaf29809924644bc9285b3',
+              //   '5faaf29809924644bc928247',
+              //   '5fb05826d8d8cf26ca191390',
+              //   '5faac9a794c20d2de0de63e8',
+              //   '5faac9a794c20d2de0de609b',
+              //   '5faaf29909924644bc92972c',
+              //   '5fb05de59966e02a4444ffaa',
+              //   '5fb05de59966e02a44450932',
+              //   '5faac9a794c20d2de0de5b2d',
+              //   '5faac9a794c20d2de0de6551',
+              //   '5faac9a794c20d2de0de5fd7',
+              //   '5faaf29909924644bc9296cc',
+              //   '5fb05826d8d8cf26ca1910e9',
+              //   '5fb05826d8d8cf26ca191a4e',
+              //   '5faaf29809924644bc9281d3',
+              //   '5faaf29909924644bc9296aa',
+              //   '5fb05de59966e02a44450695',
+              //   '5faaf29809924644bc9286e2',
+              //   '5faac9a794c20d2de0de620d',
+              //   '5faac9a794c20d2de0de59dd',
+              //   '5faaf29809924644bc927cf7',
+              //   '5faaf29909924644bc9292fe',
+              //   '5faac9a794c20d2de0de595b',
+              //   '5faaf29809924644bc9279a8',
+              //   '5fb05826d8d8cf26ca191454',
+              //   '5faaf29909924644bc929153',
+              //   '5faaf29909924644bc9291ac',
+              //   '5fb05826d8d8cf26ca191157',
+              //   '5faaf29809924644bc927807',
+              //   '5fb05de59966e02a444504f5',
+              //   '5fb05de59966e02a4444fc88',
+              //   '5faac9a794c20d2de0de6fc3',
+              //   '5fb05de59966e02a444503c1',
+              //   '5faaf29809924644bc928324',
+              //   '5fb05de59966e02a44450613',
+              //   '5faaf29809924644bc928a58',
+              //   '5faac9a794c20d2de0de6407',
+              //   '5fb05de59966e02a44450471',
+              //   '5fb05826d8d8cf26ca191609',
+              //   '5fb05de59966e02a4444fc6b',
+              //   '5faaf29809924644bc928989',
+              //   '5faaf29809924644bc9286b5',
+              //   '5faaf29809924644bc928e91',
+              //   '5faaf29909924644bc9296bf',
+              //   '5faaf29909924644bc929847',
+              //   '5fb05de59966e02a44450139',
+              //   '5fb05826d8d8cf26ca191b19'
+              // ];
+              // // for loop
+              // for (let i = 0; i < data[0].ids.length; i++) {
+              //   if (!active.includes(data[0].ids[i])) {
+              //     data[0].marker.color[i] = 'lightslategray';
+              //     data[0].marker.opacity[i] = 0.5;
+              //     data[0].marker.size[i] = 3;
+              //   }
+              // }
+              // Plotly.newPlot('plotly', data, layout, config);
             }
           });
         });
       });
     },
     addSelectionToFilter(eventData) {
-      var type = eventData.range ? 'box' : 'polygon'
-      var array = []
+      var type = eventData.range ? 'box' : 'polygon';
+      var array = [];
       if (type === 'box') {
-        array.push(eventData.range.mapbox[0])
-        array.push(eventData.range.mapbox[1])
-      }
-      else {
-        eventData.lassoPoints.mapbox.forEach((point) => {
+        array.push(eventData.range.mapbox[0]);
+        array.push(eventData.range.mapbox[1]);
+      } else {
+        eventData.lassoPoints.mapbox.forEach(point => {
           console.log(point);
-          array.push(point)
-        })
+          array.push(point);
+        });
       }
       this.$emit('filtered', type, array);
-    },
+    }
   }
 };
 </script>
