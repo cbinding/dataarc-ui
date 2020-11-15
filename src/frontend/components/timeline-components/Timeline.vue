@@ -41,9 +41,6 @@ import * as d3api from 'd3';
 import * as d3Selection from 'd3-selection';
 
 import TimelineSvg from './TimelineSvg.vue';
-// const d3 = {
-//   ...d3api, ...d3Selection,
-// }
 
 const category_colors = ['#6177aa', '#fc8d62', '#66c2a5', '#54278f', '#a63603'];
 
@@ -192,25 +189,7 @@ export default {
         this.reloadTimelineData()
       },
       deep: true,
-    }
-    // filters: {
-    //   handler(newValue, oldValue) {
-    //     if ('temporal' in newValue && 'temporal' in oldValue) {
-    //       const a = newValue.temporal
-    //       const b = oldValue.temporal
-    //       if (a === b) return true
-    //       if (a == null || b == null) return false
-    //       if (a.length !== b.length) return false
-    //       for (let i = 0; i < a.length; ++i) {
-    //         if (a[i] !== b[i]) return false
-    //       }
-    //     }
-    //     console.log("Filters changed")
-    //     console.log({newValue, oldValue})
-    //     this.reloadTimelineData()
-    //   },
-    //   deep: true,
-    // }
+    },
   },
   mounted() {
     this.getTimelineDataByPeriod(this.initialPeriod, this.initialStartDate);
@@ -301,14 +280,6 @@ export default {
 </script>
 
 <style>
-/* #timeline {
-  display: inline-block;
-  position: relative;
-  width: 100%;
-  vertical-align: top;
-  overflow: hidden;
-} */
-
 #timeline .label {
   height: 50px;
   transition: opacity 0.5s linear;
