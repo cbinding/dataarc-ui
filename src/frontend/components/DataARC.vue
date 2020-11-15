@@ -41,7 +41,7 @@
     <filter-section
       id="filter-section"
       :filters="filters"
-      :conceptFilters="conceptFilters"
+      :concept-filters="conceptFilters"
       @removed="removeFilter"
       @filters-loaded="loadFilters"
     />
@@ -106,7 +106,7 @@ export default {
       } else if (this.filters.temporal && newVal.length !== this.filters.temporal.length) {
         this.removeFilter('temporal', -1)
       }
-    }
+    },
   },
   methods: {
     loadFilters(newFilters) {
@@ -141,7 +141,7 @@ export default {
         return
       }
       if (type === 'concept') {
-        this.filters[type].splice(index, 1);
+        this.filters[type].splice(index, 1)
         this.conceptFilters.splice(index, 1)
         if (this.filters[type].length === 0) {
           this.$delete(this.filters, type)
@@ -151,7 +151,7 @@ export default {
       if ((type === 'keyword' || type === 'temporal') && index > -1) {
         const references = {
           keyword: this.keywordFilters,
-          temporal: this.temporalFilters
+          temporal: this.temporalFilters,
         }
         references[type].splice(index, 1)
         this.filters[type] = references[type]
@@ -171,7 +171,7 @@ export default {
         return
       }
       if (this.filters[type] && this.filters[type].length > 0) {
-        this.filters[type].splice(index, 1);
+        this.filters[type].splice(index, 1)
         if (this.filters[type].length === 0) {
           this.$delete(this.filters, type)
         }
@@ -181,7 +181,7 @@ export default {
       }
     },
     collectFilters() {
-      const filters = { ...this.filters}
+      const filters = { ...this.filters }
       this.totalFilters = 0
       const array = Object.values(filters)
       array.forEach((filter) => {
