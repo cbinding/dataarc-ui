@@ -66,16 +66,6 @@
 import gql from 'graphql-tag'
 import Plotly from './map-components/Plotly.vue'
 
-// const featuresQuery = gql`
-//   query featureCollection($limit: Int!, $start: Int!) {
-//     features(limit: $limit, start: $start) {
-//       id
-//       latitude
-//       longitude
-//     }
-//   }
-// `
-
 const featuresCountQuery = gql`
   query {
     countFeatures
@@ -135,37 +125,9 @@ export default {
           return 0
         })
       })
-      // window.axios.get(`${this.$apiUrl}/query/features`).then(({ data }) => {
-      //   this.features = this.$papa.parse(data, {header: true}).data
-      // })
-      // if (this.start >= this.featuresCount) return
-      // while (this.start <= this.featuresCount) {
-      //   this.getPromises.push(
-      //     window.axios.get(`${this.$apiUrl}/features?_limit=${this.step}&_start=${this.start}`).then(({ data }) => {
-      //       this.features = [...this.features, ...data.filter((feature) => {
-      //         return feature.latitude && feature.longitude
-      //       })]
-      //       console.log(this.features)
-      //     }),
-      //   )
-      //   this.start += this.step
-      // }
-      // this.$apollo.query({
-      //   query: featuresQuery,
-      //   variables: {
-      //     start: this.start,
-      //     limit: this.limit,
-      //   },
-      // }).then(({ data }) => {
-      //   this.features = [...this.features, ...data.features]
-      //   this.start += 100
-      //   this.loadFeatures()
-      // })
     },
-    addToFilter(type, payload) {
-      // console.log(type);
-      // console.log(payload);
-      this.$emit('filtered', type, payload)
+    addToFilter(payload) {
+      this.$emit('input', payload)
     },
   },
 }

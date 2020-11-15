@@ -135,8 +135,18 @@ export default {
   },
   data() {
     return {
-      filterDownloadData: null,
       downloadName: 'filters.json'
+    }
+  },
+  computed: {
+    filterDownloadData() {
+      let stringFilters = ''
+      if (!this.filters || !Object.keys(this.filters).length > 0) {
+        stringFilters = JSON.stringify({})
+      } else {
+        stringFilters = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(this.filters))}`
+      }
+      return stringFilters
     }
   },
   methods: {
@@ -165,11 +175,8 @@ export default {
       return val.slice(0, 3)
     },
     saveSearchFilters() {
-      this.filterDownloadData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.filters))
+      console.log("Save search filters")
       this.$refs.downloadAnchor.click()
-      // dlAnchorElem.setAttribute("href", dataStr);
-      // dlAnchorElem.setAttribute("download", "fitlers.json");
-      // dlAnchorElem.click();
     },
   }
 };
