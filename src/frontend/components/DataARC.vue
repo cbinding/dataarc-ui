@@ -183,9 +183,15 @@ export default {
     collectFilters() {
       const filters = { ...this.filters}
       this.totalFilters = 0
+      const keys = Object.keys(filters)
       const array = Object.values(filters)
-      array.forEach((filter) => {
-        this.totalFilters += filter.length
+      array.forEach((filter, index) => {
+        if (keys[index] === 'box' || keys[index] === 'polygon') {
+          this.totalFilters += 1
+        }
+        else {
+          this.totalFilters += filter.length
+        }
       })
 
       if ('keyword' in filters && filters.keyword.length > 0) {
