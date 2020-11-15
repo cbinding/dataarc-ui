@@ -41,6 +41,7 @@
     <filter-section
       id="filter-section"
       :filters="filters"
+      :conceptFilters="conceptFilters"
       @removed="removeFilter"
       @filters-loaded="loadFilters"
     />
@@ -123,8 +124,11 @@ export default {
     },
     processFilter(type, filter) {
       if (type === 'concept') {
-        this.conceptFilters.push(filter.id)
-        this.$set(this.filters, type, this.conceptFilters)
+        this.$set(this.conceptFilters, this.conceptFilters.length, filter)
+        if (!this.filters[type]) {
+          this.$set(this.filters, type, [])
+        }
+        this.$set(this.filters[type], this.filters[type].length, filter.id)
       }
       else {
         this.$set(this.filters, type, filter)
@@ -134,6 +138,14 @@ export default {
     removeFilter(type, index) {
       if (type === 'box' || type === 'polygon') {
         this.$delete(this.filters, type)
+        return
+      }
+      if (type === 'concept') {
+        this.filters[type].splice(index, 1);
+        this.conceptFilters.splice(index, 1)
+        if (this.filters[type].length === 0) {
+          this.$delete(this.filters, type)
+        }
         return
       }
       if ((type === 'keyword' || type === 'temporal') && index > -1) {

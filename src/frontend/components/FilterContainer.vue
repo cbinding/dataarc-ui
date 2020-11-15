@@ -52,14 +52,14 @@
             <!-- /Temporal -->
 
             <!-- Concepts -->
-            <b-card header="Concepts" v-if="filters.concept && filters.concept.length" bg-variant="dark" text-variant="white" no-body>
+            <b-card header="Concepts" v-if="filters.concept && conceptFilters && conceptFilters.length" bg-variant="dark" text-variant="white" no-body>
               <b-list-group data-type="concepts" flush>
                 <b-list-group-item
+                  v-for="(filter, index) in conceptFilters"
                   :key="index"
-                  v-for="(filter, index) in filters.concept"
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
-                  {{ filter }}
+                  {{ filter.label }}
                   <b-icon-x-circle-fill variant="light" @click="$emit('removed', 'concept', index)" />
                 </b-list-group-item>
               </b-list-group>
@@ -128,6 +128,10 @@ export default {
       type: Object,
       required: true,
     },
+    conceptFilters: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
@@ -166,7 +170,7 @@ export default {
       // dlAnchorElem.setAttribute("href", dataStr);
       // dlAnchorElem.setAttribute("download", "fitlers.json");
       // dlAnchorElem.click();
-    }
+    },
   }
 };
 </script>
