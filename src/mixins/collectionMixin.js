@@ -438,10 +438,10 @@ const apollo = {
           }
           combinators {
             id
-            name
             title
             description
             citation
+            features_count
           }
         }
       }

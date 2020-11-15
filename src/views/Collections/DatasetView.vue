@@ -171,11 +171,19 @@
           </template>
           <template v-slot:cell(title)="row" class="Title">
             <div
-              class="text-wrap"
-              style="width: 200px; max-width: 200px;"
               v-if="row.item.title"
             >
               {{ row.item.title }}
+            </div>
+          </template>
+          <template v-slot:head(features_count)="row" class="featuresCount" >
+            <span># Features</span>
+          </template>
+          <template v-slot:cell(features_count)="row" class="featuresCount" >
+            <div class="text-center">
+              <b-badge pill variant="primary">
+                {{ row.item.features_count ? row.item.features_count : 0 }}
+              </b-badge>
             </div>
           </template>
           <template v-slot:cell(actions)="row" class="Actions">
@@ -249,8 +257,8 @@ export default {
       ],
       combinatorsList: [
         { key: 'actions', sortable: false },
-        { key: 'name', sortable: true },
         { key: 'title', sortable: true },
+        { key: 'features_count', sortable: true },
       ],
       filterFields: '',
       filterCombinators: '',
