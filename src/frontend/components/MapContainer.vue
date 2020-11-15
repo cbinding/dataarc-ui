@@ -105,6 +105,7 @@ export default {
   },
   watch: {
     filters() {
+      console.log(this.filters)
       this.loadFeatures()
     },
   },

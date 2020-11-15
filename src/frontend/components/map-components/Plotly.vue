@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       featureCount: 0,
-      mutedColor: '#d3d3d3',
+      mutedColor: 'rgba(180, 180, 180, 0.2)',
       mainPlotlyReference: 'plotly',
       plotlyInstance: null,
       plotlyData: null,
