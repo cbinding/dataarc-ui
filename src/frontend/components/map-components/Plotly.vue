@@ -7,25 +7,71 @@
 </template>
 
 <script>
-import Plotly from 'plotly.js-mapbox-dist'
+import Plotly, { feature } from 'plotly.js-mapbox-dist'
 
 export default {
+  props: {
+    filteredFeatures: {
+      type: [Array, Boolean],
+      default: false,
+    },
+  },
   data() {
     return {
       featureCount: 0,
       mutedColor: '#d3d3d3',
+      mainPlotlyReference: 'plotly',
+      plotlyInstance: null,
+      plotlyData: null,
+      colorBins: [],
     }
   },
+  watch: {
+    filteredFeatures(newValue, oldValue) {
+      if (newValue) {
+        this.setFilteredFeatures()
+      } else {
+        this.clearFilteredFeatures()
+      }
+    },
+  },
   mounted() {
+    this.collectColorBins()
     this.loadMap()
   },
   methods: {
+    collectColorBins() {
+      this.colorBins = []
+      for (let i = 0; i < this.featureCount; i++) this.colorBins.push(this.mutedColor)
+    },
+    setFilteredFeatures() {
+      this.collectColorBins()
+
+      const data = this.plotlyData
+
+      this.filteredFeatures.forEach((value, index) => {
+        const pointLocation = data[value][0]
+        const pointColor = data[value][1]
+        this.colorBins[pointLocation] = pointColor
+      })
+
+      Plotly.restyle(this.plotlyInstance, 'marker.color', [this.colorBins], [0])
+    },
     loadMap() {
       const vm = this
-      Plotly.d3.csv(`${this.$apiUrl}/query/features`, (err, rows) => {
-        function unpack(rows, key) {
-          vm.featureCount = rows.length
-          return rows.map((row) => {
+      Plotly.d3.csv(`${this.$apiUrl}/query/features`, (err, parsedRows) => {
+        const rows = parsedRows.sort((a, b) => {
+          const idA = a.id
+          const idB = b.id
+          if (idA < idB) return -1
+          if (idA > idB) return 1
+          return 0
+        })
+        vm.featureCount = rows.length
+        vm.collectColorBins()
+
+        function unpack(items, key) {
+          return items.map((row) => {
             return row[key]
           })
         }
@@ -72,18 +118,22 @@ export default {
           // displayModeBar: false
         }
 
-        Plotly.newPlot('plotly', data, layout, config).then((gd) => {
+        Plotly.newPlot(vm.mainPlotlyReference, data, layout, config).then((gd) => {
+          vm.plotlyInstance = gd
+          vm.plotlyData = {}
+          data[0].ids.forEach((value, index) => {
+            vm.plotlyData[value] = [index, data[0].color[index]]
+          })
+
           gd.on('plotly_selected', (eventData) => {
             if (eventData) {
               vm.addSelectionToFilter(eventData)
-              const colors = []
-              for (let i = 0; i < vm.featureCount; i++) colors.push(vm.mutedColor)
 
-              eventData.points.forEach((pt) => {
-                colors[pt.pointNumber] = data[0].color[pt.pointNumber]
-              })
+              // eventData.points.forEach((pt) => {
+              //   vm.colorBins[pt.pointNumber] = data[0].color[pt.pointNumber]
+              // })
 
-              Plotly.restyle(gd, 'marker.color', [colors], [0])
+              // Plotly.restyle(gd, 'marker.color', [vm.colorBins], [0])
             }
           })
           gd.on('plotly_click', (eventData) => {

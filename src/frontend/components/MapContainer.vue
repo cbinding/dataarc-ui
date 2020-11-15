@@ -51,6 +51,7 @@
           >
             <b-aspect aspect="16:9">
               <plotly
+                :filtered-features="features"
                 @filtered="addToFilter"
               />
             </b-aspect>
@@ -86,15 +87,26 @@ export default {
   components: {
     Plotly,
   },
+  props: {
+    filters: {
+      type: [Object, Boolean],
+      default: false,
+    },
+  },
   data() {
     return {
       limit: 100,
       start: 0,
-      features: [],
+      features: false,
       featuresCount: 0,
       getPromises: [],
       step: 5000,
     }
+  },
+  watch: {
+    filters() {
+      this.loadFeatures()
+    },
   },
   mounted() {
     this.$apollo
@@ -108,6 +120,20 @@ export default {
   },
   methods: {
     loadFeatures() {
+      if (Object.keys(this.filters).length < 1) {
+        this.features = false
+        return
+      }
+      window.axios.post(
+        `${this.$apiUrl}/query/features`,
+        this.filters,
+      ).then(({ data }) => {
+        this.features = data.sort((a, b) => {
+          if (a < b) return -1
+          if (a > b) return 1
+          return 0
+        })
+      })
       // window.axios.get(`${this.$apiUrl}/query/features`).then(({ data }) => {
       //   this.features = this.$papa.parse(data, {header: true}).data
       // })

@@ -28,6 +28,7 @@
     />
     <map-section
       id="spatial-section"
+      :filters="compiledFilters"
       @filtered="processFilter"
     />
     <concept-section
