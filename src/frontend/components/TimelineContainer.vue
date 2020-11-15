@@ -27,7 +27,7 @@
       </b-row>
       <b-row>
         <b-col ref="timelineContainer" class="mt-3 mb-3 text-center">
-          <timeline :width="timelineWidth" v-model="currentSelectedRange" />
+          <timeline :triggers="triggers" :filters="filters" :width="timelineWidth" v-model="currentSelectedRange" />
         </b-col>
       </b-row>
       <b-row>
@@ -137,6 +137,16 @@ export default {
   name: 'TimelineContainer',
   components: {
     Timeline,
+  },
+  props: {
+    filters: {
+      type: [Object, Boolean],
+      default: false,
+    },
+    triggers: {
+      type: [Number, Boolean],
+      default: false,
+    },
   },
   data() {
     return {

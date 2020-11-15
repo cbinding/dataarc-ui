@@ -64,25 +64,14 @@ export default {
     timelineBase: {
       type: Number,
       default: -7000
-    }
-  },
-  computed: {
-    // decades() {
-    //   if ('decades' in this.timelineData) {
-    //     return this.timelineDatadecades;
-    //   }
-    //   return false;
-    // }
-  },
-  watch: {
-    'timelineData.centuries'() {
-      this.centuries = this.timelineData.centuries;
     },
-    'timelineData.decades'() {
-      this.decades = this.timelineData.decades;
+    filters: {
+      type: [Object, Boolean],
+      default: false,
     },
-    'timelineData.millennia'() {
-      this.millennia = this.timelineData.millennia;
+    triggers: {
+      type: [Number, Boolean],
+      default: false,
     }
   },
   data() {
@@ -187,10 +176,69 @@ export default {
       ]
     };
   },
+  watch: {
+    'timelineData.centuries'() {
+      this.centuries = this.timelineData.centuries;
+    },
+    'timelineData.decades'() {
+      this.decades = this.timelineData.decades;
+    },
+    'timelineData.millennia'() {
+      this.millennia = this.timelineData.millennia;
+    },
+    triggers: {
+      handler(newValue, oldValue) {
+        console.log("Changed")
+        this.reloadTimelineData()
+      },
+      deep: true,
+    }
+    // filters: {
+    //   handler(newValue, oldValue) {
+    //     if ('temporal' in newValue && 'temporal' in oldValue) {
+    //       const a = newValue.temporal
+    //       const b = oldValue.temporal
+    //       if (a === b) return true
+    //       if (a == null || b == null) return false
+    //       if (a.length !== b.length) return false
+    //       for (let i = 0; i < a.length; ++i) {
+    //         if (a[i] !== b[i]) return false
+    //       }
+    //     }
+    //     console.log("Filters changed")
+    //     console.log({newValue, oldValue})
+    //     this.reloadTimelineData()
+    //   },
+    //   deep: true,
+    // }
+  },
   mounted() {
     this.getTimelineDataByPeriod(this.initialPeriod, this.initialStartDate);
   },
   methods: {
+    reloadTimelineData() {
+      const currentActivePeriod = this.activePeriod
+
+      const promises = []
+      if (this.decades && this.decades.length > 0) {
+        promises.push(
+          this.getTimelineDataByPeriod('decades', this.decades[0].periods[0])
+        )
+      }
+      if (this.centuries && this.centuries.length > 0) {
+        promises.push(
+          this.getTimelineDataByPeriod('centuries', this.centuries[0].periods[0])
+        )
+      }
+      if (this.millennia && this.millennia.length > 0) {
+        promises.push(
+          this.getTimelineDataByPeriod('millennia', this.millennia[0].periods[0])
+        )
+      }
+      Promise.all(promises).then(() => {
+        this.activePeriod = currentActivePeriod
+      })
+    },
     setTimeline(rangeData) {
       this.getTimelineDataByPeriod(rangeData.period, rangeData.startDate);
       let multiplier = 10
@@ -210,28 +258,43 @@ export default {
     getTimelineDataByPeriod(period, startDate) {
       let url = `${this.$apiUrl}/query/timeline`;
       if (period === 'none') return
+
+      const postObject = {
+        start: parseInt(startDate),
+        type: period,
+      }
+
+      if (this.filters && Object.keys(this.filters).length > 0) {
+        Object.assign(postObject, this.filters)
+      }
+
+      console.log(postObject)
+
       return axios
-        .post(url, {
-          // filter: {},
-          start: parseInt(startDate),
-          type: period
-        })
-        .then(({ data }) => {
-          this.timelineData[period] = data;
-          this.activePeriod = period;
-          this.loaded = true;
-        });
-      // return new Promise((resolve, reject) => {
-      //   setTimeout(() => {
-      //     // This will need to be changed
-      //     // Here just imitating a wait on the return
-      //     resolve(this.sampleTimelineData)
-      //   }, 1000)
-      // }).then(() => {
-      //   this.timelineData[period] = this.sampleTimelineData
-      //   this.activePeriod = period
-      //   this.loaded = true
-      // })
+      .post(url, postObject)
+      .then(({ data }) => {
+        let result = data
+        if (result.length === 0) {
+          const counts = []
+          for (let i = 0; i < 10; i++) counts.push(0)
+          const periods = []
+          let start = startDate
+          for (let i = 0; i < 10; i++) {
+            periods.push(start)
+            start += this.ranges[period]
+          }
+          result = [
+            {
+              color: '#d3d3d3',
+              periods,
+              counts,
+            },
+          ]
+        }
+        this.timelineData[period] = result;
+        this.activePeriod = period;
+        this.loaded = true;
+      })
     }
   }
 };
