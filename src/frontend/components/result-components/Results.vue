@@ -13,7 +13,7 @@
         <b-col class="mt-3 mb-3">
           <b-card-group deck>
             <result-column
-              v-for="result in results"
+              v-for="result in sortedResults"
               :class="'bg-'+resultType"
               :key="result.category_id"
               :result="result"
@@ -63,6 +63,11 @@ export default {
       results: [],
       resultsCount: 0,
     }
+  },
+  computed: {
+    sortedResults() {
+      return _.orderBy(this.results, ['category'])
+    },
   },
   watch: {
     filters: {
