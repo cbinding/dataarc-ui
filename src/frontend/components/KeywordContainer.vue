@@ -14,7 +14,7 @@
       <b-row>
         <b-col class="mt-3 mb-3">
           <b-card no-body class="shadow">
-            <keyword v-model="keywords" />
+            <keyword v-model="keywords" :pre-loaded="preLoadedKeywords" />
           </b-card>
         </b-col>
       </b-row>
@@ -29,9 +29,19 @@ export default {
   components: {
     Keyword,
   },
+
   data() {
     return {
       keywords: '',
+      loadedKeywords: ''
+    }
+  },
+  computed: {
+    preLoadedKeywords() {
+      if (this.loadedKeywords) {
+        return this.loadedKeywords
+      }
+      return false
     }
   },
   watch: {
@@ -39,6 +49,11 @@ export default {
       this.$emit('input', this.keywords)
     },
   },
+  methods: {
+    loadFilters(arrayValues) {
+      this.loadedKeywords = arrayValues
+    },
+  }
 }
 </script>
 
