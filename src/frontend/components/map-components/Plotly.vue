@@ -5,8 +5,18 @@
     class="d-flex w-100 h-100"
   >
     <div class="position-absolute p-2 text-left" style="top:0;">
-      <b-badge v-if="filteredFeatures" variant="danger" class="mr-0" style="border-radius:0px;border-right:#FFFFFF 1px solid">{{ filteredFeatures.length }} &nbsp;</b-badge>
-      <b-badge variant="dark" class="ml-0" style="border-radius:0px;">{{ featureCount }} <span v-if="filteredFeatures">(filtered)</span><span v-else>total</span></b-badge>
+      <b-badge v-if="filteredFeatures" variant="danger" class="mr-0" style="border-radius:0px;border-right:#FFFFFF 1px solid">
+        {{ filteredFeatures.length }} &nbsp;
+      </b-badge>
+      <b-badge variant="dark" class="ml-0" style="border-radius:0px;">
+        {{ featureCount }} 
+        <span v-if="filteredFeatures">
+          (filtered)
+        </span>
+        <span v-else>
+          total
+        </span>
+      </b-badge>
     </div>
   </div>
 </template>
