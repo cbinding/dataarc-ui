@@ -1,9 +1,15 @@
 <template>
   <div>
     <div class="position-relative">
-      <div class="position-absolute w-100" style="z-index:100;">
+      <div
+        class="position-absolute w-100"
+        style="z-index:100;"
+      >
         <b-row no-gutters>
-          <b-col cols="auto" class="p-2 mr-auto">
+          <b-col
+            cols="auto"
+            class="p-2 mr-auto"
+          >
             <b-button-toolbar>
               <b-button-group class="border-0">
                 <b-button
@@ -31,32 +37,37 @@
                   <b-icon-arrows-fullscreen aria-hidden="true" />
                 </b-button>
                 <b-button
+                  v-show="currentNodeID !== 'all'"
                   title="Show All"
                   variant="danger"
                   size="sm"
                   @click.prevent="currentNodeID = 'all'"
-                  v-show="currentNodeID !== 'all'"
-                  ><b-icon-back aria-hidden="true" />
+                >
+                  <b-icon-back aria-hidden="true" />
                 </b-button>
                 <b-button
+                  v-show="currentNodeID !== 'all'"
                   title="Add Concept To Filter"
                   variant="success"
                   size="sm"
                   @click.prevent="addNodeToFilter"
-                  v-show="currentNodeID !== 'all'"
-                  ><b-icon-plus-circle-fill aria-hidden="true" />
+                >
+                  <b-icon-plus-circle-fill aria-hidden="true" />
                 </b-button>
               </b-button-group>
             </b-button-toolbar>
           </b-col>
-          <b-col cols="4" class="p-2 m-0">
+          <b-col
+            cols="4"
+            class="p-2 m-0"
+          >
             <v-select
               v-model="currentNodeID"
               :options="nodesByLabel"
               :reduce="concept => concept.id"
-              @input="onNodeSelected"
               class="w-100 bg-light"
-            ></v-select>
+              @input="onNodeSelected"
+            />
           </b-col>
         </b-row>
       </div>
@@ -64,19 +75,26 @@
     <cytoscape
       ref="cy"
       :config="config"
-      :preConfig="preConfig"
+      :pre-config="preConfig"
       class="bg-light position-absolute w-100 h-100"
       style=""
     />
-    <div class="position-absolute w-100 p-2 text-right" style="bottom:0;">
-      <b-badge variant="dark">{{ totalCurrentNodes }} of {{ totalNodes }} nodes</b-badge>&nbsp;
-      <b-badge variant="dark">{{ totalCurrentEdges }} of {{ totalEdges }} edges</b-badge>
+    <div
+      class="position-absolute w-100 p-2 text-right"
+      style="bottom:0;"
+    >
+      <b-badge variant="dark">
+        {{ totalCurrentNodes }} of {{ totalNodes }} nodes
+      </b-badge>&nbsp;
+      <b-badge variant="dark">
+        {{ totalCurrentEdges }} of {{ totalEdges }} edges
+      </b-badge>
     </div>
   </div>
 </template>
 
 <script>
-import cola from 'cytoscape-cola';
+import cola from 'cytoscape-cola'
 
 export default {
   name: 'Network',
@@ -84,22 +102,18 @@ export default {
   props: {
     topicmap: {
       type: Object,
-      required: true
+      required: true,
     },
     conceptID: {
       type: String,
-      required: false
+      required: false,
+    },
+    filteredIds: {
+      type: [Array, Boolean],
+      default: false,
     }
   },
-  mounted: function() {
-    this.cyInstance = this.$refs.cy.instance;
-    let self = this;
-    this.cyInstance.on('click tap', 'node', function(evt) {
-      self.currentNodeID = evt.target.id();
-    });
-    this.resetNetwork();
-  },
-  data: function() {
+  data() {
     return {
       container: 'cy',
       currentNodeID: 'all',
@@ -108,14 +122,14 @@ export default {
       legendItems: [
         { label: 'Selected', fill: '#5cb85c' },
         { label: 'Related', fill: '#f0ad4e' },
-        { label: 'Contextual', fill: '#d9534f' }
+        { label: 'Contextual', fill: '#d9534f' },
       ],
       layout: {
         name: 'cola',
         animate: true,
         refresh: 2,
         convergenceThreshold: 0.01,
-        maxSimulationTime: 4000
+        maxSimulationTime: 4000,
       },
       config: {
         style: [
@@ -132,8 +146,8 @@ export default {
               'text-valign': 'top',
               'text-halign': 'center',
               'color': 'dimgray',
-              'shape': 'ellipse'
-            }
+              'shape': 'ellipse',
+            },
           },
           {
             selector: `node.contextual`,
@@ -141,8 +155,8 @@ export default {
               'background-color': '#d9534f',
               'width': '20px',
               'height': '20px',
-              'shape': 'ellipse'
-            }
+              'shape': 'ellipse',
+            },
           },
           {
             selector: `node.related`,
@@ -150,8 +164,8 @@ export default {
               'background-color': '#f0ad4e',
               'width': '20px',
               'height': '20px',
-              'shape': 'triangle'
-            }
+              'shape': 'triangle',
+            },
           },
           {
             selector: `node.matched`,
@@ -160,8 +174,16 @@ export default {
               'font-weight': 'bold',
               'width': '25px',
               'height': '25px',
-              'shape': 'star'
-            }
+              'shape': 'star',
+            },
+          },
+          {
+            selector: `node.not-matched`,
+            style: {
+              'background-color': 'lightgray',
+              'border-color': 'lightgray',
+              'color': 'lightgray',
+            },
           },
           {
             selector: 'edge',
@@ -176,135 +198,146 @@ export default {
               'color': 'darkgray',
               'text-rotation': 'autorotate',
               'text-background-opacity': 0.5,
-              'text-background-color': 'whitesmoke'
-            }
-          }
+              'text-background-color': 'whitesmoke',
+            },
+          },
         ],
-        cyInstance: null
-      }
-    };
-  },
-  watch: {
-    topicmap: function() {
-      if (!this.currentNodeID || this.currentNodeID === 'all') {
-        this.resetNetwork();
-      }
-    },
-    conceptID: function(newValue) {
-      this.currentNodeID = this.concept2node.get(newValue);
-    },
-    currentNodeID: function() {
-      if (this.currentNodeID === 'all') {
-        this.resetNetwork();
-      } else {
-        this.showNeighbours();
-      }
+        cyInstance: null,
+      },
     }
   },
   computed: {
-    tm: function() {
-      return this.topicmap || {};
+    tm() {
+      return this.topicmap || {}
     },
-    title: function() {
-      return this.tm.title || '';
+    title() {
+      return this.tm.title || ''
     },
-    currentConceptID: function() {
-      return this.node2concept.get(this.currentNodeID);
+    currentConceptID() {
+      return this.node2concept.get(this.currentNodeID)
     },
-    totalNodes: function() {
-      return this.nodes.length;
+    totalNodes() {
+      return this.nodes.length
     },
-    totalEdges: function() {
-      return this.edges.length;
+    totalEdges() {
+      return this.edges.length
     },
-    totalCurrentNodes: function() {
-      return ((this.currentElements || {}).nodes || []).length;
+    totalCurrentNodes() {
+      return ((this.currentElements || {}).nodes || []).length
     },
-    totalCurrentEdges: function() {
-      return ((this.currentElements || {}).edges || []).length;
+    totalCurrentEdges() {
+      return ((this.currentElements || {}).edges || []).length
     },
-    nodes: function() {
-      let cleanNodes = (this.tm.nodes || []).map(n => {
-        let id = this.clean(n.id);
+    nodes() {
+      const cleanNodes = (this.tm.nodes || []).map((n) => {
+        const id = this.clean(n.id)
         return {
-          id: id,
+          id,
           label: this.clean(n.title).replace(/_/g, ' '),
-          concept: this.node2concept.get(id)
-        };
-      });
-      const uniqueNodes = new Map();
+          concept: this.node2concept.get(id),
+        }
+      })
+      const uniqueNodes = new Map()
       for (const n of cleanNodes) {
         if (!uniqueNodes.has(n.id)) {
-          uniqueNodes.set(n.id, n);
+          uniqueNodes.set(n.id, n)
         }
       }
-      return [...uniqueNodes.values()];
+      return [...uniqueNodes.values()]
     },
-    edges: function() {
+    edges() {
       // get unique node IDs
-      const nodeids = new Map();
+      const nodeids = new Map()
       for (const n of this.nodes) {
-        if (!nodeids.has(n.id)) nodeids.set(n.id, true);
+        if (!nodeids.has(n.id)) nodeids.set(n.id, true)
       }
       // clean edges
-      let cleanEdges = (this.tm.edges || [])
-        .map(e => {
-          let source = this.clean(e.source);
-          let target = this.clean(e.target);
-          // remove all underscores from label
-          let label = this.clean(e.title).replace(/_/g, ' ');
-          // only edges where source & target nodes exists
-          if (nodeids.has(source) && nodeids.has(target)) {
-            return {
-              id: `${source}-${target}`,
-              source: source,
-              target: target,
-              label: label
-            };
-          } else return null;
-        })
-        .filter(e => e); // filter out any null values
+      const cleanEdges = (this.tm.edges || [])
+      .map((e) => {
+        const source = this.clean(e.source)
+        const target = this.clean(e.target)
+        // remove all underscores from label
+        const label = this.clean(e.title).replace(/_/g, ' ')
+        // only edges where source & target nodes exists
+        if (nodeids.has(source) && nodeids.has(target)) {
+          return {
+            id: `${source}-${target}`,
+            source,
+            target,
+            label,
+          }
+        } return null
+      })
+      .filter((e) => e) // filter out any null values
 
       // ensure uniqueness
-      const uniqueEdges = new Map();
+      const uniqueEdges = new Map()
       for (const e of cleanEdges) {
         if (!uniqueEdges.has(e.id)) {
-          uniqueEdges.set(e.id, e);
+          uniqueEdges.set(e.id, e)
         }
       }
-      return [...uniqueEdges.values()];
+      return [...uniqueEdges.values()]
     },
-    nodesByLabel: function() {
-      return this.nodes.slice().sort((a, b) => a.label.localeCompare(b.label));
+    nodesByLabel() {
+      return this.nodes.slice().sort((a, b) => a.label.localeCompare(b.label))
     },
-    elements: function() {
+    elements() {
       // formatted for cytoscape
-      let cynodes = this.nodes.map(n => {
-        return { group: 'nodes', data: n };
-      });
-      let cyedges = this.edges.map(e => {
-        return { group: 'edges', data: e };
-      });
-      return [].concat(cynodes).concat(cyedges);
+      const cynodes = this.nodes.map((n) => {
+        return { group: 'nodes', data: n }
+      })
+      const cyedges = this.edges.map((e) => {
+        return { group: 'edges', data: e }
+      })
+      return [].concat(cynodes).concat(cyedges)
     },
-    node2concept: function() {
+    node2concept() {
       const n2c = new Map();
-      (this.tm.topics || []).forEach(t => {
-        let nid = this.clean(t.identifier);
-        let cid = this.clean(t.concept);
-        if (cid !== '' && !n2c.has(nid)) n2c.set(nid, cid);
-      });
-      return n2c;
+      (this.tm.topics || []).forEach((t) => {
+        const nid = this.clean(t.identifier)
+        const cid = this.clean(t.concept)
+        if (cid !== '' && !n2c.has(nid)) n2c.set(nid, cid)
+      })
+      return n2c
     },
-    concept2node: function() {
+    concept2node() {
       const c2n = new Map();
-      (this.tm.topics || []).forEach(t => {
-        let nid = this.clean(t.identifier);
-        let cid = this.clean(t.concept);
-        if (cid !== '' && !c2n.has(cid)) c2n.set(cid, nid);
-      });
-      return c2n;
-    }
+      (this.tm.topics || []).forEach((t) => {
+        const nid = this.clean(t.identifier)
+        const cid = this.clean(t.concept)
+        if (cid !== '' && !c2n.has(cid)) c2n.set(cid, nid)
+      })
+      return c2n
+    },
+  },
+  watch: {
+    topicmap() {
+      if (!this.currentNodeID || this.currentNodeID === 'all') {
+        this.resetNetwork()
+      }
+    },
+    conceptID(newValue) {
+      this.currentNodeID = this.concept2node.get(newValue)
+    },
+    currentNodeID() {
+      if (this.currentNodeID === 'all') {
+        this.resetNetwork()
+      } else {
+        this.showNeighbours()
+      }
+    },
+    filteredIds() {
+      this.resetNetwork()
+    },
+  },
+  mounted() {
+    this.cyInstance = this.$refs.cy.instance
+    const self = this
+    this.cyInstance.on('click tap', 'node', (evt) => {
+      self.currentNodeID = evt.target.id()
+    })
+    this.resetNetwork()
   },
   methods: {
     zoomIn() {
@@ -312,80 +345,92 @@ export default {
         level: this.cyInstance.zoom() * 1.25,
         position: {
           x: Math.round(
-            (this.cyInstance.extent().x1 + this.cyInstance.extent().x2) / 2
+            (this.cyInstance.extent().x1 + this.cyInstance.extent().x2) / 2,
           ),
           y: Math.round(
-            (this.cyInstance.extent().y1 + this.cyInstance.extent().y2) / 2
-          )
-        }
-      });
+            (this.cyInstance.extent().y1 + this.cyInstance.extent().y2) / 2,
+          ),
+        },
+      })
     },
     zoomOut() {
       this.cyInstance.zoom({
         level: this.cyInstance.zoom() * 0.75,
         position: {
           x: Math.round(
-            (this.cyInstance.extent().x1 + this.cyInstance.extent().x2) / 2
+            (this.cyInstance.extent().x1 + this.cyInstance.extent().x2) / 2,
           ),
           y: Math.round(
-            (this.cyInstance.extent().y1 + this.cyInstance.extent().y2) / 2
-          )
-        }
-      });
+            (this.cyInstance.extent().y1 + this.cyInstance.extent().y2) / 2,
+          ),
+        },
+      })
     },
     fitAll() {
-      this.cyInstance.fit();
+      this.cyInstance.fit()
     },
-    clean: s => (s || '').toString().trim(),
+    clean: (s) => (s || '').toString().trim(),
     addNodeToFilter() {
-      let concept = this.currentElements.nodes.filter(node => {
-        return node.data.id === this.currentNodeID;
-      });
-      this.$emit('concept-filter', concept.pop().data);
+      const concept = this.currentElements.nodes.filter((node) => {
+        return node.data.id === this.currentNodeID
+      })
+      this.$emit('concept-filter', concept.pop().data)
     },
     resetNetwork() {
       // reset cytoscape elements
-      this.cyInstance.elements().remove();
-      this.cyInstance.add(this.elements);
-      this.cyInstance.layout(this.layout).run();
-      this.currentElements = this.cyInstance.json().elements;
-      this.cyInstance.resize();
+      this.cyInstance.elements().remove()
+      this.cyInstance.add(this.elements)
+      this.cyInstance.layout(this.layout).run()
+      const vm = this
+      if (vm.filteredIds && vm.filteredIds.length > 0) {
+        this.cyInstance.filter((ele, i, eles) => {
+          return vm.filteredIds.indexOf(ele.data('id')) === -1
+        }).map((node, index) => {
+          node.addClass('not-matched')
+          return node
+        })
+      }
+      this.currentElements = this.cyInstance.json().elements
+      this.cyInstance.resize()
+      if (this.currentNodeID && this.currentNodeID !== 'all') {
+        this.showNeighbours()
+      }
     },
 
     onNodeSelected(nodeID) {
-      if (nodeID == null) this.currentNodeID = 'all';
-      else if (this.currentNodeID !== nodeID) this.currentNodeID = nodeID;
+      if (nodeID == null) this.currentNodeID = 'all'
+      else if (this.currentNodeID !== nodeID) this.currentNodeID = nodeID
     },
 
     preConfig(cytoscape) {
-      cytoscape.use(cola);
+      cytoscape.use(cola)
     },
 
-    showNeighbours: function() {
+    showNeighbours() {
       // reset cytoscape elements
-      this.cyInstance.elements().remove();
-      this.cyInstance.add(this.elements);
+      this.cyInstance.elements().remove()
+      this.cyInstance.add(this.elements)
 
       // get expansion for current concept
-      let node = this.cyInstance.$id(this.currentNodeID); // root node
-      let eles1 = node.neighborhood(); // 1 step away
-      let eles2 = eles1.neighborhood(); // 2 steps away
+      const node = this.cyInstance.$id(this.currentNodeID) // root node
+      const eles1 = node.neighborhood() // 1 step away
+      const eles2 = eles1.neighborhood() // 2 steps away
 
       // add classes for level styling
-      node.addClass('matched');
-      eles1.map(e => e.addClass('related'));
-      eles2.map(e => e.addClass('contextual'));
+      node.addClass('matched')
+      eles1.map((e) => e.addClass('related'))
+      eles2.map((e) => e.addClass('contextual'))
 
       // display the expanded elements
-      this.cyInstance.elements().remove();
-      this.cyInstance.add(node);
-      this.cyInstance.add(eles1);
-      this.cyInstance.add(eles2);
-      this.cyInstance.layout(this.layout).run();
-      this.currentElements = this.cyInstance.json().elements;
-    }
-  }
-};
+      this.cyInstance.elements().remove()
+      this.cyInstance.add(node)
+      this.cyInstance.add(eles1)
+      this.cyInstance.add(eles2)
+      this.cyInstance.layout(this.layout).run()
+      this.currentElements = this.cyInstance.json().elements
+    },
+  },
+}
 </script>
 
 <style>

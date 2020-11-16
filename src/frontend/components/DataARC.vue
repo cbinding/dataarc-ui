@@ -35,6 +35,8 @@
     />
     <concept-section
       id="concept-section"
+      :filters="compiledFilters"
+      :filter-count="filterCount"
       @filtered="processFilter"
     />
     <keyword-section
