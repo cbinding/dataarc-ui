@@ -7,6 +7,7 @@
     header-text-variant="light"
     :hide-footer="true"
     size="xl"
+    @hidden="currentPage = 1; loading = true"
   >
     <template class="modal-title" #modal-title>
       {{ `${resultType} Results: ${source.result.category}` }}
@@ -287,7 +288,7 @@ export default {
       this.rows = val
     },
     loadingState(length) {
-      if (length === 0) {
+      if (length === 0 && this.rows === 0) {
         return false
       }
       return ((this.currentPage * 10) - 9) > length
