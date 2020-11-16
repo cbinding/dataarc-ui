@@ -227,7 +227,7 @@ export default {
         period = 'decades'
       }
       this.$emit('input', {
-        start: rangeData.startDate,
+        begin: rangeData.startDate,
         end: rangeData.startDate + this.ranges[period] * multiplier
       })
     },
