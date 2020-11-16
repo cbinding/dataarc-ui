@@ -73,7 +73,11 @@ export default {
     filters: {
       handler(newVal, oldVal) {
         if (newVal) {
-          axios.post(`${this.$apiUrl}/query/results`, this.filters, this.resultType).then((data) => {
+          let postObject = {
+            type: this.resultType
+          }
+          postObject = Object.assign(postObject, this.filters)
+          axios.post(`${this.$apiUrl}/query/results`, postObject).then((data) => {
             this.results = data.data
             this.resultsCount = 0
             this.results.forEach((result) => {
