@@ -54,6 +54,12 @@
 
 <script>
 export default {
+  props: {
+    preLoaded: {
+      type: [Array, Boolean],
+      default: false,
+    },
+  },
   data() {
     return {
       newTag: '',
@@ -71,6 +77,11 @@ export default {
     value() {
       this.$emit('input', this.value)
     },
+    preLoaded(newValue, oldValue) {
+      if (newValue && newValue.length) {
+        this.value = [...newValue]
+      }
+    }
   },
   methods: {
     resetInputValue() {

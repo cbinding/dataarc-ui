@@ -37,6 +37,7 @@
     />
     <keyword-section
       id="keyword-section"
+      ref="keyword"
       v-model="keywordFilters"
     />
     <filter-section
@@ -137,7 +138,7 @@ export default {
 
       keys.forEach((key, index) => {
         if (key === 'keyword') {
-          this.keywordFilters = newFilters[key]
+          this.$refs.keyword.loadFilters(newFilters[key])
         } else if (key === 'temporal') {
           this.temporalFilters = newFilters[key]
         } else {
