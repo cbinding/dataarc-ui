@@ -25,6 +25,8 @@
     <timeline-section
       id="temporal-section"
       v-model="temporalFilters"
+      :filters="compiledFilters"
+      :triggers="filterCount"
     />
     <map-section
       id="spatial-section"
