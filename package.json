@@ -1,18 +1,15 @@
 {
-  "name": "dataarc-admin",
-  "version": "2.0.0",
-  "author": "Dushara",
-  "contributors": [
-    "tlsexto"
-  ],
+  "name": "dataarc-ui",
+  "version": "3.0.0",
+  "author": "CAST",
   "main": "server.js",
-  "description": "The administration interface for the DataARC project.",
+  "description": "The user interface for the DataARC project.",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "watch": "vue-cli-service build --watch",
-    "stage": "vue-cli-service build --mode staging",
+    "stage": "vue-cli-service build --mode stage",
     "test:unit": "vue-cli-service test:unit",
     "lint": "stylelint '**/*.vue' '**/*.scss' --fix scss"
   },
