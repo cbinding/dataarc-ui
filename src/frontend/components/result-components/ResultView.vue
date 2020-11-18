@@ -216,9 +216,6 @@ export default {
       ],
     }
   },
-  updated() {
-    console.log('updated');
-  },
   computed: {
     getStart() {
       return this.firstPage ? 1 : ((this.currentPage - 1) * 10) + 1
