@@ -80,9 +80,11 @@ export default {
           axios.post(`${this.$apiUrl}/query/results`, postObject).then((data) => {
             this.results = data.data
             this.resultsCount = 0
-            this.results.forEach((result) => {
-              this.resultsCount += result.total
-            })
+            if (this.resultType === 'matched') {
+              this.results.forEach((result) => {
+                this.resultsCount += result.total
+              })
+            }
           })
         }
       },
