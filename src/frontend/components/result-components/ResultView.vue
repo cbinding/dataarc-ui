@@ -7,7 +7,7 @@
     header-text-variant="light"
     :hide-footer="true"
     size="xl"
-    @hidden="currentPage = 1; loading = true"
+    @hide="resetModal"
   >
     <template class="modal-title" #modal-title>
       {{ `${resultType} Results: ${source.result.category}` }}
@@ -216,6 +216,9 @@ export default {
       ],
     }
   },
+  updated() {
+    console.log('updated');
+  },
   computed: {
     getStart() {
       return this.firstPage ? 1 : ((this.currentPage - 1) * 10) + 1
@@ -292,6 +295,12 @@ export default {
         return false
       }
       return ((this.currentPage * 10) - 9) > length
+    },
+    resetModal(event) {
+      event.preventDefault()
+      this.currentPage = 1
+      this.loading = true
+      this.$emit('modal-closed')
     },
   },
 }

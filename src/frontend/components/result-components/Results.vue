@@ -26,6 +26,7 @@
             :source="selectedResult"
             :filters="filters"
             :resultType="resultType"
+            @modal-closed="clear"
           />
         </b-col>
       </b-row>
@@ -119,6 +120,9 @@ export default {
     setResultView(source, result) {
       this.selectedResult = source
       this.selectedResult.result = result
+    },
+    clear() {
+      this.selectedResult = false
     },
   },
 }
