@@ -45,6 +45,7 @@
               title="Add Selected Range To Filter"
               variant="success"
               v-show="currentSelectedRange"
+              :disabled="checkDuplicateRange()"
               @click.prevent="setSelectedRange"
             >
               <b-icon-plus aria-hidden="true" /> Add Selected Range To Filter
@@ -92,7 +93,7 @@
                 type="text"
                 class="form-control"
                 placeholder="begin"
-                v-model="selectedFilter.start"
+                v-model="selectedFilter.begin"
               >
             </div>
             <div class="col mb-3">
@@ -122,6 +123,7 @@
         <button
           type="button"
           class="btn btn-success"
+          :disabled="checkDuplicateTemporal()"
           @click="applyFilter"
         >
           Apply Filter
@@ -153,7 +155,7 @@ export default {
       timelineFilter: [],
       selectedFilterIndex: null,
       selectedFilter: {
-        start: null,
+        begin: null,
         end: null
       },
       timelineWidth: 1160,
@@ -167,9 +169,39 @@ export default {
     this.getTemporalCoverages()
   },
   methods: {
+    checkDuplicateTemporal() {
+      let exists = []
+      if (!this.selectedFilter || !this.selectedFilter.end || !this.selectedFilter.begin) {
+        return true
+      }
+      if (this.filters && this.filters.temporal) {
+        exists = this.filters.temporal.filter((filter) => {
+          return (filter.end === this.selectedFilter.end) && (filter.begin === this.selectedFilter.begin)
+        })
+      }
+      if (exists.length === 0) {
+        return false
+      }
+      return true
+    },
+    checkDuplicateRange() {
+      let exists = []
+      if (!this.currentSelectedRange || this.currentSelectedRange.end === null || this.currentSelectedRange.begin === null) {
+        return true
+      }
+      if (this.filters && this.filters.temporal) {
+        exists = this.filters.temporal.filter((filter) => {
+          return (filter.end === this.currentSelectedRange.end) && (filter.begin === this.currentSelectedRange.begin)
+        })
+      }
+      if (exists.length === 0) {
+        return false
+      }
+      return true
+    },
     setTimelineFilterPeriod() {
       const time = this.temporalCoverages[this.selectedFilterIndex]
-      this.selectedFilter.start = time.begin
+      this.selectedFilter.begin = time.begin
       this.selectedFilter.end = time.end
     },
     applyFilter(evt) {
