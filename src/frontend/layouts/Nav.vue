@@ -92,6 +92,12 @@ export default {
     ForgotPassword,
     Notice
   },
+  props: {
+    triggerLogin: {
+      type: Boolean,
+      required: true
+    },
+  },
   computed: {
     ...mapState('account', ['user', 'role', 'status']),
   },
@@ -99,6 +105,14 @@ export default {
     return {
       submitted: false,
       action: '',
+    }
+  },
+  watch: {
+    triggerLogin(val) {
+      if (val) {
+        this.action = 'Sign In'
+        this.$bvModal.show('handleUserActions')
+      }
     }
   },
   methods: {

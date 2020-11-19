@@ -1,6 +1,6 @@
 <template>
   <div>
-    <dataarc-nav />
+    <dataarc-nav :triggerLogin="triggerLogin"/>
     <header class="masthead home-shore">
       <div class="header-content">
         <div class="header-content-inner">
@@ -93,7 +93,13 @@ export default {
   components: {
     DataarcNav
     // CallToAction,
-  }
+  },
+  props: {
+    triggerLogin: {
+      type: Boolean,
+      required: true
+    },
+  },
 };
 </script>
 
