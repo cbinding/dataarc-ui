@@ -158,7 +158,7 @@
               style="display:none"
             ></a>
             <b-button
-              title="Download Filters"
+              title="Save Search"
               variant="success"
               @click="saveSearchFilters"
             >
