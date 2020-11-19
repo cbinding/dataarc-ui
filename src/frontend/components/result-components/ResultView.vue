@@ -167,6 +167,17 @@ const datasetQuery = gql`
   }
 `
 const featuresQuery = gql`
+  query features($id: ID!, $start: Int!, $limit: Int!, $ids: [ID!]) {
+    features(where: { dataset: $id, _id_in: $ids }, start: $start, limit: $limit) {
+      id
+      title
+      summary
+      details
+      properties
+    }
+  }
+`
+const featuresQueryAll = gql`
   query features($id: ID!, $start: Int!, $limit: Int!) {
     features(where: { dataset: $id }, start: $start, limit: $limit) {
       id
@@ -175,6 +186,11 @@ const featuresQuery = gql`
       details
       properties
     }
+  }
+`
+const featuresCountQuery = gql`
+  query countFeatures($dataset: ID!) {
+    countFeatures(where: { dataset: $dataset })
   }
 `
 export default {
@@ -203,7 +219,10 @@ export default {
       filter: '',
       feature: {},
       features: [],
+      featuresCount: 0,
+      ids: [],
       currentDataset: {},
+      skip: false,
       currentDatasetId: '',
       currentPage: 1,
       start: 0,
@@ -232,16 +251,19 @@ export default {
   },
   watch: {
     source(newVal) {
-      this.currentDatasetId = this.source.dataset_id
-      this.rows = this.source.total
+      this.currentDatasetId = newVal.dataset_id
+      this.rows = newVal.total
       this.$bvModal.show(`results-details-${this.resultType}`)
       this.features = []
+      this.featuresCount = 0
+      this.ids = []
+      this.skip = false
       this.feature = {}
     },
     currentDatasetId(val) {
       this.start = 0
       this.getDataset()
-      this.getFeatures()
+      this.getFeaturesArray()
     },
     features(val) {
       this.loading = this.loadingState(val.length)
@@ -251,6 +273,16 @@ export default {
     this.$bvModal.show(`results-details-${this.resultType}`)
     this.currentDatasetId = this.source.dataset_id
     this.rows = this.source.total
+    this.$apollo
+    .query({
+      query: featuresCountQuery,
+      variables: {
+        dataset: this.currentDatasetId,
+      },
+    })
+    .then(({ data }) => {
+      this.featuresCount = data.countFeatures
+    })
   },
   methods: {
     getDataset() {
@@ -264,21 +296,60 @@ export default {
         [this.currentDataset] = data.datasets
       })
     },
-    getFeatures() {
-      this.$apollo.query({
-        query: featuresQuery,
-        variables: {
-          id: this.currentDatasetId,
-          start: this.start,
-          limit: this.limit,
-        },
-      }).then(({ data }) => {
-        this.features = [...this.features, ...data.features]
-        if (this.features.length < this.rows) {
-          this.start += 100
+    getFeaturesArray() {
+      this.ids = []
+      window.axios.post(
+        `${this.$apiUrl}/query/features`,
+        this.filters,
+      ).then(({ data }) => {
+        this.ids = data.sort((a, b) => {
+          if (a < b) return -1
+          if (a > b) return 1
+          return 0
+        })
+        if (this.ids) {
           this.getFeatures()
         }
       })
+    },
+    getFeatures() {
+      if (this.featuresCount !== 0 && this.featuresCount === this.rows) {
+        this.$apollo.query({
+          query: featuresQueryAll,
+          variables: {
+            id: this.currentDatasetId,
+            start: this.start,
+            limit: this.limit,
+          },
+        }).then(({ data }) => {
+          this.features = [...this.features, ...data.features]
+          if (this.features.length < this.rows && this.start < this.featuresCount) {
+            this.start += 100
+            if (!this.skip) {
+              this.getFeatures()
+            }
+          }
+        })
+      }
+      else {
+        this.$apollo.query({
+          query: featuresQuery,
+          variables: {
+            id: this.currentDatasetId,
+            start: this.start,
+            limit: this.limit,
+            ids: this.ids,
+          },
+        }).then(({ data }) => {
+          this.features = [...this.features, ...data.features]
+          if (this.features.length < this.rows && this.start < this.featuresCount) {
+            this.start += 100
+            if (!this.skip) {
+              this.getFeatures()
+            }
+          }
+        })
+      }
     },
     updatePage(val) {
       this.currentPage = val
@@ -295,6 +366,7 @@ export default {
     },
     resetModal(event) {
       event.preventDefault()
+      this.skip = true
       this.currentPage = 1
       this.loading = true
       this.$emit('modal-closed')
