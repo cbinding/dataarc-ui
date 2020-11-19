@@ -99,18 +99,19 @@
                 </b-row>
               </b-col>
               <b-col sm="12" v-if="feature.title">
-                <h3>{{feature.title}}</h3>
+                <div class="text-center">
+                  <h3>{{feature.title}}</h3>
+                </div>
                 <br>
-                <b-row>
-                  <b-col sm="6">
+                <b-row class="justify-content-center">
+                  <b-col sm="8">
                     <div class="text-center">
                       <h4>Details</h4>
-                      <br>
                     </div>
                     <b-jumbotron
                       border-variant="secondary"
                       bg-variant="light"
-                      style="height:400px;overflow-y:auto;overflow-x:auto"
+                      style="height:350px;overflow-y:auto;overflow-x:auto"
                     >
                       <div
                         v-html="
@@ -120,15 +121,16 @@
                       />
                     </b-jumbotron>
                   </b-col>
-                  <b-col sm="6">
+                </b-row>
+                <b-row class="justify-content-center">
+                  <b-col sm="8">
                     <div class="text-center">
                       <h4>Summary</h4>
                     </div>
-                    <br>
                     <b-jumbotron
                       border-variant="secondary"
                       bg-variant="light"
-                      style="height:400px;overflow-y:auto;overflow-x:auto"
+                      style="height:200px;overflow-y:auto;overflow-x:auto"
                     >
                       <div
                         v-html="
