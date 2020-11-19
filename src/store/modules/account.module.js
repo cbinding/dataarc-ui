@@ -21,7 +21,6 @@ const actions = {
     .then(
       (response) => {
         commit('loginSuccess', response)
-        router.push('/')
       },
       (error) => {
         commit('loginFailure', error)
@@ -40,7 +39,6 @@ const actions = {
     .then(
       (user) => {
         commit('registerSuccess', user)
-        router.push('/auth/notice')
         setTimeout(() => {
           // display success message after route change completes
           dispatch('alert/success', 'Registration successful', { root: true })
@@ -52,25 +50,6 @@ const actions = {
       },
     )
   },
-  addNewUser({ dispatch, commit }, user) {
-    commit('addNewUserRequest', user)
-
-    userService.register(user)
-    .then(
-      (user) => {
-        commit('addNewUserSuccess', user)
-        router.push('/admin/users')
-        setTimeout(() => {
-          // display success message after route change completes
-          dispatch('alert/success', 'New User Added', { root: true })
-        })
-      },
-      (error) => {
-        commit('addNewUserFailure', error)
-        dispatch('alert/error', error)
-      },
-    )
-  },
   forgotPassword({ dispatch, commit }, email) {
     commit('forgotPasswordRequest', email)
 
@@ -78,7 +57,6 @@ const actions = {
     .then(
       (email) => {
         commit('forgotPasswordSuccess', email)
-        router.push('/auth/notice')
         setTimeout(() => {
           // display success message after route change completes
           dispatch('alert/success', 'Password reset successful', { root: true })
@@ -97,7 +75,6 @@ const actions = {
     .then(
       (email) => {
         commit('resetPasswordSuccess', email)
-        router.push('/auth/notice')
         setTimeout(() => {
           // display success message after route change completes
           dispatch('alert/success', 'Password reset successful', { root: true })
@@ -142,19 +119,10 @@ const mutations = {
     state.status = { registering: true }
   },
   registerSuccess(state, user) {
-    state.status = {}
+    state.status = { registered: true }
   },
   registerFailure(state, error) {
-    state.status = {}
-  },
-  addNewUserRequest(state, user) {
-    state.status = { registering: true }
-  },
-  addNewUserSuccess(state, user) {
-    state.status = {}
-  },
-  addNewUserFailure(state, error) {
-    state.status = {}
+    state.status = {error: error[0].messages}
   },
   forgotPasswordRequest(state, email) {
     state.email = email

@@ -1,11 +1,17 @@
 <template>
   <div>
+    <div
+      v-if="submitted && !status.loggedIn && status.error"
+      class="alert alert-danger mt-2"
+      role="alert"
+    >
+      >
+      {{ status.error.message }}
+    </div>
     <form
       class="forgotPassword"
       @submit.prevent="handleSubmit()"
     >
-      <h3>Forgot Password</h3>
-
       <div class="form-group">
         <label>Email address</label>
         <input
@@ -15,6 +21,7 @@
           class="form-control form-control-lg"
         >
       </div>
+      <br>
       <button
         type="submit"
         class="btn btn-dark btn-lg btn-block"
@@ -22,14 +29,6 @@
         Request Password Reset
       </button>
     </form>
-    <div
-      v-if="submitted && !status.loggedIn && status.error"
-      class="alert alert-danger mt-2"
-      role="alert"
-    >
-      >
-      {{ status.error.message }}
-    </div>
     <debug>
       Status: {{ status }}
     </debug>

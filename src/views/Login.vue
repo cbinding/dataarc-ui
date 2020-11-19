@@ -4,8 +4,6 @@
       class="login"
       @submit.prevent="handleSubmit()"
     >
-      <h3>Sign In</h3>
-
       <div class="form-group">
         <label>Email address</label>
         <input
@@ -25,13 +23,31 @@
           class="form-control form-control-lg"
         >
       </div>
-
-      <button
-        type="submit"
-        class="btn btn-dark btn-lg btn-block"
-      >
-        Sign In
-      </button>
+      <b-row>
+        <b-col sm="6">
+          <b-button
+            @click="$emit('link-clicked', 'Register')"
+            class="btn btn-dark btn-lg btn-block"
+          >
+            Register
+          </b-button>
+          <br>
+          <a
+            href="#"
+            @click="$emit('link-clicked', 'Forgot Password')"
+          >
+            Forgot Password?
+          </a>
+        </b-col>
+        <b-col sm="6">
+          <button
+            type="submit"
+            class="btn btn-dark btn-lg btn-block"
+          >
+            Sign In
+          </button>
+        </b-col>
+      </b-row>
     </form>
     <div
       v-if="submitted && !status.loggedIn && status.error"
@@ -41,18 +57,7 @@
       >
       {{ status.error.message }}
     </div>
-    <router-link
-      to="/auth/register"
-      class="btn btn-dark btn-lg btn-block mt-2"
-    >
-      Register
-    </router-link>
-    <router-link
-      to="/auth/forgot-password"
-      class="btn btn-dark btn-lg btn-block mt-2"
-    >
-      Forgot Password
-    </router-link>
+
     <debug>
       Status: {{ status }}
     </debug>
@@ -86,7 +91,11 @@ export default {
       const { email, password } = this
       if (email && password) {
         const identifier = email
-        this.login({ identifier, password })
+        this.login({ identifier, password }).then(() => {
+          if(this.status.loggedIn) {
+            this.$emit('close-modal')
+          }
+        })
       }
     },
   },
