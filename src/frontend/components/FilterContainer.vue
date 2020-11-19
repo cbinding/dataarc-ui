@@ -48,10 +48,11 @@
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
                   <small>Polygon {{ shorten(filters.polygon) }} ...</small>
-                  <b-icon-x-circle-fill
-                    variant="light"
-                    @click="$emit('removed', 'polygon')"
-                  />
+                  <b-button variant="dark" @click="$emit('removed', 'polygon')">
+                    <b-icon-x-circle-fill
+                      variant="light"
+                    />
+                  </b-button>
                 </b-list-group-item>
               </b-list-group>
             </b-card>
@@ -72,10 +73,11 @@
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
                   Range: {{ filter.begin }} - {{ filter.end }}
-                  <b-icon-x-circle-fill
-                    variant="light"
-                    @click="$emit('removed', 'temporal', index)"
-                  />
+                  <b-button variant="dark" @click="$emit('removed', 'temporal', index)">
+                    <b-icon-x-circle-fill
+                      variant="light"
+                    />
+                  </b-button>
                 </b-list-group-item>
               </b-list-group>
             </b-card>
@@ -96,10 +98,11 @@
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
                   {{ filter.label }}
-                  <b-icon-x-circle-fill
-                    variant="light"
-                    @click="$emit('removed', 'concept', index)"
-                  />
+                  <b-button variant="dark" @click="$emit('removed', 'concept', index)">
+                    <b-icon-x-circle-fill
+                      variant="light"
+                    />
+                  </b-button>
                 </b-list-group-item>
               </b-list-group>
             </b-card>
@@ -120,10 +123,11 @@
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
                   {{ filter }}
-                  <b-icon-x-circle-fill
-                    variant="light"
-                    @click="$emit('removed', 'keyword', index)"
-                  />
+                  <b-button variant="dark" @click="$emit('removed', 'keyword', index)">
+                    <b-icon-x-circle-fill
+                      variant="light"
+                    />
+                  </b-button>
                 </b-list-group-item>
               </b-list-group>
             </b-card>
