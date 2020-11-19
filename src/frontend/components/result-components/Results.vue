@@ -11,7 +11,7 @@
       </b-row>
       <b-row>
         <b-col class="mt-3 mb-3">
-          <b-card-group deck>
+          <b-card-group v-if="results.length > 0" deck>
             <result-column
               v-for="result in sortedResults"
               :class="'bg-'+resultType"
@@ -20,6 +20,9 @@
               @result-data-view="setResultView"
             />
           </b-card-group>
+          <div v-else>
+            No Results
+          </div>
           <result-view
             v-if="selectedResult"
             :key="resultType"
