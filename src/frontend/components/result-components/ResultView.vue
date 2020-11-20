@@ -265,10 +265,23 @@ export default {
     currentDatasetId(val) {
       this.start = 0
       this.getDataset()
-      this.getFeaturesArray()
+      this.getFeatureIds()
+    },
+    currentPage(val) {
+      if (val > 1 && this.features.length < this.rows) {
+        this.loading = this.loadingState(this.features.length)
+      }
+      else {
+        this.loading = false
+      }
     },
     features(val) {
-      this.loading = this.loadingState(val.length)
+      if (val.length > 10 && this.currentPage === 1) {
+        this.loading = false
+      }
+      if (this.loading) {
+        this.loading = this.loadingState(val.length)
+      }
     }
   },
   mounted() {
@@ -298,11 +311,15 @@ export default {
         [this.currentDataset] = data.datasets
       })
     },
-    getFeaturesArray() {
+    getFeatureIds() {
       this.ids = []
+      let postObject = {
+        type: this.resultType
+      }
+      postObject = Object.assign(postObject, this.filters)
       window.axios.post(
         `${this.$apiUrl}/query/features`,
-        this.filters,
+        postObject,
       ).then(({ data }) => {
         this.ids = data.sort((a, b) => {
           if (a < b) return -1
@@ -310,48 +327,51 @@ export default {
           return 0
         })
         if (this.ids) {
-          this.getFeatures()
+          if (this.featuresCount !== 0 && this.featuresCount === this.rows) {
+            this.getAllFeatures()
+          }
+          else {
+            this.getFilteredFeatures()
+          }
         }
       })
     },
-    getFeatures() {
-      if (this.featuresCount !== 0 && this.featuresCount === this.rows) {
-        this.$apollo.query({
-          query: featuresQueryAll,
-          variables: {
-            id: this.currentDatasetId,
-            start: this.start,
-            limit: this.limit,
-          },
-        }).then(({ data }) => {
-          this.features = [...this.features, ...data.features]
-          if (this.features.length < this.rows && this.start < this.featuresCount) {
-            this.start += 100
-            if (!this.skip) {
-              this.getFeatures()
-            }
+    getAllFeatures() {
+      this.$apollo.query({
+        query: featuresQueryAll,
+        variables: {
+          id: this.currentDatasetId,
+          start: this.start,
+          limit: this.limit,
+        },
+      }).then(({ data }) => {
+        this.features = [...this.features, ...data.features]
+        if (this.features.length < this.rows && this.start < this.featuresCount) {
+          this.start += 100
+          if (!this.skip) {
+            this.getAllFeatures()
           }
-        })
-      }
-      else {
-        this.$apollo.query({
-          query: featuresQuery,
-          variables: {
-            id: this.currentDatasetId,
-            start: this.start,
-            limit: this.limit,
-            ids: this.ids,
-          },
-        }).then(({ data }) => {
-          this.features = [...this.features, ...data.features]
-          if (this.features.length < this.rows && this.start < this.featuresCount) {
-            this.start += 100
-            if (!this.skip) {
-              this.getFeatures()
-            }
+        }
+      })
+    },
+    getFilteredFeatures() {
+      this.$apollo.query({
+        query: featuresQuery,
+        variables: {
+          id: this.currentDatasetId,
+          start: this.start,
+          limit: this.limit,
+          ids: this.ids,
+        },
+      }).then(({ data }) => {
+        this.features = [...this.features, ...data.features]
+        if (this.features.length < this.rows && this.start < this.featuresCount) {
+          this.start += 100
+          if (!this.skip) {
+            this.getFilteredFeatures()
           }
-        })
-      }
+        }
+      })
     },
     updatePage(val) {
       this.currentPage = val

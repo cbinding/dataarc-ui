@@ -115,9 +115,13 @@ export default {
         this.features = false
         return
       }
+      let postObject = {
+        type: 'matched'
+      }
+      postObject = Object.assign(postObject, this.filters)
       window.axios.post(
         `${this.$apiUrl}/query/features`,
-        this.filters,
+        postObject,
       ).then(({ data }) => {
         this.features = data.sort((a, b) => {
           if (a < b) return -1
