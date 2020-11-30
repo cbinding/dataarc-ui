@@ -7,7 +7,7 @@
     header-text-variant="light"
     :hide-footer="true"
     size="xl"
-    @hidden="currentPage = 1; loading = true"
+    @hide="resetModal"
   >
     <template class="modal-title" #modal-title>
       {{ `${resultType} Results: ${source.result.category}` }}
@@ -99,18 +99,19 @@
                 </b-row>
               </b-col>
               <b-col sm="12" v-if="feature.title">
-                <h3>{{feature.title}}</h3>
+                <div class="text-center">
+                  <h3>{{feature.title}}</h3>
+                </div>
                 <br>
-                <b-row>
-                  <b-col sm="6">
+                <b-row class="justify-content-center">
+                  <b-col sm="8">
                     <div class="text-center">
                       <h4>Details</h4>
-                      <br>
                     </div>
                     <b-jumbotron
                       border-variant="secondary"
                       bg-variant="light"
-                      style="height:400px;overflow-y:auto;overflow-x:auto"
+                      style="height:350px;overflow-y:auto;overflow-x:auto"
                     >
                       <div
                         v-html="
@@ -120,15 +121,16 @@
                       />
                     </b-jumbotron>
                   </b-col>
-                  <b-col sm="6">
+                </b-row>
+                <b-row class="justify-content-center">
+                  <b-col sm="8">
                     <div class="text-center">
                       <h4>Summary</h4>
                     </div>
-                    <br>
                     <b-jumbotron
                       border-variant="secondary"
                       bg-variant="light"
-                      style="height:400px;overflow-y:auto;overflow-x:auto"
+                      style="height:200px;overflow-y:auto;overflow-x:auto"
                     >
                       <div
                         v-html="
@@ -167,6 +169,17 @@ const datasetQuery = gql`
   }
 `
 const featuresQuery = gql`
+  query features($id: ID!, $start: Int!, $limit: Int!, $ids: [ID!]) {
+    features(where: { dataset: $id, _id_in: $ids }, start: $start, limit: $limit) {
+      id
+      title
+      summary
+      details
+      properties
+    }
+  }
+`
+const featuresQueryAll = gql`
   query features($id: ID!, $start: Int!, $limit: Int!) {
     features(where: { dataset: $id }, start: $start, limit: $limit) {
       id
@@ -175,6 +188,11 @@ const featuresQuery = gql`
       details
       properties
     }
+  }
+`
+const featuresCountQuery = gql`
+  query countFeatures($dataset: ID!) {
+    countFeatures(where: { dataset: $dataset })
   }
 `
 export default {
@@ -203,7 +221,10 @@ export default {
       filter: '',
       feature: {},
       features: [],
+      featuresCount: 0,
+      ids: [],
       currentDataset: {},
+      skip: false,
       currentDatasetId: '',
       currentPage: 1,
       start: 0,
@@ -232,25 +253,51 @@ export default {
   },
   watch: {
     source(newVal) {
-      this.currentDatasetId = this.source.dataset_id
-      this.rows = this.source.total
+      this.currentDatasetId = newVal.dataset_id
+      this.rows = newVal.total
       this.$bvModal.show(`results-details-${this.resultType}`)
       this.features = []
+      this.featuresCount = 0
+      this.ids = []
+      this.skip = false
       this.feature = {}
     },
     currentDatasetId(val) {
       this.start = 0
       this.getDataset()
-      this.getFeatures()
+      this.getFeatureIds()
+    },
+    currentPage(val) {
+      if (val > 1 && this.features.length < this.rows) {
+        this.loading = this.loadingState(this.features.length)
+      }
+      else {
+        this.loading = false
+      }
     },
     features(val) {
-      this.loading = this.loadingState(val.length)
+      if (val.length > 10 && this.currentPage === 1) {
+        this.loading = false
+      }
+      if (this.loading) {
+        this.loading = this.loadingState(val.length)
+      }
     }
   },
   mounted() {
     this.$bvModal.show(`results-details-${this.resultType}`)
     this.currentDatasetId = this.source.dataset_id
     this.rows = this.source.total
+    this.$apollo
+    .query({
+      query: featuresCountQuery,
+      variables: {
+        dataset: this.currentDatasetId,
+      },
+    })
+    .then(({ data }) => {
+      this.featuresCount = data.countFeatures
+    })
   },
   methods: {
     getDataset() {
@@ -264,9 +311,34 @@ export default {
         [this.currentDataset] = data.datasets
       })
     },
-    getFeatures() {
+    getFeatureIds() {
+      this.ids = []
+      let postObject = {
+        type: this.resultType
+      }
+      postObject = Object.assign(postObject, this.filters)
+      window.axios.post(
+        `${this.$apiUrl}/query/features`,
+        postObject,
+      ).then(({ data }) => {
+        this.ids = data.sort((a, b) => {
+          if (a < b) return -1
+          if (a > b) return 1
+          return 0
+        })
+        if (this.ids) {
+          if (this.featuresCount !== 0 && this.featuresCount === this.rows) {
+            this.getAllFeatures()
+          }
+          else {
+            this.getFilteredFeatures()
+          }
+        }
+      })
+    },
+    getAllFeatures() {
       this.$apollo.query({
-        query: featuresQuery,
+        query: featuresQueryAll,
         variables: {
           id: this.currentDatasetId,
           start: this.start,
@@ -274,9 +346,30 @@ export default {
         },
       }).then(({ data }) => {
         this.features = [...this.features, ...data.features]
-        if (this.features.length < this.rows) {
+        if (this.features.length < this.rows && this.start < this.featuresCount) {
           this.start += 100
-          this.getFeatures()
+          if (!this.skip) {
+            this.getAllFeatures()
+          }
+        }
+      })
+    },
+    getFilteredFeatures() {
+      this.$apollo.query({
+        query: featuresQuery,
+        variables: {
+          id: this.currentDatasetId,
+          start: this.start,
+          limit: this.limit,
+          ids: this.ids,
+        },
+      }).then(({ data }) => {
+        this.features = [...this.features, ...data.features]
+        if (this.features.length < this.rows && this.start < this.featuresCount) {
+          this.start += 100
+          if (!this.skip) {
+            this.getFilteredFeatures()
+          }
         }
       })
     },
@@ -292,6 +385,13 @@ export default {
         return false
       }
       return ((this.currentPage * 10) - 9) > length
+    },
+    resetModal(event) {
+      event.preventDefault()
+      this.skip = true
+      this.currentPage = 1
+      this.loading = true
+      this.$emit('modal-closed')
     },
   },
 }

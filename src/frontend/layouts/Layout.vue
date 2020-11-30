@@ -1,7 +1,7 @@
 <template>
   <div id="page-top">
-    <layout-header />
-    <router-view />
+    <layout-header :triggerLogin="triggerLogin"/>
+    <router-view @sign-in="triggerLogin = true"/>
     <layout-footer />
   </div>
 </template>
@@ -17,6 +17,18 @@ export default {
     LayoutHeader,
     LayoutFooter,
   },
+  data() {
+    return {
+      triggerLogin: false
+    }
+  },
+  watch: {
+    triggerLogin(val) {
+      if (val) {
+        setTimeout(() => this.triggerLogin = false, 1000);
+      }
+    }
+  }
 }
 </script>
 

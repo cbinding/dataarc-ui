@@ -50,10 +50,10 @@
             <a class="nav-link js-scroll-trigger" href="#why-section">Why</a>
           </li>
           <li v-if="!status.loggedIn" class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="/auth/login">Login</a>
+            <a class="nav-link js-scroll-trigger" href="#" @click="action = 'Sign In'" v-b-modal.handleUserActions>Login</a>
           </li>
           <li v-if="!status.loggedIn" class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="/auth/register">Signup</a>
+            <a class="nav-link js-scroll-trigger" href="#" @click="action = 'Register'" v-b-modal.handleUserActions>Signup</a>
           </li>
           <b-nav-item-dropdown v-if="status.loggedIn" text="Manage" right>
             <b-dropdown-item :to="{ name: 'Profile' }">Profile</b-dropdown-item>
@@ -65,20 +65,72 @@
         </b-navbar-nav>
       </b-collapse>
     </div>
+    <b-modal content-class="shadow" hide-footer centered id="handleUserActions">
+      <template v-slot:modal-title>
+        <h3>{{action}}</h3>
+      </template>
+      <p class="my-2">
+        <login @link-clicked="setAction" @close-modal="action = ''; $bvModal.hide('handleUserActions')" v-if="action === 'Sign In'" />
+        <register @link-clicked="setAction" @close-modal="action = ''; $bvModal.hide('handleUserActions')" v-if="action === 'Register'" />
+        <forgot-password v-if="action === 'Forgot Password'" />
+        <notice @link-clicked="setAction" v-if="action === 'Notice'" />
+      </p>
+    </b-modal>
   </b-navbar>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import Login from '../../views/Login.vue'
+import Register from '../../views/Pages/Register.vue'
+import ForgotPassword from '../../views/Pages/ForgotPassword.vue'
+import Notice from '../../views/Pages/Notice.vue'
 export default {
+  components: {
+    Login,
+    Register,
+    ForgotPassword,
+    Notice
+  },
+  props: {
+    triggerLogin: {
+      type: Boolean,
+      required: true
+    },
+  },
   computed: {
-    ...mapState('account', ['user', 'role', 'status'])
+    ...mapState('account', ['user', 'role', 'status']),
+  },
+  data() {
+    return {
+      submitted: false,
+      action: '',
+    }
+  },
+  watch: {
+    triggerLogin(val) {
+      if (val) {
+        this.action = 'Sign In'
+        this.$bvModal.show('handleUserActions')
+      }
+    }
   },
   methods: {
-    ...mapActions('account', ['logout']),
+    ...mapActions('account', ['login','logout']),
     handleLogout() {
       this.logout();
-    }
+    },
+    handleSubmit() {
+      this.submitted = true
+      const { email, password } = this
+      if (email && password) {
+        const identifier = email
+        this.login({ identifier, password })
+      }
+    },
+    setAction(val) {
+      this.action = val
+    },
   }
 };
 </script>

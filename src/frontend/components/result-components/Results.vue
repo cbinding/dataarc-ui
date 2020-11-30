@@ -11,7 +11,7 @@
       </b-row>
       <b-row>
         <b-col class="mt-3 mb-3">
-          <b-card-group deck>
+          <b-card-group v-if="results.length > 0" deck>
             <result-column
               v-for="result in sortedResults"
               :class="'bg-'+resultType"
@@ -20,12 +20,16 @@
               @result-data-view="setResultView"
             />
           </b-card-group>
+          <div v-else>
+            No Results
+          </div>
           <result-view
             v-if="selectedResult"
             :key="resultType"
             :source="selectedResult"
             :filters="filters"
             :resultType="resultType"
+            @modal-closed="clear"
           />
         </b-col>
       </b-row>
@@ -80,9 +84,11 @@ export default {
           axios.post(`${this.$apiUrl}/query/results`, postObject).then((data) => {
             this.results = data.data
             this.resultsCount = 0
-            this.results.forEach((result) => {
-              this.resultsCount += result.total
-            })
+            if (this.resultType === 'matched') {
+              this.results.forEach((result) => {
+                this.resultsCount += result.total
+              })
+            }
           })
         }
       },
@@ -117,6 +123,9 @@ export default {
     setResultView(source, result) {
       this.selectedResult = source
       this.selectedResult.result = result
+    },
+    clear() {
+      this.selectedResult = false
     },
   },
 }

@@ -185,7 +185,6 @@ export default {
     },
     triggers: {
       handler(newValue, oldValue) {
-        console.log("Changed")
         this.reloadTimelineData()
       },
       deep: true,
@@ -246,8 +245,6 @@ export default {
       if (this.filters && Object.keys(this.filters).length > 0) {
         Object.assign(postObject, this.filters)
       }
-
-      console.log(postObject)
 
       return axios
       .post(url, postObject)

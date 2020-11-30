@@ -46,11 +46,6 @@ const routes = [
     component: defaultLayout,
     children: [
       {
-        path: 'login',
-        name: 'login',
-        component: () => import('@/views/Login.vue'),
-      },
-      {
         path: 'register',
         name: 'register',
         component: () => import('@/views/Pages/Register.vue'),
@@ -301,7 +296,7 @@ router.beforeEach((to, from, next) => {
   if (authRequired && !user) {
     rawUser = Cookies.get('user')
     user = rawUser ? JSON.parse(rawUser) : null
-    if (!user) return next('/auth/login')
+    if (!user) return next('/')
   }
 
   const roleRestriction = to.matched.some((record) => {

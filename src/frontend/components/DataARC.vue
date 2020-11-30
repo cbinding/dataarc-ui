@@ -47,9 +47,11 @@
     <filter-section
       id="filter-section"
       :filters="filters"
+      :filterCount="filterCount"
       :concept-filters="conceptFilters"
       @removed="removeFilter"
       @filters-loaded="loadFilters"
+      @sign-in="$emit('sign-in')"
     />
     <result-section
       id="result-section"

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <data-arc />
+    <data-arc @sign-in="$emit('sign-in')"/>
   </div>
 </template>
 

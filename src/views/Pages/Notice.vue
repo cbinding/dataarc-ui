@@ -21,12 +21,12 @@
             <strong>Note:</strong>
           </b-col>
           <b-col sm="11">
-            You can now login, however, you will need to wait for an email confirmation <br>before gaining Contributor access.
+            You can now login, however, you will need to wait for an email confirmation before gaining Contributor access.
           </b-col>
         </b-row>
       </p>
       <div class="text-center">
-        <b-button variant="primary" to="/auth/login">Continue to Login</b-button>
+        <b-button variant="primary" @click="$emit('link-clicked', 'Sign In')">Continue to Login</b-button>
       </div>
     </b-jumbotron>
   </div>

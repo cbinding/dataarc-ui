@@ -574,7 +574,7 @@ export default {
     this.setData()
   },
   methods: {
-    ...mapActions('account', ['addNewUser'], 'users', {
+    ...mapActions('account', 'users', {
       getAllUsers: 'getAll',
       getById: 'getById',
       deleteUser: 'delete',

@@ -116,7 +116,15 @@ export default {
   },
   methods: {
     handleConceptFilter(concept) {
-      this.$emit('filtered', 'concept', concept)
+      let filter = []
+      if (this.filters.concept) {
+        filter = this.filters.concept.filter((node) => {
+          return node === concept.id
+        })
+      }
+      if (filter.length === 0) {
+        this.$emit('filtered', 'concept', concept)
+      }
     },
     getNodes() {
       this.$apollo

@@ -48,10 +48,11 @@
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
                   <small>Polygon {{ shorten(filters.polygon) }} ...</small>
-                  <b-icon-x-circle-fill
-                    variant="light"
-                    @click="$emit('removed', 'polygon')"
-                  />
+                  <b-button variant="dark" @click="$emit('removed', 'polygon')">
+                    <b-icon-x-circle-fill
+                      variant="light"
+                    />
+                  </b-button>
                 </b-list-group-item>
               </b-list-group>
             </b-card>
@@ -72,10 +73,11 @@
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
                   Range: {{ filter.begin }} - {{ filter.end }}
-                  <b-icon-x-circle-fill
-                    variant="light"
-                    @click="$emit('removed', 'temporal', index)"
-                  />
+                  <b-button variant="dark" @click="$emit('removed', 'temporal', index)">
+                    <b-icon-x-circle-fill
+                      variant="light"
+                    />
+                  </b-button>
                 </b-list-group-item>
               </b-list-group>
             </b-card>
@@ -96,10 +98,11 @@
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
                   {{ filter.label }}
-                  <b-icon-x-circle-fill
-                    variant="light"
-                    @click="$emit('removed', 'concept', index)"
-                  />
+                  <b-button variant="dark" @click="$emit('removed', 'concept', index)">
+                    <b-icon-x-circle-fill
+                      variant="light"
+                    />
+                  </b-button>
                 </b-list-group-item>
               </b-list-group>
             </b-card>
@@ -120,10 +123,11 @@
                   class="d-flex justify-content-between align-items-center text-left bg-transparent"
                 >
                   {{ filter }}
-                  <b-icon-x-circle-fill
-                    variant="light"
-                    @click="$emit('removed', 'keyword', index)"
-                  />
+                  <b-button variant="dark" @click="$emit('removed', 'keyword', index)">
+                    <b-icon-x-circle-fill
+                      variant="light"
+                    />
+                  </b-button>
                 </b-list-group-item>
               </b-list-group>
             </b-card>
@@ -154,11 +158,11 @@
               style="display:none"
             ></a>
             <b-button
-              title="Download Filters"
+              title="Save Search"
               variant="success"
               @click="saveSearchFilters"
             >
-              <b-icon-download aria-hidden="true" /> Download Filters
+              <b-icon-download aria-hidden="true" /> Save Search
             </b-button>
             <b-button title="Share Search" variant="primary">
               <b-icon-share aria-hidden="true" /> Share Search
@@ -167,10 +171,53 @@
         </b-col>
       </b-row>
     </b-container>
+    <b-modal content-class="shadow" centered id="loginNotice">
+      <template v-slot:modal-title>
+        <h3>Notice</h3>
+      </template>
+      <p class="my-2">
+        Please login to save your search.
+      </p>
+      <template v-slot:modal-footer="{ ok, cancel }">
+        <b-button size="sm" variant="dark" @click="cancel()">
+          Cancel
+        </b-button>
+        <b-button size="sm" variant="dark" @click="$emit('sign-in');close()">
+          Login
+        </b-button>
+      </template>
+    </b-modal>
+    <b-modal content-class="shadow" hide-footer centered id="saveSearch">
+      <template v-slot:modal-title>
+        <h3>Save Search</h3>
+      </template>
+      <p class="my-2">
+        <b-form @submit.prevent="sendForm">
+          <b-form-group label="Title">
+            <b-input v-model="form.title"/>
+          </b-form-group>
+          <b-form-group label="Description">
+            <b-input v-model="form.description"/>
+          </b-form-group>
+          Filters in Search: <b-badge variant="success">
+            {{ filterCount }}
+          </b-badge>
+          <br>
+          <br>
+          <b-button type="submit" size="sm" variant="dark" >
+            Save
+          </b-button>
+          <b-button size="sm" variant="dark" @click="close()">
+            Cancel
+          </b-button>
+        </b-form>
+      </p>
+    </b-modal>
   </section>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   props: {
     filters: {
@@ -180,14 +227,20 @@ export default {
     conceptFilters: {
       type: Array,
       required: true
-    }
+    },
+    filterCount: {
+      type: Number,
+      required: true
+    },
   },
   data() {
     return {
-      downloadName: 'filters.json'
+      downloadName: 'filters.json',
+      form: {}
     };
   },
   computed: {
+    ...mapState('account', ['user', 'role', 'status']),
     filterDownloadData() {
       let stringFilters = '';
       if (!this.filters || !Object.keys(this.filters).length > 0) {
@@ -226,8 +279,28 @@ export default {
       return val.slice(0, 3);
     },
     saveSearchFilters() {
-      console.log('Save search filters');
-      this.$refs.downloadAnchor.click();
+      if (!this.status.loggedIn) {
+        this.$bvModal.show('loginNotice')
+      }
+      else {
+        this.$bvModal.show('saveSearch')
+      }
+      // this.$refs.downloadAnchor.click();
+
+    },
+    sendForm() {
+      this.form.user = this.user.id
+      this.form.filters = this.filters
+      window.axios.post(
+        `${this.$apiUrl}/searches`,
+        this.form,
+      ).then(({ data }) => {
+        this.$bvModal.hide('saveSearch')
+      })
+    },
+    close() {
+      this.$bvModal.hide('loginNotice')
+      this.$bvModal.hide('saveSearch')
     }
   }
 };
