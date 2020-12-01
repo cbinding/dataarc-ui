@@ -9,6 +9,7 @@ export default {
   resetPassword,
   getAll,
   getById,
+  update,
   delete: _delete,
 };
 
@@ -53,6 +54,18 @@ function register(user) {
     requestOptions
   ).then(handleResponse);
 }
+function update(user) {
+  const requestOptions = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(user),
+  };
+
+  return fetch(
+    `${process.env.VUE_APP_API_URL}/users/me`,
+    requestOptions
+  ).then(handleResponse);
+}
 function forgotPassword(email) {
   return axios
     .post(`${process.env.VUE_APP_API_URL}/auth/forgot-password`, {
@@ -75,6 +88,7 @@ function resetPassword(code, password, passwordConfirmation) {
       // Handle success.
       console.log('Your password has been reset.');
       console.log(response);
+      return response
     });
 }
 
