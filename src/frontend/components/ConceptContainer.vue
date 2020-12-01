@@ -7,7 +7,7 @@
       <b-row>
         <b-col>
           <h2>
-            Concepts
+            Concept Filter
             <sup><a
               href="http://www.data-arc.org/conceptmapping/"
               title="How to use dataarc concepts in your search"

@@ -7,7 +7,7 @@
       <b-row>
         <b-col>
           <h2>
-            Map
+            Spatial Filter
             <sup><a
               href="http://www.data-arc.org/space/"
               title="How dataarc thinks about space and place"

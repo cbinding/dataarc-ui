@@ -4,7 +4,7 @@
       <b-row>
         <b-col>
           <h2>
-            Timeline
+            Temporal Filter
             <sup><a href="http://www.data-arc.org/time/" title="How dataarc thinks about time" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
           </h2>
           <hr class="primary">
