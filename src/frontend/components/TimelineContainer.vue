@@ -131,7 +131,12 @@ export default {
   watch: {
     currentSelectedRange(val) {
       this.selectedFilterIndex = 'Selected Range'
-      this.selectedFilter = val
+      Object.assign(this.selectedFilter, val)
+    },
+    selectedFilterIndex(val) {
+      if (val === 'Selected Range' && this.selectedFilter !== this.currentSelectedRange) {
+        Object.assign(this.selectedFilter, this.currentSelectedRange)
+      }
     }
   },
   mounted() {
@@ -155,9 +160,11 @@ export default {
       return true
     },
     setTimelineFilterPeriod() {
-      const time = this.temporalCoverages[this.selectedFilterIndex]
-      this.selectedFilter.begin = time.begin
-      this.selectedFilter.end = time.end
+      if (this.selectedFilterIndex !== 'Selected Range') {
+        const time = this.temporalCoverages[this.selectedFilterIndex]
+        this.selectedFilter.begin = time.begin
+        this.selectedFilter.end = time.end
+      }
     },
     applyFilter(evt) {
       this.timelineFilter.push({ ...this.selectedFilter })
