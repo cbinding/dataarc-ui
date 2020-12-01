@@ -1,7 +1,7 @@
 <template>
   <b-card no-body id="timeline" ref="timeline" class="mt-2 mb-5 shadow text-center bg-white timeline-container">
     <transition name="fade">
-      <b-row align-v="center">
+      <b-row>
         <b-col md="11">
           <timeline-svg
             v-if="loaded"
@@ -15,13 +15,13 @@
         </b-col>
         <b-col sm="1">
           <b-row>
-            <strong><small>-Millennium</small></strong>
+            <strong><small>Millennium</small></strong>
           </b-row>
         </b-col>
       </b-row>
     </transition>
     <transition name="fade">
-      <b-row align-v="center" v-if="activePeriod !== 'millennia' && centuries.length > 0">
+      <b-row v-if="activePeriod !== 'millennia' && centuries.length > 0">
         <b-col md="11">
           <timeline-svg
             :labels="centuries[0].periods"
@@ -34,13 +34,13 @@
         </b-col>
         <b-col sm="1">
           <b-row>
-            <strong><small>-Century</small></strong>
+            <strong><small>Century</small></strong>
           </b-row>
         </b-col>
       </b-row>
     </transition>
     <transition name="fade">
-      <b-row align-v="center" v-if="activePeriod === 'decades' && decades.length">
+      <b-row v-if="activePeriod === 'decades' && decades.length">
         <b-col md="11">
           <timeline-svg
             :labels="decades[0].periods"
@@ -52,8 +52,8 @@
           />
         </b-col>
         <b-col sm="1">
-          <b-row>
-            <strong><small>-Decade</small></strong>
+          <b-row >
+            <strong><small>Decade</small></strong>
           </b-row>
         </b-col>
       </b-row>
