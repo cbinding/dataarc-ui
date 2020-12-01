@@ -50,6 +50,24 @@ const actions = {
       },
     )
   },
+  update({ dispatch, commit }, user) {
+    commit('updateRequest', user)
+
+    userService.update(user)
+    .then(
+      (user) => {
+        commit('updateSuccess', user)
+        setTimeout(() => {
+          // display success message after route change completes
+          dispatch('alert/success', 'Update successful', { root: true })
+        })
+      },
+      (error) => {
+        commit('updateFailure', error)
+        dispatch('alert/error', error, { root: true })
+      },
+    )
+  },
   forgotPassword({ dispatch, commit }, email) {
     commit('forgotPasswordRequest', email)
 
@@ -68,13 +86,13 @@ const actions = {
       },
     )
   },
-  resetPassword({ dispatch, commit }, email) {
-    commit('resetPasswordRequest', email)
+  resetPassword({ dispatch, commit }, {code, password, passwordConfirmation}) {
+    commit('resetPasswordRequest', code, password, passwordConfirmation)
 
-    userService.resetPassword(email)
+    userService.resetPassword(code, password, passwordConfirmation)
     .then(
-      (email) => {
-        commit('resetPasswordSuccess', email)
+      (response) => {
+        commit('resetPasswordSuccess', response)
         setTimeout(() => {
           // display success message after route change completes
           dispatch('alert/success', 'Password reset successful', { root: true })
@@ -122,6 +140,15 @@ const mutations = {
     state.status = { registered: true }
   },
   registerFailure(state, error) {
+    state.status = {error: error[0].messages}
+  },
+  updateRequest(state, user) {
+    state.status = { updating: true }
+  },
+  updateSuccess(state, user) {
+    state.status = { updated: true }
+  },
+  updateFailure(state, error) {
     state.status = {error: error[0].messages}
   },
   forgotPasswordRequest(state, email) {
