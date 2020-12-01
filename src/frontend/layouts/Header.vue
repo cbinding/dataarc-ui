@@ -16,6 +16,11 @@
             You can search and filter by any combination of keyword, time, space
             and concept. Combine filters to narrow your search.
           </p>
+          <p>
+            The filters do not need to be completed in any particular order.
+            We recommend applying a filter and then revisiting the other data
+            visualization graphs to view the changes that reflect the newly selected data.
+          </p>
           <h6>
             <a href="/help" class="btn btn-sm btn-outline-light"
               >Not sure where to start?</a
