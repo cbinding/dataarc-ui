@@ -8,7 +8,10 @@
             <sup><a href="http://www.data-arc.org/keywords/" title="How dataarc thinks about keywords" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
           </h2>
           <hr class="primary">
-          <p>Use the keyword box to add keyword filters to the results.</p>
+          <p>
+            Filter by keyword. Keywords are commonly occurring words found within the database text.<br>
+            Keyword and concept filters using the same word(s) will produce different results.
+          </p>
         </b-col>
       </b-row>
       <b-row>

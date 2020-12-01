@@ -3,8 +3,11 @@
     <b-container class="text-center pt-5 pb-5">
       <b-row>
         <b-col>
-          <h2 class="text-capitalize">
+          <h2 v-if="resultType !== 'matched'" class="text-capitalize">
             {{ resultType }} Results
+          </h2>
+          <h2 v-else class="text-capitalize">
+            Results ({{ resultType }} Results)
           </h2>
           <hr class="bg-light">
         </b-col>

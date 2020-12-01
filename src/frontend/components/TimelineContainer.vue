@@ -8,7 +8,10 @@
             <sup><a href="http://www.data-arc.org/time/" title="How dataarc thinks about time" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
           </h2>
           <hr class="primary">
-          <p>Use the timeline to examine how data is distributed temporally.</p>
+          <p>
+            Use the timeline graph below to explore data richness by time period. Below the timeline,<br>
+            specify the parameters and select Add Temporal Filter button to apply filter.
+          </p>
         </b-col>
       </b-row>
       <b-row class="justify-content-md-center">
