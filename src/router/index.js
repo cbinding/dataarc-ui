@@ -34,6 +34,11 @@ const routes = [
         name: 'frontend',
         component: () => import('@/frontend/views/Home.vue'),
       },
+      {
+        path: 'manage-profile',
+        name: 'manage-profile',
+        component: () => import('@/frontend/components/ManageProfile.vue'),
+      },
     ],
     meta: {
       auth: false,
