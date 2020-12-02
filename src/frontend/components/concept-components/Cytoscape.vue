@@ -421,7 +421,6 @@ export default {
     this.cyInstance.on('click tap', 'node', (evt) => {
       self.currentNodeID = evt.target.id()
     })
-    this.resetNetwork()
   },
   methods: {
     zoomIn() {
