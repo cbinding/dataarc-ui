@@ -9,7 +9,7 @@
         {{ filteredFeatures.length }} &nbsp;
       </b-badge>
       <b-badge variant="dark" class="ml-0" style="border-radius:0px;">
-        {{ featureCount }} 
+        {{ featureCount }}
         <span v-if="filteredFeatures">
           (filtered)
         </span>
@@ -291,7 +291,6 @@ export default {
         array.push([corner1X, corner2Y])
       } else {
         eventData.lassoPoints.mapbox.forEach((point) => {
-          console.log(point)
           array.push(point)
         })
       }
