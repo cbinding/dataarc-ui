@@ -51,6 +51,7 @@
           <b-card
             no-body
             class="shadow"
+            style="min-height:600px;"
           >
             <b-aspect aspect="16:9">
               <network
