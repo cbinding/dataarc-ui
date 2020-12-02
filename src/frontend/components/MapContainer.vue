@@ -7,7 +7,7 @@
       <b-row>
         <b-col>
           <h2>
-            Map
+            Spatial Filter
             <sup><a
               href="http://www.data-arc.org/space/"
               title="How dataarc thinks about space and place"
@@ -17,7 +17,10 @@
             ><b-icon-info-circle-fill /></a></sup>
           </h2>
           <hr class="primary">
-          <p>Use the map to examine how data is distributed spatially.</p>
+          <p>
+            Explore the map to view data availability by geographic area.  Use the Box Select or Lasso Select buttons to create a spatial filter.<br>
+            The filter is applied immediately after the area is defined.
+          </p>
         </b-col>
       </b-row>
       <b-row class="justify-content-md-center">
@@ -95,7 +98,6 @@ export default {
   },
   watch: {
     filters() {
-      console.log(this.filters)
       this.loadFeatures()
     },
   },

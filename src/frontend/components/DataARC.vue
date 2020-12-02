@@ -38,6 +38,7 @@
       :filters="compiledFilters"
       :filter-count="filterCount"
       @filtered="processFilter"
+      @removed="removeFilter"
     />
     <keyword-section
       id="keyword-section"
@@ -230,7 +231,6 @@ export default {
         filters,
         'matched',
       ).then((data) => {
-        console.log(data)
       })
     },
     setCount(val) {

@@ -1,37 +1,62 @@
 <template>
   <b-card no-body id="timeline" ref="timeline" class="mt-2 mb-5 shadow text-center bg-white timeline-container">
     <transition name="fade">
-      <timeline-svg
-        v-if="loaded"
-        :labels="millennia[0].periods"
-        :data="millennia"
-        :rect-height="realRectHeight(millennia)"
-        :period-name="'centuries'"
-        :collapsed="false"
-        @range-selected="setTimeline"
-      />
+      <b-row>
+        <b-col md="11">
+          <timeline-svg
+            v-if="loaded"
+            :labels="millennia[0].periods"
+            :data="millennia"
+            :rect-height="realRectHeight(millennia)"
+            :period-name="'centuries'"
+            :collapsed="false"
+            @range-selected="setTimeline"
+          />
+        </b-col>
+        <b-col sm="1">
+          <b-row>
+            <strong><small>Millennium</small></strong>
+          </b-row>
+        </b-col>
+      </b-row>
     </transition>
     <transition name="fade">
-      <timeline-svg
-        v-if="activePeriod !== 'millennia' && centuries.length > 0"
-        :labels="centuries[0].periods"
-        :data="centuries"
-        :rect-height="realRectHeight(centuries)"
-        :period-name="'decades'"
-        :collapsed="false"
-        @range-selected="setTimeline"
-      />
+      <b-row v-if="activePeriod !== 'millennia' && centuries.length > 0">
+        <b-col md="11">
+          <timeline-svg
+            :labels="centuries[0].periods"
+            :data="centuries"
+            :rect-height="realRectHeight(centuries)"
+            :period-name="'decades'"
+            :collapsed="false"
+            @range-selected="setTimeline"
+          />
+        </b-col>
+        <b-col sm="1">
+          <b-row>
+            <strong><small>Century</small></strong>
+          </b-row>
+        </b-col>
+      </b-row>
     </transition>
     <transition name="fade">
-      <timeline-svg
-        v-if="activePeriod === 'decades' && decades.length"
-        :labels="decades[0].periods"
-        :data="decades"
-        :rect-height="realRectHeight(decades)"
-        :period-name="'none'"
-        :collapsed="false"
-        @range-selected="setTimeline"
-      />
+      <b-row v-if="activePeriod === 'decades' && decades.length">
+        <b-col md="11">
+          <timeline-svg
+            :labels="decades[0].periods"
+            :data="decades"
+            :rect-height="realRectHeight(decades)"
+            :period-name="'none'"
+            :collapsed="false"
+            @range-selected="setTimeline"
+          />
+        </b-col>
+        <b-col sm="1">
+          <b-row >
+            <strong><small>Decade</small></strong>
+          </b-row>
+        </b-col>
+      </b-row>
     </transition>
   </b-card>
 </template>

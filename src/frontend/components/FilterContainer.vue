@@ -17,7 +17,8 @@
           </h2>
           <hr class="primary" />
           <p>
-            Filters will appear here as you select them from the sections above.
+            A list of filters currently applied to the data using AND logic (all criteria are met).<br>
+            To remove a filter, click the X to the right of the filter.
           </p>
         </b-col>
       </b-row>

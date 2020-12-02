@@ -7,7 +7,7 @@
       <b-row>
         <b-col>
           <h2>
-            Concepts
+            Concept Filter
             <sup><a
               href="http://www.data-arc.org/conceptmapping/"
               title="How to use dataarc concepts in your search"
@@ -17,7 +17,10 @@
             ><b-icon-info-circle-fill /></a></sup>
           </h2>
           <hr class="primary">
-          <p>Use the graph to examine how concepts are related to each other.</p>
+          <p>
+            The concepts map is a visual representation of all dataARC concepts and their connectedness to one another.<br>
+            Select a concept from the drop down menu and use the green Add Concept to Filter button to filter. Repeat to filter by multiple concepts.
+          </p>
         </b-col>
       </b-row>
       <b-row class="justify-content-md-center">
@@ -54,6 +57,7 @@
                 :topicmap="conceptMap"
                 @concept-filter="handleConceptFilter"
                 :filteredIds="filteredIds"
+                :filters="filters"
               />
             </b-aspect>
           </b-card>
@@ -115,15 +119,21 @@ export default {
     this.getNodes()
   },
   methods: {
-    handleConceptFilter(concept) {
-      let filter = []
-      if (this.filters.concept) {
-        filter = this.filters.concept.filter((node) => {
-          return node === concept.id
-        })
+    handleConceptFilter(concept, action) {
+      if (action === 'remove') {
+        let index = _.indexOf(this.filters.concept, concept)
+        this.$emit('removed', 'concept', index)
       }
-      if (filter.length === 0) {
-        this.$emit('filtered', 'concept', concept)
+      else {
+        let filter = []
+        if (this.filters.concept) {
+          filter = this.filters.concept.filter((node) => {
+            return node === concept.id
+          })
+        }
+        if (filter.length === 0) {
+          this.$emit('filtered', 'concept', concept)
+        }
       }
     },
     getNodes() {
@@ -147,13 +157,13 @@ export default {
       })
     },
     nodeSelected({ node }) {
-      console.log(node)
+      // console.log(node)
     },
     linkSelected({ link }) {
-      console.log(link)
+      // console.log(link)
     },
     test(search) {
-      console.log(search)
+      // console.log(search)
     },
     addNodeToFilter(node) {
       this.$emit('filtered', 'concept', node)
