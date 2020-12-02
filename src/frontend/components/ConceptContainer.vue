@@ -57,6 +57,7 @@
                 :topicmap="conceptMap"
                 @concept-filter="handleConceptFilter"
                 :filteredIds="filteredIds"
+                :filters="filters"
               />
             </b-aspect>
           </b-card>
@@ -118,15 +119,21 @@ export default {
     this.getNodes()
   },
   methods: {
-    handleConceptFilter(concept) {
-      let filter = []
-      if (this.filters.concept) {
-        filter = this.filters.concept.filter((node) => {
-          return node === concept.id
-        })
+    handleConceptFilter(concept, action) {
+      if (action === 'remove') {
+        let index = _.indexOf(this.filters.concept, concept)
+        this.$emit('removed', 'concept', index)
       }
-      if (filter.length === 0) {
-        this.$emit('filtered', 'concept', concept)
+      else {
+        let filter = []
+        if (this.filters.concept) {
+          filter = this.filters.concept.filter((node) => {
+            return node === concept.id
+          })
+        }
+        if (filter.length === 0) {
+          this.$emit('filtered', 'concept', concept)
+        }
       }
     },
     getNodes() {
@@ -150,13 +157,13 @@ export default {
       })
     },
     nodeSelected({ node }) {
-      console.log(node)
+      // console.log(node)
     },
     linkSelected({ link }) {
-      console.log(link)
+      // console.log(link)
     },
     test(search) {
-      console.log(search)
+      // console.log(search)
     },
     addNodeToFilter(node) {
       this.$emit('filtered', 'concept', node)

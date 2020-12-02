@@ -46,13 +46,22 @@
                   <b-icon-back aria-hidden="true" />
                 </b-button>
                 <b-button
-                  v-show="currentNodeID !== 'all'"
+                  v-show="currentNodeID !== 'all' && notInFilter"
                   title="Add Concept To Filter"
                   variant="success"
                   size="sm"
                   @click.prevent="addNodeToFilter"
                 >
                   <b-icon-plus-circle-fill aria-hidden="true" />
+                </b-button>
+                <b-button
+                  v-show="currentNodeID !== 'all' && !notInFilter"
+                  title="Remove Concept From Filter"
+                  variant="danger"
+                  size="sm"
+                  @click.prevent="removeNodeFromFilter"
+                >
+                  <b-icon-dash-circle-fill aria-hidden="true" />
                 </b-button>
               </b-button-group>
             </b-button-toolbar>
@@ -112,6 +121,10 @@ export default {
     filteredIds: {
       type: [Array, Boolean],
       default: false,
+    },
+    filters: {
+      type: Object,
+      required: true,
     }
   },
   data() {
@@ -275,6 +288,9 @@ export default {
     }
   },
   computed: {
+    notInFilter() {
+      return !_.includes(this.filters.concept, this.currentNodeID)
+    },
     tm() {
       return this.topicmap || {}
     },
@@ -442,7 +458,10 @@ export default {
       const concept = this.currentElements.nodes.filter((node) => {
         return node.data.id === this.currentNodeID
       })
-      this.$emit('concept-filter', concept.pop().data)
+      this.$emit('concept-filter', concept.pop().data, 'add')
+    },
+    removeNodeFromFilter() {
+      this.$emit('concept-filter', this.currentNodeID, 'remove')
     },
     resetNetwork() {
       // reset cytoscape elements
