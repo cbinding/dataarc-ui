@@ -2,7 +2,7 @@
   <div
     id="plotly"
     ref="plotly"
-    class="d-flex w-100 h-100"
+    class="w-100 h-100"
   >
     <div class="position-absolute p-2 text-left" style="top:0;">
       <b-badge v-if="filteredFeatures" variant="danger" class="mr-0" style="border-radius:0px;border-right:#FFFFFF 1px solid">
@@ -136,6 +136,8 @@ export default {
         }
 
         const config = {
+          responsive: true,
+          displaylogo: false,
           // displayModeBar: false
         }
 

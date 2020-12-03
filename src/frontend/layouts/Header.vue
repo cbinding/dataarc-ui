@@ -40,12 +40,13 @@
                   />
                   <h4 class="mt-2">Temporal</h4>
                 </a>
-                <!-- <a
+                <a
                   class="btn btn-sm btn-light js-scroll-trigger"
-                  href="#temporal-example"
+                  href="#temporal-section"
+                  @click="$emit('apply-sample-filter', 'temporal')"
                   >Run Example</a
                 >
-                <p>This example uses our timeline to filter the result data.</p> -->
+                <p>This example uses our timeline to filter the result data.</p>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 text-center">
@@ -54,12 +55,13 @@
                   <fa-icon icon="compass" class="fa-4x text-danger sr-icons" />
                   <h4 class="mt-2">Spatial</h4>
                 </a>
-                <!-- <a
+                <a
                   class="btn btn-sm btn-light js-scroll-trigger"
-                  href="#spatial-example"
+                  href="#spatial-section"
+                  @click="$emit('apply-sample-filter', 'polygon')"
                   >Run Example</a
                 >
-                <p>Want to see results only with a specific bounding box?</p> -->
+                <p>Want to see results only with a specific bounding box?</p>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 text-center">
@@ -68,9 +70,10 @@
                   <fa-icon icon="sitemap" class="fa-4x text-warning sr-icons" />
                   <h4 class="mt-2">Concept</h4>
                 </a>
-                <!-- <a
+                <a
                   class="btn btn-sm btn-light js-scroll-trigger"
-                  href="#concept-example"
+                  href="#concept-section"
+                  @click="$emit('apply-sample-filter', 'concept')"
                   >Run Example</a
                 >
                 <p>
@@ -79,7 +82,7 @@
                   <a href="//www.data-arc.org/conceptmapping/"
                     >dataARC&apos;s concept map</a
                   >.
-                </p> -->
+                </p>
               </div>
             </div>
           </div>

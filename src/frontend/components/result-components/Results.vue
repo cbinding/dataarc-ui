@@ -10,6 +10,9 @@
             Results ({{ resultType }} Results)
           </h2>
           <hr class="bg-light">
+          <p>
+            {{ description }}
+          </p>
         </b-col>
       </b-row>
       <b-row>
@@ -69,12 +72,20 @@ export default {
       selectedResult: false,
       results: [],
       resultsCount: 0,
+      descriptionText: {
+        matched: 'The number of data records directly returned from the applied filter(s).',
+        related: 'The first-degree concept connections identified from the results subset.',
+        contextual: 'The second-degree concept connections identified from the results subset.',
+      },
     }
   },
   computed: {
     sortedResults() {
       return _.orderBy(this.results, ['category'])
     },
+    description() {
+      return this.descriptionText[this.resultType]
+    }
   },
   watch: {
     filters: {

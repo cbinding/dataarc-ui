@@ -51,6 +51,7 @@
           <b-card
             no-body
             class="shadow"
+            style="min-height:600px;"
           >
             <b-aspect aspect="16:9">
               <network
@@ -58,6 +59,7 @@
                 @concept-filter="handleConceptFilter"
                 :filteredIds="filteredIds"
                 :filters="filters"
+                :sample-concept="sampleConcept"
               />
             </b-aspect>
           </b-card>
@@ -94,6 +96,10 @@ export default {
       type: [Object, Boolean],
       default: false,
     },
+    sampleConcept: {
+      type: String,
+      default: false,
+    },
   },
   data() {
     return {
@@ -113,7 +119,7 @@ export default {
         return
       }
       this.getFilterNodes()
-    }
+    },
   },
   mounted() {
     this.getNodes()

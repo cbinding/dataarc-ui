@@ -113,6 +113,10 @@ export default {
     periodName: {
       type: String,
       default: 'millennia'
+    },
+    sampleRect: {
+      type: [Number, Boolean],
+      default: false,
     }
   },
   data() {
@@ -133,6 +137,15 @@ export default {
         this.collapseContainer();
       } else {
         this.expandContainer();
+      }
+    },
+    sampleRect(val) {
+      if (val && val > -1) {
+        this.activeRect = val
+        let sample = {target: {dataset: {category: 1, period: val}}}
+        if (this.data[1]) {
+          this.rectClick(sample)
+        }
       }
     }
   },

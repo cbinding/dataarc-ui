@@ -27,6 +27,7 @@
       v-model="temporalFilters"
       :filters="compiledFilters"
       :triggers="filterCount"
+      :sample-range="sampleRange"
     />
     <map-section
       id="spatial-section"
@@ -37,6 +38,7 @@
       id="concept-section"
       :filters="compiledFilters"
       :filter-count="filterCount"
+      :sample-concept="sampleConcept"
       @filtered="processFilter"
       @removed="removeFilter"
     />
@@ -48,7 +50,7 @@
     <filter-section
       id="filter-section"
       :filters="filters"
-      :filterCount="filterCount"
+      :filter-count="filterCount"
       :concept-filters="conceptFilters"
       @removed="removeFilter"
       @filters-loaded="loadFilters"
@@ -77,6 +79,12 @@ import WhySection from './WhyContainer.vue'
 
 export default {
   name: 'DataARC',
+  props: {
+    sampleFilter: {
+      type: String,
+      required: true
+    },
+  },
   components: {
     KeywordSection,
     TimelineSection,
@@ -101,6 +109,26 @@ export default {
         concept: this.conceptFilters,
         spatial: this.spatialFilter,
       },
+      sampleFilters: {
+        temporal: [
+          {
+            begin: 1000,
+            end: 2000,
+          },
+        ],
+        polygon: [
+          [-26.592264978338108,68.59665393385154],
+          [-10.219481129760624,68.59665393385154],
+          [-10.219481129760624,61.14073882263878],
+          [-26.592264978338108,61.14073882263878],
+        ],
+        concept: {
+          id: '5f430a76836c1e48136b4fd2',
+          label: 'humans',
+        }
+      },
+      sampleConcept: '',
+      sampleRange: null,
     }
   },
   computed: {
@@ -117,6 +145,38 @@ export default {
     }
   },
   watch: {
+    sampleFilter(val) {
+      if (val) {
+        if (val !== 'concept') {
+          this[val === 'polygon' ? 'spatialFilter' : `${val}Filters`] = this.sampleFilters[val]
+          if (val === 'temporal') {
+            [this.sampleRange] = this.sampleFilters[val]
+          }
+        }
+        else {
+          let exists = []
+          if (this.filters && this.filters.concept) {
+            exists = this.filters.concept.filter((filter) => {
+              return (filter === this.sampleFilters.concept.id)
+            })
+          }
+          if (exists.length === 0) {
+            this.sampleConcept = this.sampleFilters[val].id
+            this.processFilter(val, this.sampleFilters[val])
+          }
+        }
+      }
+    },
+    sampleConcept(val) {
+      if (val) {
+        setTimeout(() => this.sampleConcept = '', 1000)
+      }
+    },
+    sampleRange(val) {
+      if (val) {
+        setTimeout(() => this.sampleRange = null, 1000)
+      }
+    },
     keywordFilters(newVal, oldVal) {
       if (newVal.length > 0 && newVal.length > oldVal.length) {
         this.processFilter('keyword', newVal)
@@ -133,7 +193,7 @@ export default {
     },
     spatialFilter(newVal, oldVal) {
       if (newVal && newVal.length > 0) {
-        this.processFilter('polygon', this.spatialFilter)
+        this.processFilter('polygon', newVal)
       } else {
         this.removeFilter('polygon', -1)
       }

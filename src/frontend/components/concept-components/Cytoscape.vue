@@ -125,7 +125,11 @@ export default {
     filters: {
       type: Object,
       required: true,
-    }
+    },
+    sampleConcept: {
+      type: String,
+      default: false,
+    },
   },
   data() {
     return {
@@ -414,6 +418,11 @@ export default {
     filteredIds() {
       this.resetNetwork()
     },
+    sampleConcept(val) {
+      if (val) {
+        this.currentNodeID = val
+      }
+    }
   },
   mounted() {
     this.cyInstance = this.$refs.cy.instance
@@ -421,7 +430,6 @@ export default {
     this.cyInstance.on('click tap', 'node', (evt) => {
       self.currentNodeID = evt.target.id()
     })
-    this.resetNetwork()
   },
   methods: {
     zoomIn() {

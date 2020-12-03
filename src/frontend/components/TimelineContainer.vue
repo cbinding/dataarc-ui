@@ -30,7 +30,7 @@
       </b-row>
       <b-row>
         <b-col ref="timelineContainer" class="mt-3 mb-3 text-center">
-          <timeline :triggers="triggers" :filters="filters" :width="timelineWidth" v-model="currentSelectedRange" />
+          <timeline :triggers="triggers" :filters="filters" :width="timelineWidth" v-model="currentSelectedRange" :sample-rect="sampleRect" />
         </b-col>
       </b-row>
     </b-container>
@@ -116,6 +116,10 @@ export default {
       type: [Number, Boolean],
       default: false,
     },
+    sampleRange: {
+      type: [Object, Boolean],
+      default: false,
+    },
   },
   data() {
     return {
@@ -128,19 +132,32 @@ export default {
       timelineWidth: 1160,
       temporalCoverages: [],
       timelineSelected: null,
-      currentSelectedRange: null
+      currentSelectedRange: null,
+      sampleRect: -1,
     }
   },
   watch: {
     currentSelectedRange(val) {
-      this.selectedFilterIndex = 'Selected Range'
-      Object.assign(this.selectedFilter, val)
+      if (val) {
+        this.selectedFilterIndex = 'Selected Range'
+        Object.assign(this.selectedFilter, val)
+        if (this.sampleRange) {
+          this.setSampleFilter()
+        }
+      }
     },
     selectedFilterIndex(val) {
       if (val === 'Selected Range' && this.selectedFilter !== this.currentSelectedRange) {
         Object.assign(this.selectedFilter, this.currentSelectedRange)
       }
-    }
+    },
+    sampleRange(val) {
+      if (val) {
+        this.currentSelectedRange = val
+        this.sampleRect = 8
+        setTimeout(() => this.sampleRect = -1, 1000)
+      }
+    },
   },
   mounted() {
     this.timelineWidth = this.$refs.timelineContainer.clientWidth
@@ -149,7 +166,7 @@ export default {
   methods: {
     checkDuplicateTemporal() {
       let exists = []
-      if (!this.selectedFilter || !this.selectedFilter.end || !this.selectedFilter.begin) {
+      if (!this.selectedFilter || this.selectedFilter.end === null || this.selectedFilter.begin === null) {
         return true
       }
       if (this.filters && this.filters.temporal) {
@@ -168,6 +185,11 @@ export default {
         this.selectedFilter.begin = time.begin
         this.selectedFilter.end = time.end
       }
+    },
+    setSampleFilter() {
+      this.timelineFilter = []
+      this.timelineFilter.push({ ...this.selectedFilter })
+      this.emitFilter()
     },
     applyFilter(evt) {
       this.timelineFilter.push({ ...this.selectedFilter })

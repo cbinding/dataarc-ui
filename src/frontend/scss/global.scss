@@ -141,9 +141,10 @@ header.home-shore {
   }
 
   header.masthead .header-content {
-    position: absolute;
+    position: relative;
     top: 20%;
     padding: 0 50px;
+    padding-top: 10%;
   }
 
   header.masthead .header-content .header-content-inner {
