@@ -1,5 +1,6 @@
 class Users {
   constructor(data) {
+    this.formData = (({username, firstName, lastName, email, password}) => ({username, firstName, lastName, email, password}))(data);
     this.id = data.id;
     this.username = data.username;
     this.firstName = data.firstName;
@@ -12,6 +13,7 @@ class Users {
     this.confirmed = data.confirmed;
     this.blocked = data.blocked;
     this.role = data.role;
+    this.admin = data.admin
     this.createUrl = `${process.env.VUE_APP_API_URL}/auth/local/register`;
     this.editUrl = `${process.env.VUE_APP_API_URL}/users/${this.id}`;
     this.routeUrl = '/admin/users/index';
@@ -28,7 +30,8 @@ class Users {
 
   _update = async () => {
     try {
-      const resp = await axios.put(this.editUrl, this);
+
+      const resp = await axios.put(this.editUrl, this.admin ? this : this.formData);
       return resp;
     } catch (err) {
       console.log(err);
