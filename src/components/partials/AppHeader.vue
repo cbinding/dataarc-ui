@@ -15,32 +15,7 @@
     <div class="navbar-menu-wrapper d-flex align-items-center ml-auto ml-lg-0">
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-        <b-nav-item-dropdown
-          right
-          class="preview-list"
-        >
-          <template slot="button-content">
-            <!-- <img
-              src="../../assets/images/faces/face4.jpg"
-              alt="profile image"
-              class="img-xs rounded-circle"
-            > -->
-            <span>{{ user ? user.email : null }}</span>
-          </template>
-          <b-dropdown-item
-            :to="{name: 'Profile' }"
-            class="preview-item flex-wrap"
-          >
-            Profile
-          </b-dropdown-item>
-          <b-dropdown-item
-            href="#"
-            class="preview-item flex-wrap"
-            @click="handleLogout()"
-          >
-            Signout
-          </b-dropdown-item>
-        </b-nav-item-dropdown>
+
       </b-navbar-nav>
       <button
         class="navbar-toggler navbar-toggler-right align-self-center"

@@ -8,8 +8,19 @@
         <li class="nav-item nav-profile">
           <div class="nav-link">
             <div class="profile-name">
-              <p class="name">
-                {{ user ? user.username : '' }}
+              <p class="name" v-if="user">
+                <b-dropdown menu-class="w-100" variant="light" :text="dropdownText">
+                  <b-dropdown-item
+                    :to="{name: 'Profile' }"
+                  >
+                    Profile
+                  </b-dropdown-item>
+                  <b-dropdown-item
+                    @click="handleLogout()"
+                  >
+                    Signout
+                  </b-dropdown-item>
+                </b-dropdown>
               </p>
               <p class="designation">
                 Role: {{ role ? role.name : '' }}
@@ -18,6 +29,7 @@
           </div>
         </li>
         <li
+          v-if="role && role.name !== 'Authenticated' && role.name !== 'Public'"
           v-for="route in compileRoutes"
           :key="route.name"
           class="nav-item"
@@ -83,6 +95,9 @@ export default {
   },
   computed: {
     ...mapState('account', ['user', 'role']),
+    dropdownText() {
+      return this.user.firstName ? `${this.user.firstName} ${this.user.lastName ? this.user.lastName : ''}` : this.user.email
+    },
     compileRoutes() {
       return [...this.contributorRoutes, ...this.authenticatedRoutes]
     },
@@ -90,7 +105,12 @@ export default {
       return [...this.adminRoutes]
     },
   },
-  mounted() {
+  methods: {
+    ...mapActions('account', ['login', 'logout']),
+    handleLogout() {
+      this.logout()
+      this.$router.push('/')
+    },
   },
 }
 </script>
