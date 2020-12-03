@@ -1,7 +1,7 @@
 <template>
   <div id="page-top">
-    <layout-header :triggerLogin="triggerLogin"/>
-    <router-view @sign-in="triggerLogin = true"/>
+    <layout-header @apply-sample-filter="applyFilter" :triggerLogin="triggerLogin"/>
+    <router-view :sampleFilter="runSampleFilter" @sign-in="triggerLogin = true"/>
     <layout-footer />
   </div>
 </template>
@@ -19,14 +19,25 @@ export default {
   },
   data() {
     return {
-      triggerLogin: false
+      triggerLogin: false,
+      runSampleFilter: '',
     }
   },
   watch: {
     triggerLogin(val) {
       if (val) {
-        setTimeout(() => this.triggerLogin = false, 1000);
+        setTimeout(() => this.triggerLogin = false, 1000)
       }
+    },
+    runSampleFilter(val) {
+      if (val) {
+        setTimeout(() => this.runSampleFilter = '', 1000)
+      }
+    }
+  },
+  methods: {
+    applyFilter(filter) {
+      this.runSampleFilter = filter
     }
   }
 }

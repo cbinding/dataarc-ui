@@ -10,6 +10,7 @@
             :rect-height="realRectHeight(millennia)"
             :period-name="'centuries'"
             :collapsed="false"
+            :sample-rect="sampleRect"
             @range-selected="setTimeline"
           />
         </b-col>
@@ -92,6 +93,10 @@ export default {
       default: false,
     },
     triggers: {
+      type: [Number, Boolean],
+      default: false,
+    },
+    sampleRect: {
       type: [Number, Boolean],
       default: false,
     }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <data-arc @sign-in="$emit('sign-in')"/>
+    <data-arc :sampleFilter="sampleFilter" @sign-in="$emit('sign-in')"/>
   </div>
 </template>
 
@@ -10,6 +10,12 @@ import DataArc from '../components/DataARC.vue'
 
 export default {
   name: 'HomeView',
+  props: {
+    sampleFilter: {
+      type: String,
+      required: true
+    },
+  },
   components: {
     DataArc,
   },
