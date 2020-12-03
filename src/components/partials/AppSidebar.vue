@@ -29,7 +29,7 @@
           </div>
         </li>
         <li
-          v-if="role.name !== 'Authenticated' && role.name !== 'Public'"
+          v-if="role && role.name !== 'Authenticated' && role.name !== 'Public'"
           v-for="route in compileRoutes"
           :key="route.name"
           class="nav-item"
@@ -96,7 +96,7 @@ export default {
   computed: {
     ...mapState('account', ['user', 'role']),
     dropdownText() {
-      return this.user.firstName ? `${this.user.firstName} ${this.user.lastName}` : this.user.email
+      return this.user.firstName ? `${this.user.firstName} ${this.user.lastName ? this.user.lastName : ''}` : this.user.email
     },
     compileRoutes() {
       return [...this.contributorRoutes, ...this.authenticatedRoutes]
