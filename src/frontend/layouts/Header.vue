@@ -40,10 +40,11 @@
                   />
                   <h4 class="mt-2">Temporal</h4>
                 </a>
-                <button
+                <a
                   class="btn btn-sm btn-light js-scroll-trigger"
+                  href="#temporal-section"
                   @click="$emit('apply-sample-filter', 'temporal')"
-                  >Run Example</button
+                  >Run Example</a
                 >
                 <p>This example uses our timeline to filter the result data.</p>
               </div>
@@ -54,10 +55,11 @@
                   <fa-icon icon="compass" class="fa-4x text-danger sr-icons" />
                   <h4 class="mt-2">Spatial</h4>
                 </a>
-                <button
+                <a
                   class="btn btn-sm btn-light js-scroll-trigger"
+                  href="#spatial-section"
                   @click="$emit('apply-sample-filter', 'polygon')"
-                  >Run Example</button
+                  >Run Example</a
                 >
                 <p>Want to see results only with a specific bounding box?</p>
               </div>
@@ -68,10 +70,11 @@
                   <fa-icon icon="sitemap" class="fa-4x text-warning sr-icons" />
                   <h4 class="mt-2">Concept</h4>
                 </a>
-                <button
+                <a
                   class="btn btn-sm btn-light js-scroll-trigger"
+                  href="#concept-section"
                   @click="$emit('apply-sample-filter', 'concept')"
-                  >Run Example</button
+                  >Run Example</a
                 >
                 <p>
                   Looking for a way to view results that only relate to specific
