@@ -56,6 +56,9 @@ export default {
     loadFilters(arrayValues) {
       this.loadedKeywords = arrayValues
     },
+    removeFilters() {
+      this.loadedKeywords = false
+    },
   }
 }
 </script>

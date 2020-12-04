@@ -1,12 +1,14 @@
 <template>
   <div>
-    <data-arc :sampleFilter="sampleFilter" @sign-in="$emit('sign-in')"/>
+    <manage-profile @load-saved-search="handleSearch" v-if="$route.path === '/manage-profile'"/>
+    <data-arc v-else :saved-search="savedSearch" :sampleFilter="sampleFilter" @sign-in="$emit('sign-in')"/>
   </div>
 </template>
 
 <script>
 
 import DataArc from '../components/DataARC.vue'
+import ManageProfile from '../components/ManageProfile.vue'
 
 export default {
   name: 'HomeView',
@@ -16,8 +18,20 @@ export default {
       required: true
     },
   },
+  data() {
+    return {
+      savedSearch: {},
+    }
+  },
   components: {
     DataArc,
+    ManageProfile
+  },
+  methods: {
+    handleSearch(search) {
+      this.savedSearch = {}
+      Object.assign(this.savedSearch, search)
+    }
   },
 }
 </script>

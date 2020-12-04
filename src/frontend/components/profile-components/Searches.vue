@@ -15,6 +15,9 @@
         <b-col class="mt-3 mb-3">
           <b-card no-body class="shadow">
             <b-table head-variant="light" :fields="fields" :items="searches">
+              <template v-slot:cell(title)="row">
+                <b-button variant="light" title="Load Saved Search" @click="$emit('load-saved-search', row.item); routeHome()">{{row.item.title}}</b-button>
+              </template>
               <template v-slot:cell(actions)="row" class="actions">
                 <b-button variant="primary" v-text="'Request Download'" @click="download = row.item"></b-button>
                 <b-button variant="primary" v-text="'Download'" :disabled="true" @click="download = row.item"></b-button>
@@ -59,7 +62,8 @@ export default {
         { key: 'description', sortable: true },
         { key: 'filters', sortable: false },
       ],
-      download: {}
+      download: {},
+      savedSearch: {}
     }
   },
   watch: {
@@ -85,6 +89,9 @@ export default {
         this.searches = data.searches
         this.count = data.countSearches
       })
+    },
+    routeHome() {
+      this.$router.replace('/')
     }
   }
 

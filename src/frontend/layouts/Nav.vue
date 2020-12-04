@@ -56,7 +56,7 @@
             <a class="nav-link js-scroll-trigger" href="#" @click="action = 'Register'" v-b-modal.handleUserActions>Signup</a>
           </li>
           <b-nav-item-dropdown v-if="status.loggedIn" text="Manage" right>
-            <b-dropdown-item :to="{ name: 'manage-profile' }">Profile</b-dropdown-item>
+            <b-dropdown-item to="/manage-profile">Profile</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'authenticated' }"
               >Admin</b-dropdown-item
             >
