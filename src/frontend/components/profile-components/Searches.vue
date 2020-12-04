@@ -37,7 +37,6 @@ const searchesQuery = gql`
       title
       description
       filters
-      results
     }
     countSearches
   }
