@@ -266,11 +266,11 @@ const apollo = {
           description
           citation
           url
-          processed_at
+          processed
           active
           source
           topics_count
-          processing
+          process
         }
       }
     `,
@@ -285,7 +285,7 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         let stopQuery = data.conceptMaps.filter(conceptMap => {
-          if (conceptMap.processing) {
+          if (conceptMap.process) {
             return conceptMap;
           }
         });
@@ -302,7 +302,7 @@ const apollo = {
   allConceptTopics: {
     query: gql`
       query conceptTopics($map: ID!, $start: Int, $limit: Int) {
-        conceptTopics(where: {map: $map  }, start: $start, limit: $limit) {
+        conceptTopics(where: { map: $map }, start: $start, limit: $limit) {
           id
           title
           concept {
@@ -310,7 +310,7 @@ const apollo = {
             title
           }
         }
-        conceptMaps(where: {id: $map}) {
+        conceptMaps(where: { id: $map }) {
           topics_count
         }
       }
@@ -320,7 +320,8 @@ const apollo = {
     variables() {
       // Use vue reactive properties here
       return {
-        map: this && this.currentId ? this.currentId : "5fa05f2ac8efcfd72451a752",
+        map:
+          this && this.currentId ? this.currentId : '5fa05f2ac8efcfd72451a752',
         limit: 100,
         start:
           this &&
@@ -368,11 +369,11 @@ const apollo = {
           source
           image
           metadata
-          processed_at
+          processed
           fields_count
           features_count
           combinators_count
-          processing
+          process
         }
       }
     `,
@@ -386,7 +387,7 @@ const apollo = {
     result({ data, loading, networkStatus }) {
       if (data) {
         let stopQuery = data.datasets.filter(dataset => {
-          if (dataset.processing) {
+          if (dataset.process) {
             return dataset;
           }
         });
@@ -421,7 +422,7 @@ const apollo = {
           features_count
           fields_count
           combinators_count
-          processed_at
+          processed
           title_layout
           link_layout
           details_layout
@@ -727,7 +728,7 @@ const methods = {
   async process(val, component) {
     this.currentId = val.id;
     let url = component === 'Datasets' ? 'datasets' : 'concept-maps';
-    val.processing = true;
+    val.process = true;
     const resp = await axios.get(`${this.$apiUrl}/${url}/process/${val.id}`);
     if (resp) {
       this.$apollo.queries[`all${component}`].refetch();
@@ -789,8 +790,8 @@ const methods = {
   makeToast(variant) {
     this.$bvToast.toast('Saved!', {
       variant,
-      solid: true,
-    })
+      solid: true
+    });
   },
   loadingState(length, component) {
     if (length === 0) {

@@ -15,10 +15,7 @@
       @limitUpdated="updateLimit"
     >
       <template v-slot:button>
-        <b-button
-          variant="primary"
-          :to="{name: 'Create ConceptMap' }"
-        >
+        <b-button variant="primary" :to="{ name: 'Create ConceptMap' }">
           <b-icon-plus />Add new Concept Map
         </b-button>
       </template>
@@ -60,33 +57,27 @@
           </template>
           <template v-slot:cell(topics_count)="row">
             <div class="text-center">
-              <b-badge
-                pill
-                variant="primary"
-              >
+              <b-badge pill variant="primary">
                 {{ row.item.topics_count }}
               </b-badge>
             </div>
           </template>
-          <template
-            v-slot:cell(actions)="row"
-            class="actions"
-          >
+          <template v-slot:cell(actions)="row" class="actions">
             <b-button-group size="sm">
               <b-button
                 variant="primary"
-                :disabled="row.item.processing || !row.item.source"
+                :disabled="row.item.process || !row.item.source"
                 @click="process(row.item, component)"
                 v-text="'Process'"
               />
               <b-button
-                :disabled="row.item.processing"
-                :to="{name: 'Update ConceptMap', params: {id: row.item.id} }"
+                :disabled="row.item.process"
+                :to="{ name: 'Update ConceptMap', params: { id: row.item.id } }"
                 variant="primary"
                 v-text="'Edit'"
               />
               <b-button
-                :disabled="row.item.active || row.item.processing"
+                :disabled="row.item.active || row.item.process"
                 v-b-modal.deleteConfirmation
                 variant="primary"
                 @click="itemToDelete = row.item"
@@ -94,7 +85,9 @@
               />
               <b-button
                 variant="primary"
-                :disabled="row.item.processing || !row.item.source || row.item.active"
+                :disabled="
+                  row.item.process || !row.item.source || row.item.active
+                "
                 @click="activate(row.item)"
                 v-text="'Activate'"
               />
@@ -107,7 +100,7 @@
 </template>
 
 <script>
-import collectionMixin from '../../mixins/collectionMixin'
+import collectionMixin from '../../mixins/collectionMixin';
 export default {
   mixins: [collectionMixin],
   data() {
@@ -116,45 +109,44 @@ export default {
       displayFields: [
         { key: 'actions', sortable: false },
         { key: 'title', sortable: true },
-        { key: 'topics_count', sortable: true },
+        { key: 'topics_count', sortable: true }
       ],
-      conceptMapsLoading: true,
-    }
+      conceptMapsLoading: true
+    };
   },
   watch: {
     conceptMaps(val) {
       if (val) {
-        this.$emit('bv::refresh::table', 'conceptMaps')
-        this.conceptMapsLoading = this.loadingState(val.length)
+        this.$emit('bv::refresh::table', 'conceptMaps');
+        this.conceptMapsLoading = this.loadingState(val.length);
       }
     },
     $route(to, from) {
       if (to.name !== 'ConceptMaps') {
-        this.$apollo.queries.allConceptMaps.skip = true
+        this.$apollo.queries.allConceptMaps.skip = true;
+      } else if (from.name !== 'ConceptMaps') {
+        this.$apollo.queries.allConceptMaps.skip = false;
+        this.$apollo.queries.allConceptMaps.refetch();
       }
-      else if (from.name !== 'ConceptMaps') {
-        this.$apollo.queries.allConceptMaps.skip = false
-        this.$apollo.queries.allConceptMaps.refetch()
-      }
-    },
+    }
   },
   created() {
-    this.$apollo.queries.allConceptMaps.skip = false
+    this.$apollo.queries.allConceptMaps.skip = false;
   },
   methods: {
     activate(val) {
       this.currentId = val.id;
       let url = 'concept-maps';
       val.active = true;
-      this.conceptMaps.forEach((conceptMap) => {
+      this.conceptMaps.forEach(conceptMap => {
         if (conceptMap.id !== val.id) {
-          conceptMap.active = false
+          conceptMap.active = false;
         }
-      })
-      axios.get(`${this.$apiUrl}/${url}/activate/${val.id}`).then((data) => {
+      });
+      axios.get(`${this.$apiUrl}/${url}/activate/${val.id}`).then(data => {
         console.log('success');
-      })
-    },
-  },
-}
+      });
+    }
+  }
+};
 </script>

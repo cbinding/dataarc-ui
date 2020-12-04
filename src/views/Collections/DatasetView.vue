@@ -5,7 +5,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">
         <h3>Updating: {{ model.title }}</h3>
-        <small>Last Updated: {{ getDate(model.processed_at) }}</small
+        <small>Last Updated: {{ getDate(model.processed) }}</small
         ><br />
         <router-link v-if="currentDataset" :to="{ name: 'Update Templates' }"
           >Edit Templates</router-link
@@ -60,7 +60,13 @@
           </template>
           <template v-slot:cell(title)="row" class="Title">
             <div style="max-width: 400px;" v-if="row.item.title">
-              <b-input v-model="row.item.title" @blur="updateField(row.item); makeToast('success')"></b-input>
+              <b-input
+                v-model="row.item.title"
+                @blur="
+                  updateField(row.item);
+                  makeToast('success');
+                "
+              ></b-input>
             </div>
           </template>
           <template v-slot:cell(type)="row" class="Type">
@@ -72,7 +78,11 @@
                 <div v-for="type in fieldTypes" :key="type">
                   <b-dropdown-item
                     v-model="row.item.type"
-                    @click="row.item.type = type; updateField(row.item); makeToast('success')"
+                    @click="
+                      row.item.type = type;
+                      updateField(row.item);
+                      makeToast('success');
+                    "
                   >
                     {{ type }}
                   </b-dropdown-item>
@@ -80,12 +90,12 @@
               </b-dropdown>
             </div>
           </template>
-          <template v-slot:head(processed_at)="row">
+          <template v-slot:head(processed)="row">
             <span>Last Updated</span>
           </template>
-          <template v-slot:cell(processed_at)="row" class="processed_at">
+          <template v-slot:cell(processed)="row" class="processed">
             <div>
-              {{ getDate(row.item.processed_at) }}
+              {{ getDate(row.item.processed) }}
             </div>
           </template>
           <template v-slot:cell(actions)="row" class="Actions">
@@ -106,20 +116,42 @@
       </template>
       <b-form>
         <b-form-group label="Description">
-          <b-form-textarea v-model="currentField.description" rows="4" size="lg" no-auto-shrink></b-form-textarea>
+          <b-form-textarea
+            v-model="currentField.description"
+            rows="4"
+            size="lg"
+            no-auto-shrink
+          ></b-form-textarea>
         </b-form-group>
         <b-form-group label="Citation">
-          <b-form-textarea v-model="currentField.citation" rows="4" size="lg" no-auto-shrink></b-form-textarea>
+          <b-form-textarea
+            v-model="currentField.citation"
+            rows="4"
+            size="lg"
+            no-auto-shrink
+          ></b-form-textarea>
         </b-form-group>
         <b-form-group label="Url">
-          <b-form-input v-model="currentField.url" rows="4" size="lg" no-auto-shrink></b-form-input>
+          <b-form-input
+            v-model="currentField.url"
+            rows="4"
+            size="lg"
+            no-auto-shrink
+          ></b-form-input>
         </b-form-group>
       </b-form>
       <template v-slot:modal-footer="{ ok, cancel }">
         <b-button size="sm" @click="cancel()">
           Cancel
         </b-button>
-        <b-button size="sm" variant="primary" @click="updateField(currentField); makeToast('success')">
+        <b-button
+          size="sm"
+          variant="primary"
+          @click="
+            updateField(currentField);
+            makeToast('success');
+          "
+        >
           Save
         </b-button>
       </template>
@@ -158,16 +190,14 @@
             </div>
           </template>
           <template v-slot:cell(title)="row" class="Title">
-            <div
-              v-if="row.item.title"
-            >
+            <div v-if="row.item.title">
               {{ row.item.title }}
             </div>
           </template>
-          <template v-slot:head(features_count)="row" class="featuresCount" >
+          <template v-slot:head(features_count)="row" class="featuresCount">
             <span># Features</span>
           </template>
-          <template v-slot:cell(features_count)="row" class="featuresCount" >
+          <template v-slot:cell(features_count)="row" class="featuresCount">
             <div class="text-center">
               <b-badge pill variant="primary">
                 {{ row.item.features_count ? row.item.features_count : 0 }}
@@ -241,12 +271,12 @@ export default {
         { key: 'source', sortable: true },
         { key: 'title', sortable: true },
         { key: 'type', sortable: true },
-        { key: 'processed_at', sortable: true }
+        { key: 'processed', sortable: true }
       ],
       combinatorsList: [
         { key: 'actions', sortable: false },
         { key: 'title', sortable: true },
-        { key: 'features_count', sortable: true },
+        { key: 'features_count', sortable: true }
       ],
       filterFields: '',
       filterCombinators: '',
@@ -301,7 +331,7 @@ export default {
             label: 'Metadata',
             model: 'metadata',
             visible: true,
-            required: false,
+            required: false
           },
           {
             type: 'input',
@@ -315,7 +345,7 @@ export default {
             inputType: 'text',
             label: 'Image',
             model: 'image',
-            visible: true,
+            visible: true
           },
           {
             type: 'input',
@@ -376,7 +406,7 @@ export default {
         return this[val];
       }
       return 'secondary';
-    },
+    }
   },
   mixins: [collectionMixin],
   watch: {
