@@ -476,11 +476,13 @@ export default {
       self.currentNodeID = evt.target.id()
     })
     this.cyInstance.on('mouseover', 'node', (evt) => {
+      if (this.currentNodeID !== 'all') return
       self.hoverNode = evt.target.id()
       this.hoverNeighbours()
     })
 
     this.cyInstance.on('mouseout', 'node', (evt) => {
+      if (this.currentNodeID !== 'all') return
       this.unHoverNeighbours()
       this.hoverNode = null
     })
