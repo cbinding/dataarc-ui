@@ -84,6 +84,10 @@ export default {
       type: String,
       required: true
     },
+    savedSearch: {
+      type: [Object, Boolean],
+      required: true
+    },
   },
   components: {
     KeywordSection,
@@ -145,6 +149,17 @@ export default {
     }
   },
   watch: {
+    savedSearch(val) {
+      if (val) {
+        this.keywordFilters = []
+        this.$refs.keyword.removeFilters()
+        this.temporalFilters = []
+        this.conceptFilters = []
+        this.spatialFilter = false
+        this.filters = {}
+        this.loadFilters(val.filters)
+      }
+    },
     sampleFilter(val) {
       if (val) {
         if (val !== 'concept') {
@@ -178,7 +193,7 @@ export default {
       }
     },
     keywordFilters(newVal, oldVal) {
-      if (newVal.length > 0 && newVal.length > oldVal.length) {
+      if (newVal.length > 0) {
         this.processFilter('keyword', newVal)
       } else if (this.filters.keyword && newVal.length !== this.filters.keyword.length) {
         this.removeFilter('keyword', -1)
@@ -251,16 +266,6 @@ export default {
         this.filters[type] = references[type]
         if (this.filters[type].length === 0) {
           this.$delete(this.filters, type)
-        }
-        return
-      }
-      if (index === -1 && type === 'keyword') {
-        this.totalFilters -= this.filters[type].length
-        this.filters[type] = this[`${type}Filters`]
-        this.totalFilters += this.filters[type].length
-        if (this.totalFilters <= 0) {
-          this.filters = {}
-          this.totalFilters = 0
         }
         return
       }

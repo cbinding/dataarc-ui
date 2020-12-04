@@ -30,7 +30,6 @@ class Users {
 
   _update = async () => {
     try {
-
       const resp = await axios.put(this.editUrl, this.admin ? this : this.formData);
       return resp;
     } catch (err) {

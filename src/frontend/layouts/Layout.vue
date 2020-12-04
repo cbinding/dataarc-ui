@@ -21,6 +21,7 @@ export default {
     return {
       triggerLogin: false,
       runSampleFilter: '',
+      savedSearch: {},
     }
   },
   watch: {

@@ -50,6 +50,24 @@ const actions = {
       },
     )
   },
+  update({ dispatch, commit }, {user, id}) {
+    commit('updateRequest', user, id)
+
+    userService.update(user, id)
+    .then(
+      (user) => {
+        commit('updateSuccess', user)
+        setTimeout(() => {
+          // display success message after route change completes
+          dispatch('alert/success', 'Update successful', { root: true })
+        })
+      },
+      (error) => {
+        commit('updateFailure', error)
+        dispatch('alert/error', error, { root: true })
+      },
+    )
+  },
   forgotPassword({ dispatch, commit }, email) {
     commit('forgotPasswordRequest', email)
 
@@ -68,13 +86,13 @@ const actions = {
       },
     )
   },
-  resetPassword({ dispatch, commit }, email) {
-    commit('resetPasswordRequest', email)
+  resetPassword({ dispatch, commit }, {code, password, passwordConfirmation}) {
+    commit('resetPasswordRequest', code, password, passwordConfirmation)
 
-    userService.resetPassword(email)
+    userService.resetPassword(code, password, passwordConfirmation)
     .then(
-      (email) => {
-        commit('resetPasswordSuccess', email)
+      (response) => {
+        commit('resetPasswordSuccess', response)
         setTimeout(() => {
           // display success message after route change completes
           dispatch('alert/success', 'Password reset successful', { root: true })
@@ -82,6 +100,24 @@ const actions = {
       },
       (error) => {
         commit('resetPasswordFailure', error)
+        dispatch('alert/error', error, { root: true })
+      },
+    )
+  },
+  getById({ dispatch, commit }, id) {
+    commit('getByIdRequest', id)
+
+    userService.getById(id)
+    .then(
+      (data) => {
+        commit('getByIdSuccess', data.data)
+        setTimeout(() => {
+          // display success message after route change completes
+          // dispatch('alert/success', 'Registration successful', { root: true })
+        })
+      },
+      (error) => {
+        commit('getByIdFailure', error)
         dispatch('alert/error', error, { root: true })
       },
     )
@@ -98,7 +134,7 @@ const mutations = {
     state.status = { loggedIn: true }
     state.user = response.user
     state.jwt = response.jwt
-    state.role = state.user ? state.user.role : null
+    state.role = response.user ? response.user.role : null
   },
   loginFailure(state, err) {
     if (err.message === 'Request failed with status code 400') {
@@ -122,6 +158,16 @@ const mutations = {
     state.status = { registered: true }
   },
   registerFailure(state, error) {
+    state.status = {error: error[0].messages}
+  },
+  updateRequest(state, user) {
+    // state.status.updating = true
+  },
+  updateSuccess(state, data) {
+    state.user = data.data
+    state.status.updated = true
+  },
+  updateFailure(state, error) {
     state.status = {error: error[0].messages}
   },
   forgotPasswordRequest(state, email) {
@@ -150,6 +196,17 @@ const mutations = {
     state.user = null
     state.role = null
     state.jwt = null
+  },
+  getByIdRequest(state, user) {
+    // state.status
+  },
+  getByIdSuccess(state, user) {
+    if (!user.length) {
+      state.user = user
+    }
+  },
+  getByIdFailure(state, error) {
+    state.status = {error: error[0].messages}
   },
 }
 

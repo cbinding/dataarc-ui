@@ -9,6 +9,7 @@ export default {
   resetPassword,
   getAll,
   getById,
+  update,
   delete: _delete,
 };
 
@@ -53,6 +54,17 @@ function register(user) {
     requestOptions
   ).then(handleResponse);
 }
+function update(user, id) {
+  return axios
+  .put(`${process.env.VUE_APP_API_URL}/users/${id}`,
+    user,
+  )
+  .then((response) => {
+    // Handle success.
+    Cookies.set('user', response.data);
+    return response
+  });
+}
 function forgotPassword(email) {
   return axios
     .post(`${process.env.VUE_APP_API_URL}/auth/forgot-password`, {
@@ -75,6 +87,7 @@ function resetPassword(code, password, passwordConfirmation) {
       // Handle success.
       console.log('Your password has been reset.');
       console.log(response);
+      return response
     });
 }
 
@@ -90,15 +103,12 @@ function getAll() {
 }
 
 function getById(id) {
-  const requestOptions = {
-    method: 'GET',
-    headers: authHeader(),
-  };
-
-  return fetch(
-    `${process.env.VUE_APP_API_URL}/users/${id}`,
-    requestOptions
-  ).then(handleResponse);
+  return axios
+  .get(`${process.env.VUE_APP_API_URL}/users/${id}`)
+  .then((response) => {
+    // Handle success.
+    return response
+  });
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

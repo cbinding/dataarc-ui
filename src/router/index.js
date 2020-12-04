@@ -33,6 +33,7 @@ const routes = [
         path: '/',
         name: 'frontend',
         component: () => import('@/frontend/views/Home.vue'),
+        alias: ['/manage-profile']
       },
     ],
     meta: {

@@ -4,7 +4,7 @@
     class="navbar navbar-expand-lg navbar-light navbar-shrink fixed-top"
   >
     <div class="container">
-      <b-navbar-brand class="navbar-brand js-scroll-trigger" href="#page-top"
+      <b-navbar-brand class="navbar-brand js-scroll-trigger" href="/"
         >DataARC</b-navbar-brand
       >
       <a class="navbar-about btn btn-sm btn-outline-dark" href="/about"
@@ -56,7 +56,7 @@
             <a class="nav-link js-scroll-trigger" href="#" @click="action = 'Register'" v-b-modal.handleUserActions>Signup</a>
           </li>
           <b-nav-item-dropdown v-if="status.loggedIn" text="Manage" right>
-            <b-dropdown-item :to="{ name: 'Profile' }">Profile</b-dropdown-item>
+            <b-dropdown-item to="/manage-profile">Profile</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'authenticated' }"
               >Admin</b-dropdown-item
             >
@@ -118,7 +118,11 @@ export default {
   methods: {
     ...mapActions('account', ['login','logout']),
     handleLogout() {
-      this.logout();
+      this.logout().then(() => {
+        if (this.$route.path !== '/') {
+          this.$router.push('/')
+        }
+      });
     },
     handleSubmit() {
       this.submitted = true

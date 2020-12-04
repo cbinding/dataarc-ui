@@ -80,6 +80,8 @@ export default {
     preLoaded(newValue, oldValue) {
       if (newValue && newValue.length) {
         this.value = [...newValue]
+      } else if (oldValue && oldValue.length && !newValue) {
+        this.value = []
       }
     }
   },
