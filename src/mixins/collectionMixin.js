@@ -725,7 +725,7 @@ const apollo = {
 };
 
 const methods = {
-  async process(val, component) {
+  async setProcess(val, component) {
     this.currentId = val.id;
     let url = component === 'Datasets' ? 'datasets' : 'concept-maps';
     val.process = true;
