@@ -50,10 +50,10 @@ const actions = {
       },
     )
   },
-  update({ dispatch, commit }, user) {
-    commit('updateRequest', user)
+  update({ dispatch, commit }, {user, id}) {
+    commit('updateRequest', user, id)
 
-    userService.update(user)
+    userService.update(user, id)
     .then(
       (user) => {
         commit('updateSuccess', user)
@@ -104,6 +104,24 @@ const actions = {
       },
     )
   },
+  getById({ dispatch, commit }, id) {
+    commit('getByIdRequest', id)
+
+    userService.getById(id)
+    .then(
+      (data) => {
+        commit('getByIdSuccess', data.data)
+        setTimeout(() => {
+          // display success message after route change completes
+          // dispatch('alert/success', 'Registration successful', { root: true })
+        })
+      },
+      (error) => {
+        commit('getByIdFailure', error)
+        dispatch('alert/error', error, { root: true })
+      },
+    )
+  },
 }
 
 const mutations = {
@@ -116,7 +134,7 @@ const mutations = {
     state.status = { loggedIn: true }
     state.user = response.user
     state.jwt = response.jwt
-    state.role = state.user ? state.user.role : null
+    state.role = response.user ? response.user.role : null
   },
   loginFailure(state, err) {
     if (err.message === 'Request failed with status code 400') {
@@ -143,10 +161,11 @@ const mutations = {
     state.status = {error: error[0].messages}
   },
   updateRequest(state, user) {
-    state.status = { updating: true }
+    // state.status.updating = true
   },
-  updateSuccess(state, user) {
-    state.status = { updated: true }
+  updateSuccess(state, data) {
+    state.user = data.data
+    state.status.updated = true
   },
   updateFailure(state, error) {
     state.status = {error: error[0].messages}
@@ -177,6 +196,17 @@ const mutations = {
     state.user = null
     state.role = null
     state.jwt = null
+  },
+  getByIdRequest(state, user) {
+    // state.status
+  },
+  getByIdSuccess(state, user) {
+    if (!user.length) {
+      state.user = user
+    }
+  },
+  getByIdFailure(state, error) {
+    state.status = {error: error[0].messages}
   },
 }
 

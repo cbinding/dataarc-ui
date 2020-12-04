@@ -72,13 +72,6 @@
               @submit.prevent="resetPasswordSubmit"
             >
               <div class="form-group">
-                <input
-                  v-model="code"
-                  hidden
-                >
-                </input>
-              </div>
-              <div class="form-group">
                 <label>Password</label>
                 <input
                   v-model="password"
@@ -127,12 +120,10 @@
 import { mapState, mapActions } from 'vuex'
 import gql from 'graphql-tag'
 export default {
-
   data() {
     return {
       errors: [],
       passwordErrors: [],
-      code: '',
       password: '',
       passwordConfirmation: '',
       form: {
@@ -146,11 +137,21 @@ export default {
   computed: {
     ...mapState('account', ['user', 'role', 'status']),
   },
+  watch: {
+    user(val) {
+      if (val) {
+        this.form = (({username, firstName, lastName, email, password}) => ({username, firstName, lastName, email, password}))(val);
+      }
+    }
+  },
   mounted() {
-    this.form = this.user
+    this.form = (({username, firstName, lastName, email, password}) => ({username, firstName, lastName, email, password}))(this.user);
+  },
+  updated() {
+
   },
   methods: {
-    ...mapActions('account', ['update', 'resetPassword'], { clearAlert: 'alert/clear' }),
+    ...mapActions('account', ['update'], { clearAlert: 'alert/clear' }),
     validEmail(email) {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       return re.test(email)
@@ -166,12 +167,14 @@ export default {
       }
 
       if (!this.errors.length) {
-        this.update(this.form)
+        this.update({ user: this.form, id: this.user.id}).then((response) => {
+          this.makeToast('success')
+        })
       }
     },
     resetPasswordSubmit() {
       this.submitted = true
-      const { code, password, passwordConfirmation } = this
+      const { password, passwordConfirmation } = this
       this.passwordErrors = []
 
       if (!password) {
@@ -180,9 +183,17 @@ export default {
         this.passwordErrors.push('Confirmation Password required.')
       } else if (password !== passwordConfirmation) {
         this.passwordErrors.push('Passwords must match.')
-      } else if (code && password && passwordConfirmation) {
-        this.resetPassword( { code, password, passwordConfirmation })
+      } else if (password && passwordConfirmation) {
+        this.update( { user: {password: password }, id: this.user.id}).then((response) => {
+          this.makeToast('success')
+        })
       }
+    },
+    makeToast(variant) {
+      this.$bvToast.toast('Profile Updated!', {
+        variant,
+        solid: true,
+      })
     },
   }
 }
