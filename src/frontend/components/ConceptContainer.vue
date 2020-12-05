@@ -35,6 +35,13 @@
           align-self="center"
           md="auto"
         >
+          <b-icon-circle-fill variant="success" />
+          <mark class="typetip">Matched</mark> Concepts
+        </b-col>
+        <b-col
+          align-self="center"
+          md="auto"
+        >
           <b-icon-triangle-fill variant="warning" />
           <mark class="typetip">Related</mark> Concepts
         </b-col>
@@ -155,12 +162,34 @@ export default {
     },
     getFilterNodes() {
       const url = `${this.$apiUrl}/query/concepts`
+      // Required in reverse order
+      // const types = ['contextual', 'related', 'matched']
       const postObject = { ...this.filters }
       if (Object.keys(postObject).length < 1) return
+
+      // let requests = []
+      postObject.type = 'matched'
+
       axios.post(url, postObject)
       .then(({ data }) => {
         this.filteredIds = data
       })
+
+      // for (let typeIndex = 0; typeIndex < types.length; typeIndex++) {
+      //   const typeValue = types[typeIndex]
+      //   postObject.type = typeValue
+
+      //   requests.push(
+      //     axios.post(url, postObject)
+      //     .then(({ data }) => {
+      //       return data
+      //     })
+      //   )
+      // }
+
+      // Promise.all(requests).then((data) => {
+      //   this.filteredIds = data
+      // })
     },
     nodeSelected({ node }) {
       // console.log(node)

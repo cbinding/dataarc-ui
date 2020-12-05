@@ -115,8 +115,9 @@ export default {
       required: true,
     },
     conceptID: {
-      type: String,
+      type: [String, Boolean],
       required: false,
+      default: false,
     },
     filteredIds: {
       type: [Array, Boolean],
@@ -127,7 +128,7 @@ export default {
       required: true,
     },
     sampleConcept: {
-      type: String,
+      type: [String, Boolean],
       default: false,
     },
   },
@@ -167,9 +168,9 @@ export default {
         // Sample size to construct distance matrix
         sampleSize: 45,
         // Separation amount between nodes
-        nodeSeparation: 75,
+        nodeSeparation: 150,
         // Power iteration tolerance
-        piTol: 0.0000002,
+        piTol: 0.0000001,
 
         /* incremental layout options */
 
@@ -182,13 +183,13 @@ export default {
         // Nesting factor (multiplier) to compute ideal edge length for nested edges
         nestingFactor: 0.1,
         // Maximum number of iterations to perform
-        numIter: 2500,
+        numIter: 5000,
         // For enabling tiling
         tile: true,
         // Represents the amount of the vertical space to put between the zero degree members during the tiling operation(can also be a function)
-        tilingPaddingVertical: 10,
+        tilingPaddingVertical: 30,
         // Represents the amount of the horizontal space to put between the zero degree members during the tiling operation(can also be a function)
-        tilingPaddingHorizontal: 10,
+        tilingPaddingHorizontal: 30,
         // Gravity force (constant)
         gravity: 0.35,
         // Gravity range (constant) for compounds
@@ -198,11 +199,12 @@ export default {
         // Gravity range (constant)
         gravityRange: 3.8,
         // Initial cooling factor for incremental layout
-        initialEnergyOnIncremental: 0.3,
+        initialEnergyOnIncremental: 0.5,
       },
       container: 'cy',
       currentNodeID: 'all',
       currentNode: null,
+      hoverNode: null,
       currentElements: {},
       legendItems: [
         { label: 'Selected', fill: '#5cb85c' },
@@ -259,6 +261,15 @@ export default {
               'font-weight': 'bold',
               'width': '25px',
               'height': '25px',
+            },
+          },
+          {
+            selector: `node.selected`,
+            style: {
+              'background-color': '#5cb85c',
+              'font-weight': 'bold',
+              'width': '25px',
+              'height': '25px',
               'shape': 'star',
             },
           },
@@ -284,6 +295,40 @@ export default {
               'text-rotation': 'autorotate',
               'text-background-opacity': 0.5,
               'text-background-color': 'whitesmoke',
+            },
+          },
+          {
+            selector: `edge.hovered`,
+            style: {
+              'width': 1,
+              'line-color': '#2f2f2f',
+              'target-arrow-color': '#2f2f2f',
+              'target-arrow-shape': 'triangle',
+              'curve-style': 'haystack',
+              'label': 'data(label)',
+              'font-size': '0.8em',
+              'color': 'black',
+              'text-rotation': 'autorotate',
+              'text-background-opacity': 1,
+              'text-background-color': 'whitesmoke',
+            },
+          },
+          {
+            selector: `edge.hovered-lg`,
+            style: {
+              width: 5,
+            },
+          },
+          {
+            selector: `edge.hovered-md`,
+            style: {
+              width: 3,
+            },
+          },
+          {
+            selector: `edge.hovered-sm`,
+            style: {
+              width: 1,
             },
           },
         ],
@@ -422,13 +467,24 @@ export default {
       if (val) {
         this.currentNodeID = val
       }
-    }
+    },
   },
   mounted() {
     this.cyInstance = this.$refs.cy.instance
     const self = this
     this.cyInstance.on('click tap', 'node', (evt) => {
       self.currentNodeID = evt.target.id()
+    })
+    this.cyInstance.on('mouseover', 'node', (evt) => {
+      if (this.currentNodeID !== 'all') return
+      self.hoverNode = evt.target.id()
+      this.hoverNeighbours()
+    })
+
+    this.cyInstance.on('mouseout', 'node', (evt) => {
+      if (this.currentNodeID !== 'all') return
+      this.unHoverNeighbours()
+      this.hoverNode = null
     })
   },
   methods: {
@@ -473,22 +529,54 @@ export default {
     },
     resetNetwork() {
       // reset cytoscape elements
+      // const typeByIndex = ['contextual', 'related', 'matched']
+
       this.cyInstance.elements().remove()
       this.cyInstance.add(this.elements)
       this.cyInstance.layout(this.fcoseSettings).run()
-      const vm = this
-      if (vm.filteredIds && vm.filteredIds.length > 0) {
-        this.cyInstance.filter((ele, i, eles) => {
-          return vm.filteredIds.indexOf(ele.data('id')) === -1
-        }).map((node, index) => {
-          node.addClass('not-matched')
-          return node
-        })
-      }
+      this.setFilteredNodes()
+
       this.currentElements = this.cyInstance.json().elements
       this.cyInstance.resize()
       if (this.currentNodeID && this.currentNodeID !== 'all') {
         this.showNeighbours()
+      }
+    },
+
+    setFilteredNodes() {
+      if (this.filteredIds && this.filteredIds.length > 0) {
+        this.cyInstance.filter((ele, i, eles) => {
+          return this.filteredIds.indexOf(ele.data('id')) === -1
+        }).map((node, index) => {
+          node.classes(['not-matched'])
+          return node
+        })
+
+        const matchedNodes = []
+        const firstDegreeNodes = []
+        const secondDegreeNodes = []
+
+        this.cyInstance.filter((ele, i, eles) => {
+          return this.filteredIds.indexOf(ele.data('id')) >= 0
+        }).forEach((node, index) => {
+          node.toggleClass('not-matched', false)
+          matchedNodes.push(node)
+          const eles = node.neighborhood()
+          if (eles.length <= 0) {
+            return
+          }
+          firstDegreeNodes.push(eles)
+          const eles1 = eles.neighborhood()
+          if (eles1.length <= 0) {
+            return
+          }
+          secondDegreeNodes.push(eles1)
+        })
+        secondDegreeNodes.map((e) => e.classes(['contextual']))
+        firstDegreeNodes.map((e) => e.classes(['related']))
+        matchedNodes.map((e) => e.classes(['matched']))
+      } else {
+        this.cyInstance.elements().classes([])
       }
     },
 
@@ -502,8 +590,25 @@ export default {
       cytoscape.use(fcose)
     },
 
+    hoverNeighbours() {
+      const node = this.cyInstance.$id(this.hoverNode)
+      const eles1 = node.neighborhood() // 1 step away
+      const eles2 = eles1.neighborhood() // 2 steps away
+      // add classes for level styling
+      eles2.classes(['contextual', 'hovered', 'hovered-sm'])
+      eles1.classes(['related', 'hovered', 'hovered-md'])
+      node.classes(['selected', 'hovered', 'hovered-lg'])
+    },
+
+    unHoverNeighbours() {
+      this.setFilteredNodes()
+      this.showNeighbours()
+    },
+
     showNeighbours() {
       // reset cytoscape elements
+      if (!this.currentNodeID || this.currentNodeID === 'all') return
+
       this.cyInstance.elements().remove()
       this.cyInstance.add(this.elements)
 
@@ -513,7 +618,7 @@ export default {
       const eles2 = eles1.neighborhood() // 2 steps away
 
       // add classes for level styling
-      node.addClass('matched')
+      node.addClass('selected')
       eles1.map((e) => e.addClass('related'))
       eles2.map((e) => e.addClass('contextual'))
 
