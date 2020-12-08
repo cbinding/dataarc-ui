@@ -1,26 +1,17 @@
 <template>
   <div>
     <div class="sticky-top">
-      <b-button-group class="float-right border-0">
-        <b-button
-          href="#result-section"
-          variant="dark"
-        >
-          Results
-          <b-badge variant="danger">
-            {{ resultsCount }}
-          </b-badge>
-        </b-button>
-        <b-button
-          href="#filter-section"
-          variant="dark"
-        >
-          Filters
-          <b-badge variant="success">
-            {{ filterCount }}
-          </b-badge>
-        </b-button>
-      </b-button-group>
+      <b-col>
+        <search-dialog
+          id="search-dialog"
+          :results-count="resultsCount"
+          :filter-count="filterCount"
+          :results="results"
+          :filters="compiledFilters"
+          :concept-filters="conceptFilters"
+          @removed="removeFilter"
+        />
+      </b-col>
     </div>
     <timeline-section
       id="temporal-section"
@@ -60,6 +51,7 @@
       id="result-section"
       :filters="compiledFilters"
       @resultsCount="setCount"
+      @resultsUpdated="setResults"
     />
     <why-section
       id="why-section"
@@ -76,6 +68,7 @@ import ConceptSection from './ConceptContainer.vue'
 import FilterSection from './FilterContainer.vue'
 import ResultSection from './ResultContainer.vue'
 import WhySection from './WhyContainer.vue'
+import SearchDialog from './result-components/SearchDialog.vue'
 
 export default {
   name: 'DataARC',
@@ -97,6 +90,7 @@ export default {
     FilterSection,
     ResultSection,
     WhySection,
+    SearchDialog,
   },
   data() {
     return {
@@ -104,6 +98,7 @@ export default {
       totalFilters: 0,
       keywordFilters: [],
       temporalFilters: [],
+      results: {},
       resultsCount: 0,
       conceptFilters: [],
       spatialFilter: false,
@@ -146,7 +141,7 @@ export default {
         this.conceptFilters.length,
         this.spatialFilter ? 1 : 0,
       ].reduce((a, b) => a + b, 0)
-    }
+    },
   },
   watch: {
     savedSearch(val) {
@@ -239,7 +234,6 @@ export default {
       else {
         this.$set(this.filters, type, filter)
       }
-      this.getResults()
     },
     removeFilter(type, index) {
       if (type === 'polygon') {
@@ -288,18 +282,11 @@ export default {
 
       return filters
     },
-    getResults() {
-      const filters = this.compiledFilters
-      return axios
-      .post(
-        `${this.$apiUrl}/query/results`,
-        filters,
-        'matched',
-      ).then((data) => {
-      })
-    },
     setCount(val) {
       this.resultsCount = val
+    },
+    setResults(val, type) {
+      this.$set(this.results, type, val)
     },
   },
 }

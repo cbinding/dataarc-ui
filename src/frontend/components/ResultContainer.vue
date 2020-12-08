@@ -6,7 +6,8 @@
       :filters="filters"
       :result-type="result"
       :result-types="resultTypes"
-      @resultsCount="setResultsCount"
+      @resultsCount="emitResultsCount"
+      @resultsUpdated="emitResults"
     />
   </section>
 </template>
@@ -31,8 +32,11 @@ export default {
     };
   },
   methods: {
-    setResultsCount(val) {
+    emitResultsCount(val) {
       this.$emit('resultsCount', val)
+    },
+    emitResults(val, type) {
+      this.$emit('resultsUpdated', val, type )
     }
   },
 };

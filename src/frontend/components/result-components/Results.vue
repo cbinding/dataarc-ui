@@ -1,5 +1,5 @@
 <template>
-  <section :class="'bg-'+resultType">
+  <section :id="`${resultType}-section`" :class="'bg-'+resultType">
     <b-container class="text-center pt-5 pb-5">
       <b-row>
         <b-col>
@@ -91,19 +91,7 @@ export default {
     filters: {
       handler(newVal, oldVal) {
         if (newVal) {
-          let postObject = {
-            type: this.resultType
-          }
-          postObject = Object.assign(postObject, this.filters)
-          axios.post(`${this.$apiUrl}/query/results`, postObject).then((data) => {
-            this.results = data.data
-            this.resultsCount = 0
-            if (this.resultType === 'matched') {
-              this.results.forEach((result) => {
-                this.resultsCount += result.total
-              })
-            }
-          })
+          this.getAllResults()
         }
       },
       deep: true,
@@ -111,27 +99,12 @@ export default {
     resultsCount(val) {
       this.$emit('resultsCount', val)
     },
+    results(val) {
+      this.$emit('resultsUpdated', this.sortedResults, this.resultType)
+    },
   },
   mounted() {
-    let postObject = {
-      type: this.resultType
-    }
-    postObject = Object.assign(postObject, this.filters)
-    axios.post(`${this.$apiUrl}/query/results`, postObject).then((data) => {
-      this.results = data.data
-      if (this.resultType === 'matched') {
-        this.resultsCount = 0
-        this.results.forEach((result) => {
-          this.resultsCount += result.total
-        })
-        this.$emit('resultsCount', this.resultsCount)
-      }
-    })
-    // axios.post(`${this.$apiUrl}/query/results`, this.filters, 'matched').then((data) => {
-    //   console.log(data);
-    //   this.results = data
-    // })
-    // this.results = this.sampleResult
+    this.getAllResults()
   },
   methods: {
     setResultView(source, result) {
@@ -141,6 +114,21 @@ export default {
     clear() {
       this.selectedResult = false
     },
+    getAllResults() {
+      let postObject = {
+        type: this.resultType
+      }
+      postObject = Object.assign(postObject, this.filters)
+      axios.post(`${this.$apiUrl}/query/results`, postObject).then((data) => {
+        this.results = data.data
+        if (this.resultType === 'matched') {
+          this.resultsCount = 0
+          this.results.forEach((result) => {
+            this.resultsCount += result.total
+          })
+        }
+      })
+    }
   },
 }
 </script>
