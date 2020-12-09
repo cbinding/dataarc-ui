@@ -6,8 +6,8 @@
           <h2>
             Temporal Filter
             <sup><a href="http://www.data-arc.org/time/" title="Learn about time in dataARC" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
-            <sup><a href="#" title="" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-file-earmark-text /></a></sup>
-            <sup><a href="#" title="" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-play-fill /></a></sup>
+            <sup><a href="#" title="Read instructions on how to use the tool" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-file-earmark-text /></a></sup>
+            <sup><a href="#" title="Watch a quick demo of the tool" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-play-fill /></a></sup>
           </h2>
           <hr class="primary">
           <p>

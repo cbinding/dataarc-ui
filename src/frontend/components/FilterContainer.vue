@@ -14,7 +14,7 @@
             ><b-icon-info-circle-fill /></a></sup>
             <sup><a
               href="#"
-              title=""
+              title="Read instructions on how to use the tool"
               class="text-dark"
               target="_blank"
               data-toggle="tooltip"

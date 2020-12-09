@@ -17,7 +17,7 @@
             ><b-icon-info-circle-fill /></a></sup>
             <sup><a
               href="#"
-              title=""
+              title="Watch a quick demo of the tool"
               class="text-dark"
               target="_blank"
               data-toggle="tooltip"

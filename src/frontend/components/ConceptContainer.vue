@@ -17,14 +17,14 @@
             ><b-icon-info-circle-fill /></a></sup>
             <sup><a
               href="#"
-              title=""
+              title="Read instructions on how to use the tool"
               class="text-dark"
               target="_blank"
               data-toggle="tooltip"
             ><b-icon-file-earmark-text /></a></sup>
             <sup><a
               href="#"
-              title=""
+              title="Watch a quick demo of the tool"
               class="text-dark"
               target="_blank"
               data-toggle="tooltip"

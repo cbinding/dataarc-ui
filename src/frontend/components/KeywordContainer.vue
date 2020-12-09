@@ -6,7 +6,7 @@
           <h2>
             Keyword
             <sup><a href="http://www.data-arc.org/keywords/" title="How dataarc thinks about keywords" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
-            <sup><a href="#" title="" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-file-earmark-text /></a></sup>
+            <sup><a href="#" title="Read instructions on how to use the tool" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-file-earmark-text /></a></sup>
           </h2>
           <hr class="primary">
           <p>
