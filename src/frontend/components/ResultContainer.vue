@@ -8,6 +8,7 @@
       :result-types="resultTypes"
       @resultsCount="emitResultsCount"
       @resultsUpdated="emitResults"
+      @load-video="emitFileName"
     />
   </section>
 </template>
@@ -37,7 +38,10 @@ export default {
     },
     emitResults(val, type) {
       this.$emit('resultsUpdated', val, type )
-    }
+    },
+    emitFileName(val) {
+      this.$emit('load-video', val )
+    },
   },
 };
 </script>

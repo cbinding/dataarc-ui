@@ -8,6 +8,29 @@
           </h2>
           <h2 v-else class="text-capitalize">
             Results ({{ resultType }} Results)
+            <sup><a
+              href="https://dataarc-demo.readthedocs.io/en/latest/#getting-started"
+              title="Read instructions on how to use the tool"
+              class="text-dark"
+              target="_blank"
+              data-toggle="tooltip"
+            ><b-icon-file-earmark-text /></a></sup>
+            <sup><b-button
+              size="sm"
+              variant="transparent"
+              @click="$emit('load-video', 'Results_111320.mp4')"
+              title="Watch a quick demo of the tool"
+              class="text-dark p-0 pb-1"
+              data-toggle="tooltip"
+            ><b-icon-play-fill font-scale="2.25" /></b-button></sup>
+            <sup><a
+              href="#"
+              title=""
+              class="text-dark"
+              target="_blank"
+              data-toggle="tooltip"
+              bg
+            ><b-icon-image /></a></sup>
           </h2>
           <hr class="bg-light">
           <p>
