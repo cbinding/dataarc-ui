@@ -6,14 +6,7 @@
           <h2>
             Filters
             <sup><a
-              href="http://www.data-arc.org/filters/"
-              title="How dataarc thinks about filters"
-              class="text-dark"
-              target="_blank"
-              data-toggle="tooltip"
-            ><b-icon-info-circle-fill /></a></sup>
-            <sup><a
-              href="#"
+              href="https://dataarc-demo.readthedocs.io/en/latest/#getting-started"
               title="Read instructions on how to use the tool"
               class="text-dark"
               target="_blank"

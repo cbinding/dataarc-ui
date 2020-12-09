@@ -9,20 +9,20 @@
           <h2 v-else class="text-capitalize">
             Results ({{ resultType }} Results)
             <sup><a
-              href="#"
-              title=""
+              href="https://dataarc-demo.readthedocs.io/en/latest/#getting-started"
+              title="Read instructions on how to use the tool"
               class="text-dark"
               target="_blank"
               data-toggle="tooltip"
-            ><b-icon-info-circle-fill /></a></sup>
-            <sup><a
-              href="#"
+            ><b-icon-file-earmark-text /></a></sup>
+            <sup><b-button
+              size="sm"
+              variant="transparent"
+              @click="$emit('load-video', 'Results_111320.mp4')"
               title="Watch a quick demo of the tool"
-              class="text-dark"
-              target="_blank"
+              class="text-dark p-0 pb-1"
               data-toggle="tooltip"
-              bg
-            ><b-icon-play-fill /></a></sup>
+            ><b-icon-play-fill font-scale="2.25" /></b-button></sup>
             <sup><a
               href="#"
               title=""

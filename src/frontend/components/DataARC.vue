@@ -19,11 +19,13 @@
       :filters="compiledFilters"
       :triggers="filterCount"
       :sample-range="sampleRange"
+      @load-video="setFileName"
     />
     <map-section
       id="spatial-section"
       v-model="spatialFilter"
       :filters="compiledFilters"
+      @load-video="setFileName"
     />
     <concept-section
       id="concept-section"
@@ -32,6 +34,7 @@
       :sample-concept="sampleConcept"
       @filtered="processFilter"
       @removed="removeFilter"
+      @load-video="setFileName"
     />
     <keyword-section
       id="keyword-section"
@@ -52,11 +55,13 @@
       :filters="compiledFilters"
       @resultsCount="setCount"
       @resultsUpdated="setResults"
+      @load-video="setFileName"
     />
     <why-section
       id="why-section"
       :filters="filters"
     />
+    <video-modal v-if="fileName" :fileName="fileName" @video-closed="resetFileName"/>
   </div>
 </template>
 
@@ -69,6 +74,7 @@ import FilterSection from './FilterContainer.vue'
 import ResultSection from './ResultContainer.vue'
 import WhySection from './WhyContainer.vue'
 import SearchDialog from './result-components/SearchDialog.vue'
+import VideoModal from './modal-components/VideoModal.vue'
 
 export default {
   name: 'DataARC',
@@ -91,6 +97,7 @@ export default {
     ResultSection,
     WhySection,
     SearchDialog,
+    VideoModal,
   },
   data() {
     return {
@@ -128,6 +135,7 @@ export default {
       },
       sampleConcept: '',
       sampleRange: null,
+      fileName: null,
     }
   },
   computed: {
@@ -287,6 +295,12 @@ export default {
     },
     setResults(val, type) {
       this.$set(this.results, type, val)
+    },
+    setFileName(val) {
+      this.fileName = val
+    },
+    resetFileName(val) {
+      this.fileName = null
     },
   },
 }
