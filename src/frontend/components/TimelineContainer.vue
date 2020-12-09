@@ -5,7 +5,7 @@
         <b-col>
           <h2>
             Temporal Filter
-            <sup><a href="http://www.data-arc.org/time/" title="How dataarc thinks about time" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
+            <sup><a href="http://www.data-arc.org/time/" title="Learn about time in dataARC" class="text-dark" target="_blank" data-toggle="tooltip" ><b-icon-info-circle-fill /></a></sup>
           </h2>
           <hr class="primary">
           <p>
@@ -17,15 +17,15 @@
       <b-row class="justify-content-md-center">
         <b-col align-self="center" md="auto">
           <b-icon-circle-fill class="text-archaeological"/>
-          <mark class="typetip">Archaeological</mark> Sources
+          <mark class="typetip" title="Archaeological sources include excavated artifactual and faunal data">Archaeological</mark> Sources
         </b-col>
         <b-col align-self="center" md="auto">
           <b-icon-circle-fill class="text-textual"/>
-          <mark class="typetip">Textual</mark> Sources
+          <mark class="typetip" title="Textual sources include Icelandic sagas and historical documents, geolocated to places and place names">Textual</mark> Sources
         </b-col>
         <b-col align-self="center" md="auto">
           <b-icon-circle-fill class="text-environmental"/>
-          <mark class="typetip">Environmental</mark> Sources
+          <mark class="typetip" title="Environmental sources include volcanic, climatological, and other paleoenvironmental samples">Environmental</mark> Sources
         </b-col>
       </b-row>
       <b-row>

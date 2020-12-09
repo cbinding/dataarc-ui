@@ -10,7 +10,7 @@
             Concept Filter
             <sup><a
               href="http://www.data-arc.org/conceptmapping/"
-              title="How to use dataarc concepts in your search"
+              title="Learn about concepts in dataARC"
               class="text-dark"
               target="_blank"
               data-toggle="tooltip"
@@ -29,7 +29,7 @@
           md="auto"
         >
           <b-icon-star-fill variant="success" />
-          <mark class="typetip">Selected</mark> Concept
+          <mark class="typetip" title="The concept selected in the graph">Selected</mark> Concept
         </b-col>
         <b-col
           align-self="center"
@@ -43,14 +43,14 @@
           md="auto"
         >
           <b-icon-triangle-fill variant="warning" />
-          <mark class="typetip">Related</mark> Concepts
+          <mark class="typetip" title="The concepts directly related (first-degree) to the selected concept">Related</mark> Concepts
         </b-col>
         <b-col
           align-self="center"
           md="auto"
         >
           <b-icon-circle-fill variant="danger" />
-          <mark class="typetip">Contextual</mark> Concepts
+          <mark class="typetip" title="The concepts loosely related (second-degree) to the selected concept">Contextual</mark> Concepts
         </b-col>
       </b-row>
       <b-row>
