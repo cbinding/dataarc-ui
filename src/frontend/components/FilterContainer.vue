@@ -5,15 +5,21 @@
         <b-col>
           <h2>
             Filters
-            <sup
-              ><a
-                href="http://www.data-arc.org/filters/"
-                title="How dataarc thinks about filters"
-                class="text-dark"
-                target="_blank"
-                data-toggle="tooltip"
-                ><b-icon-info-circle-fill /></a
-            ></sup>
+            <sup><a
+              href="http://www.data-arc.org/filters/"
+              title="How dataarc thinks about filters"
+              class="text-dark"
+              target="_blank"
+              data-toggle="tooltip"
+            ><b-icon-info-circle-fill /></a></sup>
+            <sup><a
+              href="#"
+              title=""
+              class="text-dark"
+              target="_blank"
+              data-toggle="tooltip"
+              bg
+            ><b-icon-file-earmark-text /></a></sup>
           </h2>
           <hr class="primary" />
           <p>

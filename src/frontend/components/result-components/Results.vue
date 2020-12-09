@@ -8,6 +8,29 @@
           </h2>
           <h2 v-else class="text-capitalize">
             Results ({{ resultType }} Results)
+            <sup><a
+              href="#"
+              title=""
+              class="text-dark"
+              target="_blank"
+              data-toggle="tooltip"
+            ><b-icon-info-circle-fill /></a></sup>
+            <sup><a
+              href="#"
+              title=""
+              class="text-dark"
+              target="_blank"
+              data-toggle="tooltip"
+              bg
+            ><b-icon-play-fill /></a></sup>
+            <sup><a
+              href="#"
+              title=""
+              class="text-dark"
+              target="_blank"
+              data-toggle="tooltip"
+              bg
+            ><b-icon-image /></a></sup>
           </h2>
           <hr class="bg-light">
           <p>
