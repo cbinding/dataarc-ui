@@ -38,7 +38,30 @@
               <h3>Filters</h3>
             </b-card-title>
             <b-card-group deck style="margin:0px;">
-              <b-card no-body bg-variant="transparent">
+              <b-card no-body bg-variant="transparent" style="margin:2px;">
+                <b-card-header header-bg-variant="secondary" style="padding:0rem">
+                  <div class="text-center no-wrap" >
+                    <small>Spatial</small>
+                  </div>
+                </b-card-header>
+                <b-card-text class="small">
+                  <b-list-group data-type="spatial" v-if="filters.polygon" flush>
+                    <b-list-group-item
+                      class="d-flex justify-content-between align-items-center text-left bg-secondary"
+                      border-variant="light"
+                      style="padding:0.5rem;padding-right:0rem;"
+                    >
+                      <small>Polygon</small>
+                      <b-button size="sm" style="padding:0.1rem;" @click="$emit('removed', 'polygon')">
+                        <b-icon-x-circle-fill
+                          variant="light"
+                        />
+                      </b-button>
+                    </b-list-group-item>
+                  </b-list-group>
+                </b-card-text>
+              </b-card>
+              <b-card no-body bg-variant="transparent" style="margin:2px;">
                 <b-card-header header-bg-variant="secondary" style="padding:0rem;">
                   <div class="text-center no-wrap" >
                     <small>Temporal</small>
@@ -63,30 +86,7 @@
                   </b-list-group>
                 </b-card-text>
               </b-card>
-              <b-card no-body bg-variant="transparent">
-                <b-card-header header-bg-variant="secondary" style="padding:0rem;">
-                  <div class="text-center no-wrap" >
-                    <small>Spatial</small>
-                  </div>
-                </b-card-header>
-                <b-card-text class="small">
-                  <b-list-group data-type="spatial" v-if="filters.polygon" flush>
-                    <b-list-group-item
-                      class="d-flex justify-content-between align-items-center text-left bg-secondary"
-                      border-variant="light"
-                      style="padding:0.5rem;padding-right:0rem;"
-                    >
-                      <small>Polygon</small>
-                      <b-button size="sm" style="padding:0.1rem;" @click="$emit('removed', 'polygon')">
-                        <b-icon-x-circle-fill
-                          variant="light"
-                        />
-                      </b-button>
-                    </b-list-group-item>
-                  </b-list-group>
-                </b-card-text>
-              </b-card>
-              <b-card no-body bg-variant="transparent">
+              <b-card no-body bg-variant="transparent" style="margin:2px;">
                 <b-card-header header-bg-variant="secondary" style="padding:0rem;">
                   <div class="text-center no-wrap" >
                     <small>Conceptual</small>
@@ -98,10 +98,34 @@
                       v-for="(filter, index) in conceptFilters"
                       :key="index"
                       style="padding:0.5rem;padding-right:0rem;"
-                      class="d-flex justify-content-between align-items-center text-left bg-secondary"
+                      class="justify-content-between align-items-center text-left bg-secondary"
                     >
                       <small>{{ filter.label }}</small>
                       <b-button size="sm" variant="transparent" style="padding:0.1rem;" @click="$emit('removed', 'concept', index)">
+                        <b-icon-x-circle-fill
+                          variant="light"
+                        />
+                      </b-button>
+                    </b-list-group-item>
+                  </b-list-group>
+                </b-card-text>
+              </b-card>
+              <b-card no-body bg-variant="transparent" style="margin:2px;">
+                <b-card-header header-bg-variant="secondary" style="padding:0rem;">
+                  <div class="text-center no-wrap" >
+                    <small>Keywords</small>
+                  </div>
+                </b-card-header>
+                <b-card-text class="small">
+                  <b-list-group data-type="concepts" flush>
+                    <b-list-group-item
+                      v-for="(filter, index) in keywordFilters"
+                      :key="index"
+                      style="padding:0.5rem;padding-right:0rem;"
+                      class="justify-content-between align-items-center text-left bg-secondary"
+                    >
+                      <small>{{ filter }}</small>
+                      <b-button size="sm" variant="transparent" style="padding:0.1rem;" @click="$emit('removed', 'keyword', index)">
                         <b-icon-x-circle-fill
                           variant="light"
                         />
@@ -173,6 +197,10 @@ export default {
       required: true,
     },
     conceptFilters: {
+      type: [Array, Boolean],
+      required: true,
+    },
+    keywordFilters: {
       type: [Array, Boolean],
       required: true,
     },

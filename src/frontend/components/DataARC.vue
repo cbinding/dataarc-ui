@@ -9,6 +9,7 @@
           :results="results"
           :filters="compiledFilters"
           :concept-filters="conceptFilters"
+          :keyword-filters="keywordFilters"
           @removed="removeFilter"
         />
       </b-col>
