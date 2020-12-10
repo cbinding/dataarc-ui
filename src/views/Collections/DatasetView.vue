@@ -439,7 +439,9 @@ export default {
   mounted() {
     this.currentId = this.$route.params.id;
     this.$apollo.queries.dataset.skip = false;
+    this.$apollo.queries.dataset.refetch();
     this.$apollo.queries.allCategories.skip = false;
+    this.$apollo.queries.allCategories.refetch();
   }
 };
 </script>
