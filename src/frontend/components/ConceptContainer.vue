@@ -64,7 +64,7 @@
           align-self="center"
           md="auto"
         >
-          <b-icon-circle-fill variant="danger" />
+          <b-icon-circle-fill variant="primary" />
           <mark class="typetip" title="The concepts loosely related (second-degree) to the selected concept">Contextual</mark> Concepts
         </b-col>
       </b-row>
