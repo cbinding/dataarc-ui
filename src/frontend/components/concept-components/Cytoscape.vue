@@ -63,6 +63,16 @@
                 >
                   <b-icon-dash-circle-fill aria-hidden="true" />
                 </b-button>
+                <b-button
+                  v-if="metadata"
+                  :href="metadata"
+                  title="View Concept Metadata"
+                  variant="primary"
+                  size="sm"
+                  target="_blank"
+                >
+                  <b-icon-info-circle-fill aria-hidden="true" />
+                </b-button>
               </b-button-group>
             </b-button-toolbar>
           </b-col>
@@ -103,8 +113,21 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
 import cola from 'cytoscape-cola'
 import fcose from 'cytoscape-fcose'
+
+const conceptsQuery = gql`
+  query concepts($id: ID!) {
+    concepts(where: { id: $id }) {
+      id
+      title
+      description
+      citation
+      url
+    }
+  }
+`
 
 export default {
   name: 'Network',
@@ -209,7 +232,7 @@ export default {
       legendItems: [
         { label: 'Selected', fill: '#5cb85c' },
         { label: 'Related', fill: '#f0ad4e' },
-        { label: 'Contextual', fill: '#d9534f' },
+        { label: 'Contextual', fill: '#0275d8' },
       ],
       layout: {
         name: 'cola',
@@ -239,7 +262,7 @@ export default {
           {
             selector: `node.contextual`,
             style: {
-              'background-color': '#d9534f',
+              'background-color': '#0275d8',
               'width': '20px',
               'height': '20px',
               'shape': 'ellipse',
@@ -334,9 +357,13 @@ export default {
         ],
         cyInstance: null,
       },
+      currentConcept: {},
     }
   },
   computed: {
+    metadata() {
+      return (this.currentConcept && this.currentConcept.url) ? this.currentConcept.url : false
+    },
     notInFilter() {
       return !_.includes(this.filters.concept, this.currentNodeID)
     },
@@ -455,8 +482,10 @@ export default {
     },
     currentNodeID() {
       if (this.currentNodeID === 'all') {
+        this.resetConcept()
         this.resetNetwork()
       } else {
+        this.getConcept()
         this.showNeighbours()
       }
     },
@@ -583,6 +612,21 @@ export default {
     onNodeSelected(nodeID) {
       if (nodeID == null) this.currentNodeID = 'all'
       else if (this.currentNodeID !== nodeID) this.currentNodeID = nodeID
+    },
+
+    getConcept() {
+      this.$apollo.query({
+        query: conceptsQuery,
+        variables: {
+          id: this.currentNodeID,
+        },
+      }).then(({ data }) => {
+        [this.currentConcept] = data.concepts
+      })
+    },
+
+    resetConcept() {
+      this.currentConcept = {}
     },
 
     preConfig(cytoscape) {
