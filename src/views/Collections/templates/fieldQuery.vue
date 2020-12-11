@@ -72,6 +72,10 @@ export default {
         {type: 'Less Than or Equal to', value: 'less_than_or_equal_to'},
         {type: 'Greater Than or Equal to', value: 'greater_than_or_equal_to'},
       ],
+      array: [
+        {type: 'Contains', value: 'contains'},
+        {type: 'Not Contains', value: 'not_contains'},
+      ],
       string: [
         {type: 'Equals', value: 'equals'},
         {type: 'Not Equals', value: 'not_equals' },
@@ -158,6 +162,12 @@ export default {
     getOperators(val) {
       if (val) {
         if (val.type) {
+          if (val.type === 'begin' || val.type === 'end') {
+            return this.number
+          }
+          if (val.type === 'url') {
+            return this.string
+          }
           return this[val.type]
         }
         let test = this.schema.values.filter((value) => {
@@ -167,7 +177,14 @@ export default {
           }
         })
         if (test.length > 0) {
-          return this[test[0].type]
+          let type = test[0].type
+          if (type === 'begin' || type === 'end') {
+            return this.number
+          }
+          if (type === 'url') {
+            return this.string
+          }
+          return this[type]
         }
       }
       return this.operators
