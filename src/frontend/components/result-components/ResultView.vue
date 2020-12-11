@@ -78,24 +78,6 @@
                   </div>
                 </div>
               </div> -->
-              <!-- <b-col sm="12" v-if="!feature.title">
-                <b-row v-if="currentDataset.description">
-                  <strong>Description: </strong>
-                  {{ currentDataset.description }}
-                  <br>
-                  <br>
-                </b-row>
-                <b-row v-if="currentDataset.citation">
-                  <strong>Citation: </strong>
-                  {{ currentDataset.citation }}
-                  <br>
-                  <br>
-                </b-row>
-                <b-row v-if="currentDataset.url">
-                  <strong>Url: </strong>
-                  <a :href="currentDataset.url">{{ currentDataset.url }}</a>
-                </b-row>
-              </b-col> -->
               <b-col sm="12" v-if="feature.title">
                 <div class="text-center">
                   <h3>{{feature.title}}</h3>
@@ -113,7 +95,7 @@
                     >
                       <div
                         v-html="
-                          pug.render(feature.details, feature.properties)
+                          pug.render(currentDataset.details_layout, feature.properties)
                         "
                         lang="pug"
                       />
@@ -132,7 +114,7 @@
                     >
                       <div
                         v-html="
-                          pug.render(feature.summary, feature.properties)
+                          pug.render(currentDataset.summary_layout, feature.properties)
                         "
                         lang="pug"
                       />
@@ -233,6 +215,8 @@ const datasetQuery = gql`
       citation
       url
       metadata
+      summary_layout
+      details_layout
       features_count
     }
   }
@@ -255,8 +239,6 @@ const featuresQuery = gql`
     features(where: { dataset: $id, _id_in: $ids }, start: $start, limit: $limit) {
       id
       title
-      summary
-      details
       properties
     }
   }
@@ -266,8 +248,6 @@ const featuresQueryAll = gql`
     features(where: { dataset: $id }, start: $start, limit: $limit) {
       id
       title
-      summary
-      details
       properties
     }
   }
