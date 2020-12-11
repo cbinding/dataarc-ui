@@ -13,10 +13,8 @@
       {{ `${resultType} Results: ${source.result.category}` }}
     </template>
     <template #default>
-      <h4>{{ source.dataset }}</h4>
-      <br>
-      <div class="tab-content" id="results-source-tabContent">
-        <div id="sead-content" class="tab-pane fade show active" role="tabpanel">
+      <b-tabs>
+        <b-tab :title="source.dataset" class="nav-item nav-link active" data-toggle="tab" href="#dataset-content" role="tab">
           <b-row>
             <b-col sm="4" class="source-table">
               <div id="results-details-table_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
@@ -30,11 +28,11 @@
                       </div>
                       <div class="d-flex justify-content-end">
                         <b-input-group>
-                          <b-input v-model="filter" placeholder="Filter..."></b-input>
+                          <b-input v-model="featuresFilter" placeholder="Filter..."></b-input>
                         </b-input-group>
                       </div>
                     </b-row>
-                    <b-table @filtered="updatePagination" :busy="loading" :fields="fields" :filter="filter" :per-page="10" :current-page="currentPage" id="results-details-table" head-variant="light" table-variant="light" role="grid" dataTable striped bordered hover small :items="features">
+                    <b-table @filtered="updatePagination" :busy="featuresLoading" :fields="featuresFields" :filter="featuresFilter" :per-page="10" :current-page="currentFeaturesPage" id="results-details-table" head-variant="light" table-variant="light" role="grid" dataTable striped bordered hover small :items="features">
                       <template v-slot:table-busy>
                         <div class="text-center my-2">
                           <b-spinner class="align-middle"></b-spinner>
@@ -56,7 +54,7 @@
                       <div class="d-flex justify-content-end">
                         <b-pagination
                           size="sm"
-                          v-model="currentPage"
+                          v-model="currentFeaturesPage"
                           :total-rows="rows"
                           :per-page="10"
                           :limit="4"
@@ -80,7 +78,7 @@
                   </div>
                 </div>
               </div> -->
-              <b-col sm="12" v-if="!feature.title">
+              <!-- <b-col sm="12" v-if="!feature.title">
                 <b-row v-if="currentDataset.description">
                   <strong>Description: </strong>
                   {{ currentDataset.description }}
@@ -97,7 +95,7 @@
                   <strong>Url: </strong>
                   <a :href="currentDataset.url">{{ currentDataset.url }}</a>
                 </b-row>
-              </b-col>
+              </b-col> -->
               <b-col sm="12" v-if="feature.title">
                 <div class="text-center">
                   <h3>{{feature.title}}</h3>
@@ -145,8 +143,78 @@
               <!-- <chart :feature="feature"></chart> -->
             </b-col>
           </b-row>
-        </div>
-      </div>
+        </b-tab>
+        <b-tab title="Metadata" class="nav-item nav-link" data-toggle="tab" href="#metadata-content" role="tab">
+          <b-row>
+            <b-col sm="8">
+              <b-row class="justify-content-between">
+                <div class="badge badge-light text-dark d-flex justify-content-start">
+                  <div class="dataTables_info" id="results-details-table_info" role="status" aria-live="polite">
+                    {{ getFieldsStart }} - {{ getFieldsNext }} of {{ getCount }}
+                  </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <b-input-group>
+                    <b-input v-model="fieldsFilter" placeholder="Filter..."></b-input>
+                  </b-input-group>
+                </div>
+              </b-row>
+              <b-table responsive @filtered="updateFieldsPagination" :busy="fieldsLoading" :fields="fieldsFields" :filter="fieldsFilter" :per-page="10" :current-page="currentFieldsPage" id="field-metadata-table" head-variant="light" table-variant="light" role="grid" dataTable striped bordered hover small :items="datasetFields">
+                <template v-slot:table-busy>
+                  <div class="text-center my-2">
+                    <b-spinner class="align-middle"></b-spinner>
+                    <strong>Loading...</strong>
+                  </div>
+                </template>
+                <template v-slot:cell(description)="row">
+                  <div class="text-wrap" style="width: 200px; max-width: 400px;" v-if="row.item.description">
+                    {{ row.item.description }}
+                  </div>
+                </template>
+              </b-table>
+              <b-row>
+                <div class="d-flex justify-content-end">
+                  <b-pagination
+                    size="sm"
+                    v-model="currentFieldsPage"
+                    :total-rows="filteredFieldsCount > 0 ? filteredFieldsCount : datasetFieldsCount"
+                    :per-page="10"
+                    :limit="4"
+                    first-number
+                    last-number
+                  />
+                </div>
+              </b-row>
+            </b-col>
+            <b-col sm="4">
+              <b-col sm="12">
+                <b-container>
+                  <b-row v-if="currentDataset.description">
+                    <strong>Description: </strong>
+                    {{ currentDataset.description }}
+                    <br>
+                    <br>
+                  </b-row>
+                  <b-row v-if="currentDataset.citation">
+                    <strong>Citation: </strong>
+                    {{ currentDataset.citation }}
+                    <br>
+                    <br>
+                  </b-row>
+                  <b-row v-if="currentDataset.url">
+                    <strong>Url: </strong>
+                    <a :href="currentDataset.url">{{ currentDataset.url }}</a>
+                  </b-row>
+                  <br>
+                  <b-row v-if="currentDataset.metadata">
+                    <b-button :href="'https://raw.githubusercontent.com/castuofa/dataarc-source/main/'+currentDataset.metadata">View Metadata</b-button>
+                  </b-row>
+                </b-container>
+              </b-col>
+            </b-col>
+          </b-row>
+        </b-tab>
+      </b-tabs>
     </template>
   </b-modal>
 
@@ -164,7 +232,21 @@ const datasetQuery = gql`
       description
       citation
       url
+      metadata
       features_count
+    }
+  }
+`
+const fieldQuery = gql`
+  query datasetFields($id: ID!) {
+    datasetFields(where: { dataset: $id }) {
+      id
+      type
+      title
+      source
+      description
+      citation
+      url
     }
   }
 `
@@ -217,39 +299,68 @@ export default {
   data() {
     return {
       pug: require('pug'),
-      loading: true,
-      filter: '',
+      featuresLoading: true,
+      fieldsLoading: true,
+      featuresFilter: '',
+      fieldsFilter: '',
       feature: {},
       features: [],
+      datasetFields: [],
       featuresCount: 0,
+      filteredFieldsCount: 0,
       ids: [],
       currentDataset: {},
       skip: false,
       currentDatasetId: '',
-      currentPage: 1,
+      currentFeaturesPage: 1,
+      currentFieldsPage: 1,
       start: 0,
       limit: 100,
       rows: 10,
-      fields: [
+      featuresFields: [
         { key: 'view', sortable: false },
         { key: 'date', sortable: true },
         { key: 'title', sortable: true },
+      ],
+      fieldsFields: [
+        { key: 'title', sortable: true },
+        { key: 'description', sortable: true },
+        { key: 'citation', sortable: true },
+        { key: 'url', sortable: true },
       ],
     }
   },
   computed: {
     getStart() {
-      return this.firstPage ? 1 : ((this.currentPage - 1) * 10) + 1
+      return this.firstPage ? 1 : ((this.currentFeaturesPage - 1) * 10) + 1
     },
     getNext() {
       return this.getStart + 9 > this.rows ? this.rows : this.nextVal
     },
     nextVal() {
-      return this.firstPage ? 10 : (this.currentPage * 10)
+      return this.firstPage ? 10 : (this.currentFeaturesPage * 10)
     },
     firstPage() {
-      return this.currentPage === 1
+      return this.currentFeaturesPage === 1
     },
+    getFieldsStart() {
+      return this.firstFieldsPage ? 1 : ((this.currentFieldsPage - 1) * 10) + 1
+    },
+    getFieldsNext() {
+      return this.getFieldsStart + 9 > this.getCount ? this.getCount : this.nextFieldsVal
+    },
+    getCount() {
+      return this.filteredFieldsCount > 0 ? this.filteredFieldsCount : this.datasetFieldsCount
+    },
+    nextFieldsVal() {
+      return this.firstFieldsPage ? 10 : (this.currentFieldsPage * 10)
+    },
+    firstFieldsPage() {
+      return this.currentFieldsPage === 1
+    },
+    datasetFieldsCount() {
+      return this.datasetFields && this.datasetFields.length > 0 ? this.datasetFields.length : 0
+    }
   },
   watch: {
     source(newVal) {
@@ -257,6 +368,7 @@ export default {
       this.rows = newVal.total
       this.$bvModal.show(`results-details-${this.resultType}`)
       this.features = []
+      this.datasetFields = []
       this.featuresCount = 0
       this.ids = []
       this.skip = false
@@ -266,21 +378,38 @@ export default {
       this.start = 0
       this.getDataset()
       this.getFeatureIds()
+      this.getFields()
     },
-    currentPage(val) {
+    currentFeaturesPage(val) {
       if (val > 1 && this.features.length < this.rows) {
-        this.loading = this.loadingState(this.features.length)
+        this.featuresLoading = this.loadingState(this.features.length)
       }
       else {
-        this.loading = false
+        this.featuresLoading = false
+      }
+    },
+    currentFieldsPage(val) {
+      if (val > 1 && this.datasetFieldsCount < this.getCount) {
+        this.fieldsLoading = this.loadingFieldsState(this.datasetFieldsCount)
+      }
+      else {
+        this.fieldsLoading = false
       }
     },
     features(val) {
-      if (val.length > 10 && this.currentPage === 1) {
-        this.loading = false
+      if (val.length > 10 && this.currentFeaturesPage === 1) {
+        this.featuresLoading = false
       }
-      if (this.loading) {
-        this.loading = this.loadingState(val.length)
+      if (this.featuresLoading) {
+        this.featuresLoading = this.loadingState(val.length)
+      }
+    },
+    datasetFields(val) {
+      if (val.length > 10 && this.currentFieldsPage === 1) {
+        this.fieldsLoading = false
+      }
+      if (this.fieldsLoading) {
+        this.fieldsLoading = this.loadingFieldsState(val.length)
       }
     }
   },
@@ -309,6 +438,17 @@ export default {
         },
       }).then(({ data }) => {
         [this.currentDataset] = data.datasets
+      })
+    },
+    getFields() {
+      this.datasetFields = []
+      this.$apollo.query({
+        query: fieldQuery,
+        variables: {
+          id: this.currentDatasetId,
+        },
+      }).then(({ data }) => {
+        this.datasetFields = data.datasetFields
       })
     },
     getFeatureIds() {
@@ -373,24 +513,34 @@ export default {
         }
       })
     },
-    updatePage(val) {
-      this.currentPage = val
-    },
     updatePagination(array, val) {
-      this.currentPage = 1
+      this.currentFeaturesPage = 1
       this.rows = val
+    },
+    updateFieldsPagination(array, val) {
+      this.currentFieldsPage = 1
+      this.filteredFieldsCount = val
     },
     loadingState(length) {
       if (length === 0 && this.rows === 0) {
         return false
       }
-      return ((this.currentPage * 10) - 9) > length
+      return ((this.currentFeaturesPage * 10) - 9) > length
+    },
+    loadingFieldsState(length) {
+      if (length === 0 && this.datasetFieldsCount === 0) {
+        return false
+      }
+      return ((this.currentFieldsPage * 10) - 9) > length
     },
     resetModal(event) {
       event.preventDefault()
       this.skip = true
-      this.currentPage = 1
-      this.loading = true
+      this.filteredFieldsCount = 0
+      this.currentFeaturesPage = 1
+      this.currentFieldsPage = 1
+      this.featuresLoading = true
+      this.fieldsLoading = true
       this.$emit('modal-closed')
     },
   },
