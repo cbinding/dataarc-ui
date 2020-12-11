@@ -1,6 +1,6 @@
 <template>
   <b-modal
-    v-if="source && currentDataset"
+    :visible="show"
     class="modal-dialog"
     :id="`results-details-${resultType}`"
     header-bg-variant="dark"
@@ -10,7 +10,7 @@
     @hide="resetModal"
   >
     <template class="modal-title" #modal-title>
-      {{ `${resultType} Results: ${source.result.category}` }}
+      {{ `${resultType} Results: ${source.category}` }}
     </template>
     <template #default>
       <b-tabs>
@@ -32,7 +32,7 @@
                         </b-input-group>
                       </div>
                     </b-row>
-                    <b-table @filtered="updatePagination" :busy="featuresLoading" :fields="featuresFields" :filter="featuresFilter" :per-page="10" :current-page="currentFeaturesPage" id="results-details-table" head-variant="light" table-variant="light" role="grid" dataTable striped bordered hover small :items="features">
+                    <b-table responsive @filtered="updatePagination" :busy="featuresLoading" :fields="featuresFields" :filter="featuresFilter" :per-page="10" :current-page="currentFeaturesPage" id="results-details-table" head-variant="light" table-variant="light" role="grid" dataTable striped bordered hover small :items="features">
                       <template v-slot:table-busy>
                         <div class="text-center my-2">
                           <b-spinner class="align-middle"></b-spinner>
@@ -78,7 +78,7 @@
                   </div>
                 </div>
               </div> -->
-              <b-col sm="12" v-if="feature.title">
+              <b-col sm="12" v-if="feature.properties">
                 <div class="text-center">
                   <h3>{{feature.title}}</h3>
                 </div>
@@ -94,11 +94,17 @@
                       style="height:350px;overflow-y:auto;overflow-x:auto"
                     >
                       <div
+                        v-if="currentDataset.details_layout"
                         v-html="
                           pug.render(currentDataset.details_layout, feature.properties)
                         "
                         lang="pug"
                       />
+                      <div
+                        v-else
+                      >
+                        No Details layout found for <strong>{{ currentDataset.title }}</strong>
+                      </div>
                     </b-jumbotron>
                   </b-col>
                 </b-row>
@@ -113,11 +119,17 @@
                       style="height:200px;overflow-y:auto;overflow-x:auto"
                     >
                       <div
+                        v-if="currentDataset.summary_layout"
                         v-html="
                           pug.render(currentDataset.summary_layout, feature.properties)
                         "
                         lang="pug"
                       />
+                      <div
+                        v-else
+                      >
+                        No Summary layout found for <strong>{{ currentDataset.title }}</strong>
+                      </div>
                     </b-jumbotron>
                   </b-col>
                 </b-row>
@@ -239,6 +251,8 @@ const featuresQuery = gql`
     features(where: { dataset: $id, _id_in: $ids }, start: $start, limit: $limit) {
       id
       title
+      begin
+      end
       properties
     }
   }
@@ -248,6 +262,8 @@ const featuresQueryAll = gql`
     features(where: { dataset: $id }, start: $start, limit: $limit) {
       id
       title
+      begin
+      end
       properties
     }
   }
@@ -291,15 +307,16 @@ export default {
       ids: [],
       currentDataset: {},
       skip: false,
-      currentDatasetId: '',
       currentFeaturesPage: 1,
       currentFieldsPage: 1,
       start: 0,
       limit: 100,
       rows: 10,
+      show: false,
       featuresFields: [
         { key: 'view', sortable: false },
-        { key: 'date', sortable: true },
+        { key: 'begin', sortable: true },
+        { key: 'end', sortable: true },
         { key: 'title', sortable: true },
       ],
       fieldsFields: [
@@ -340,25 +357,22 @@ export default {
     },
     datasetFieldsCount() {
       return this.datasetFields && this.datasetFields.length > 0 ? this.datasetFields.length : 0
-    }
+    },
+    currentDatasetId() {
+      return this.source.dataset_id
+    },
+    sourceTotal() {
+      return this.source.total
+    },
   },
   watch: {
     source(newVal) {
-      this.currentDatasetId = newVal.dataset_id
       this.rows = newVal.total
-      this.$bvModal.show(`results-details-${this.resultType}`)
       this.features = []
       this.datasetFields = []
-      this.featuresCount = 0
       this.ids = []
       this.skip = false
       this.feature = {}
-    },
-    currentDatasetId(val) {
-      this.start = 0
-      this.getDataset()
-      this.getFeatureIds()
-      this.getFields()
     },
     currentFeaturesPage(val) {
       if (val > 1 && this.features.length < this.rows) {
@@ -391,24 +405,38 @@ export default {
       if (this.fieldsLoading) {
         this.fieldsLoading = this.loadingFieldsState(val.length)
       }
-    }
+    },
+  },
+  updated() {
+    this.show = true
   },
   mounted() {
-    this.$bvModal.show(`results-details-${this.resultType}`)
-    this.currentDatasetId = this.source.dataset_id
-    this.rows = this.source.total
-    this.$apollo
-    .query({
-      query: featuresCountQuery,
-      variables: {
-        dataset: this.currentDatasetId,
-      },
-    })
-    .then(({ data }) => {
-      this.featuresCount = data.countFeatures
-    })
+    this.show = true
+    this.rows = this.sourceTotal
+    this.getFeaturesCount()
+    this.getDataset()
+    this.getFields()
   },
   methods: {
+    getFeaturesCount() {
+      let count = this.sourceTotal
+      this.$apollo
+      .query({
+        query: featuresCountQuery,
+        variables: {
+          dataset: this.currentDatasetId,
+        },
+      })
+      .then(({ data }) => {
+        this.featuresCount = data.countFeatures
+        if (data && data.countFeatures === count) {
+          this.getAllFeatures()
+        }
+        else {
+          this.getFeatureIds()
+        }
+      })
+    },
     getDataset() {
       this.currentDataset = {}
       this.$apollo.query({
@@ -447,12 +475,7 @@ export default {
           return 0
         })
         if (this.ids) {
-          if (this.featuresCount !== 0 && this.featuresCount === this.rows) {
-            this.getAllFeatures()
-          }
-          else {
-            this.getFilteredFeatures()
-          }
+          this.getFilteredFeatures()
         }
       })
     },
@@ -516,6 +539,9 @@ export default {
     resetModal(event) {
       event.preventDefault()
       this.skip = true
+      this.start = 0
+      this.show = false
+      this.rows = 10
       this.filteredFieldsCount = 0
       this.currentFeaturesPage = 1
       this.currentFieldsPage = 1
