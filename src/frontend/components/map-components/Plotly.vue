@@ -71,9 +71,11 @@ export default {
       const data = this.plotlyData
 
       this.filteredFeatures.forEach((value, index) => {
-        const pointLocation = data[value][0]
-        const pointColor = data[value][1]
-        this.colorBins[pointLocation] = pointColor
+        if (data[value]) {
+          const pointLocation = data[value][0]
+          const pointColor = data[value][1]
+          this.colorBins[pointLocation] = pointColor
+        }
       })
 
       Plotly.restyle(this.plotlyInstance, 'marker.color', [this.colorBins], [0])
