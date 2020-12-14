@@ -30,6 +30,10 @@ export default {
       type: [Array, Boolean],
       default: false,
     },
+    filters: {
+      type: [Object, Boolean],
+      default: false,
+    },
   },
   data() {
     return {
@@ -39,6 +43,10 @@ export default {
       plotlyInstance: null,
       plotlyData: null,
       colorBins: [],
+      outline: {
+        lon: [],
+        lat: [],
+      }
     }
   },
   watch: {
@@ -64,10 +72,27 @@ export default {
         this.colorBins[value[0]] = value[1]
       })
       Plotly.restyle(this.plotlyInstance, 'marker.color', [this.colorBins], [0])
+      this.clearFilterOutline()
+    },
+    setFilterOutline() {
+      let update = {
+        'lon': [this.outline.lon],
+        'lat': [this.outline.lat],
+      }
+      Plotly.restyle(this.plotlyInstance, update, [1])
+    },
+    clearFilterOutline() {
+      let update = {
+        'lon': [0],
+        'lat': [0],
+      }
+      Plotly.restyle(this.plotlyInstance, update, [1])
     },
     setFilteredFeatures() {
+      if (!this.filters.polygon) {
+        this.clearFilterOutline()
+      }
       this.collectColorBins()
-
       const data = this.plotlyData
 
       this.filteredFeatures.forEach((value, index) => {
@@ -114,6 +139,16 @@ export default {
               allowoverlap: true,
             },
             hovertemplate: '%{text}<extra></extra>',
+            showlegend: false,
+          },
+          {
+            type: 'scattermapbox',
+            mode: 'lines',
+            lon: 0,
+            lat: 0,
+            marker: { size: 10, color: 'black'},
+            showlegend: false,
+            hoverinfo: 'none'
           },
         ]
 
@@ -140,7 +175,7 @@ export default {
         const config = {
           responsive: true,
           displaylogo: false,
-          // displayModeBar: false
+          displayModeBar: true,
         }
 
         Plotly.newPlot(vm.mainPlotlyReference, data, layout, config).then((gd) => {
@@ -161,9 +196,11 @@ export default {
               // Plotly.restyle(gd, 'marker.color', [vm.colorBins], [0])
             }
           })
+          gd.on('plotly_deselect', (eventData) => {
+            this.$emit('removed', 'polygon')
+          })
           gd.on('plotly_click', (eventData) => {
             if (eventData) {
-              // console.log(data);
               // WORKING EXAMPLE BELOW ON HOW TO COLORIZE CHART POINTS
               // var active = [
               //   '5fb05de59966e02a444509dd',
@@ -293,10 +330,21 @@ export default {
         array.push([corner2X, corner1Y])
         array.push([corner2X, corner2Y])
         array.push([corner1X, corner2Y])
+        this.outline.lon = [corner1X, corner2X, corner2X, corner1X, corner1X]
+        this.outline.lat = [corner1Y, corner1Y, corner2Y, corner2Y, corner1Y]
+        this.setFilterOutline()
+
       } else {
+        this.outline = {lat:[], lon:[]}
+        let firstPoint = eventData.lassoPoints.mapbox[0]
         eventData.lassoPoints.mapbox.forEach((point) => {
           array.push(point)
+          this.outline.lon.push(point[0])
+          this.outline.lat.push(point[1])
         })
+        this.outline.lon.push(firstPoint[0])
+        this.outline.lat.push(firstPoint[1])
+        this.setFilterOutline()
       }
       this.$emit('filtered', array)
     },
