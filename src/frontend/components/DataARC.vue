@@ -27,6 +27,7 @@
       v-model="spatialFilter"
       :filters="compiledFilters"
       @load-video="setFileName"
+      @removed="removeFilter"
     />
     <concept-section
       id="concept-section"

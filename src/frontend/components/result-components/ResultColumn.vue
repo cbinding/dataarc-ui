@@ -1,8 +1,8 @@
 
 <template>
   <b-card no-body>
-    <b-card-title class="mt-3 display-4" :class="'text-'+result.category.toLowerCase()">
-      {{ result.category }}
+    <b-card-title class="mt-3 display-4" :class="'text-'+category.toLowerCase()">
+      {{ category }}
       <hr>
       <p class="display-2">{{ result.total.toLocaleString() }}</p>
     </b-card-title>
@@ -13,7 +13,7 @@
         href="#"
         v-for="(source, index) in result.datasets"
         :key="index"
-        @click="viewData(source, result)"
+        @click="viewData(source)"
       >
         {{ source.dataset }}
         <b-badge variant="dark">{{ source.total }}</b-badge>
@@ -31,10 +31,14 @@ export default {
       type: Object,
       required: true,
     },
+    category: {
+      type: String,
+      required: true,
+    },
   },
   methods: {
-    viewData(source, result) {
-      this.$emit('result-data-view', source, result)
+    viewData(source) {
+      this.$emit('result-data-view', source, this.category)
     },
   },
 }

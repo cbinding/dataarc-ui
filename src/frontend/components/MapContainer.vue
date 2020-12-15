@@ -70,7 +70,9 @@
             <b-aspect aspect="16:9">
               <plotly
                 :filtered-features="features"
+                :filters="filters"
                 @filtered="addToFilter"
+                @removed="emitRemove"
               />
             </b-aspect>
           </b-card>
@@ -150,6 +152,9 @@ export default {
     addToFilter(payload) {
       this.$emit('input', payload)
     },
+    emitRemove() {
+      this.$emit('removed', 'polygon')
+    }
   },
 }
 </script>

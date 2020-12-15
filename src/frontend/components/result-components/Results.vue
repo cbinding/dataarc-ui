@@ -46,6 +46,7 @@
               :class="'bg-'+resultType"
               :key="result.category_id"
               :result="result"
+              :category="result.category"
               @result-data-view="setResultView"
             />
           </b-card-group>
@@ -130,9 +131,9 @@ export default {
     this.getAllResults()
   },
   methods: {
-    setResultView(source, result) {
+    setResultView(source, category) {
       this.selectedResult = source
-      this.selectedResult.result = result
+      this.$set(this.selectedResult, 'category', category)
     },
     clear() {
       this.selectedResult = false
